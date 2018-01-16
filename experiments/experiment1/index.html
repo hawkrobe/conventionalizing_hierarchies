@@ -56,13 +56,26 @@
         <canvas id="viewport"> </canvas>
     </div>
 
+    <div id="dimScreen" style="display:none"></div>
+
     <div id="post_test" style="display:none">
       <span>
-	<h3 style='margin-top: 2%' align='center'> Thanks for playing! </h3>
-	<p id="post_test_instruction" align='center' style='width: 50%;margin:auto'> </p>
+	<div id="transition_text">
+	  <p>Now that you've made up a language together, can you tell us what different words mean?</p>
+	  <br />
+	  <p>In the final part of this experiment, you'll be doing two short tasks:</p>
+	  <br />
+	  <p>In one, we'll show you a <b>word</b> and ask you which objects it refers to.</p>
+	  <br />
+	  <p>In the other, we'll show you an <b>object</b> and ask you which words refer to it.<p>
+	    <br />
+	  <p>Ready to begin?</p>
+	  <button id="transition_button" style="width:100px; height:50px;font-size:150%;margin: 20px"> Next </button>
+	</div>
+	<p id="post_test_instruction"></p>
         <div id="word_grid" class="grid"></div>
         <div id="object_grid" class="grid"></div>
-	<button id="post_test_button" style="width:100px; height:50px;font-size:150%;padding:5px"> Next </button>
+	<button id="post_test_button" style="width:100px; height:50px;font-size:150%;margin: 20px;"> Next </button>
     </div>
 
     <div id="exit_survey" style="display:none">
