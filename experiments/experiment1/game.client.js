@@ -174,44 +174,73 @@ var client_onMessage = function(data) {
   }
 };
 
+// We want to test both directions of the lexicon.
+// Given a word, what objects does it apply to; given an object, what words apply to it?
 function setupPostTest () {
-  var showNextLabel = () => {
-    // Clear borders on objects
-    $('img').css({'border-color' : 'white'});
-    globalGame.selectedObjects = [];
-    
-    // grey out old label
-    if(globalGame.currLabel) {
-      var oldLabel = $(`p:contains("${globalGame.currLabel}")`)
-	  .css('color', '#666666');
-    }
-    
-    // highlight new label
-    globalGame.labelNum += 1;
-    globalGame.currLabel = globalGame.labels[globalGame.labelNum];
-    var newLabel = $(`p:contains("${globalGame.currLabel}")`)
-	.css('color', '#FFFFFF');
-  };
+  var testTargets = _.shuffle(['word', 'object']);
+  globalGame.currTargetType = testTargets.shift();
 
   var button = document.getElementById('post_test_button');
+  var objectNames = _.map(globalGame.allObjects, 'name');
+    
+  var showNextTarget = () => {
+    var targets = globalGame.currTargetType == 'word' ? globalGame.labels : objectNames;
+    var targetTag = globalGame.currTargetType == 'word' ? 'p' : 'img';    
+    var targetProperty = globalGame.currTargetType == 'word' ?  'color' : 'border-color';
+    var targetSelectedColor = globalGame.currTargetType == 'word' ? 'white' : 'grey';
+    var targetUnselectedColor = globalGame.currTargetType == 'word' ? 'grey' : 'white';
+
+    var optionTag = globalGame.currTargetType == 'word' ? '#post_test img' : '#post_test p';
+    var optionProperty = globalGame.currTargetType == 'word' ? 'border-color' : 'color';
+    var optionSelectedColor = globalGame.currTargetType == 'word' ? 'grey' : 'white';
+    var optionUnselectedColor = globalGame.currTargetType == 'word' ? 'white' :  'grey';
+
+    // Clear previous selections
+    $(optionTag).css(_.zipObject([optionProperty], [optionUnselectedColor]));
+    globalGame.selections = [];
+    
+    // unselect old target
+    if(globalGame.currTarget) {
+      var oldTarget = $(`${targetTag}[data-name~="${globalGame.currTarget}"`)
+	  .css(_.zipObject([targetProperty], [targetUnselectedColor]));
+    }
+    
+    // highlight new target
+    globalGame.targetNum += 1;
+    globalGame.currTarget = targets[globalGame.targetNum];
+    var newTarget = $(`${targetTag}[data-name~="${globalGame.currTarget}"`)
+	.css(_.zipObject([targetProperty], [targetSelectedColor]));
+  };
+
   button.onclick = () => {
-    globalGame.socket.send('postTestData.' + globalGame.currLabel + '.'
-			   + globalGame.selectedObjects.join('.'));
-    if(globalGame.labelNum >= globalGame.labels.length - 1){
+    // Send data from current response
+    globalGame.socket.send('postTestData.' + globalGame.currTarget + '.'
+			   + globalGame.selections.join('.'));
+    var limit = (globalGame.currTargetType == 'word' ? globalGame.labels.length - 1 :
+		 globalGame.allObjects.length - 1);
+    // If you've advanced through both objs and words, move on to exit survey
+    if(globalGame.targetNum >= limit && testTargets.length == 0){
       $('#post_test').hide();
       $('#exit_survey').show();
+    // If you're done with first batch, move to second
+    } else if(globalGame.targetNum >= limit) {
+      globalGame.currTargetType = testTargets.shift();
+      setupPostTestHTML();
+      showNextTarget();      
     } else {
-      showNextLabel();
+      showNextTarget();
     }
   };  
-  
+
   // Populate display fields
   _.forEach(globalGame.labels, (word) =>{
     $('#word_grid').append(
       $('<p/>')
-	.css({color: '#666666'})
+	.css({color: 'grey'})
 	.addClass('cell')
+	.addClass('noselect')
 	.text(word)
+	.attr({'data-name' : word})      
     );
   });
   
@@ -224,20 +253,42 @@ function setupPostTest () {
   	.addClass("imgcell")
     );
   });
-  
-  $('img').click(function(event) {
-    $(this).css('border-color');
-    if(_.includes(globalGame.selectedObjects, $(this).attr('data-name'))) {
-      _.remove(globalGame.selectedObjects, obj => obj == $(this).attr('data-name'));
-      $(this).css({'border-color': 'white'});
-    } else {
-      globalGame.selectedObjects.push($(this).attr('data-name'));
-      $(this).css({'border-color': 'grey'});
-    }
-  });
 
-  globalGame.labelNum = -1;
-  showNextLabel();
+  setupPostTestHTML();
+  showNextTarget();
+};
+
+var setupPostTestHTML = function() {
+  // Set up instructions and grid locations
+  globalGame.targetNum = -1;
+
+  // Set target array at top
+  var intendedTop = `#${globalGame.currTargetType}_grid`;
+  $(intendedTop).insertAfter( $('#post_test_instruction') );
+
+  // Unbind old click listeners if they exist 
+  $(globalGame.currTargetType == 'word' ? '#word_grid p' : '#object_grid img')
+    .off('click');
+
+  // Set new listeners
+  $(globalGame.currTargetType == 'word' ? '#object_grid img' : '#word_grid p')
+    .click(function(event) {
+      var optionProperty = globalGame.currTargetType == 'word' ? 'border-color' : 'color';
+      var selectedColor = globalGame.currTargetType == 'word' ? 'grey' : 'white';
+      var unselectedColor = globalGame.currTargetType == 'word' ? 'white' : 'grey';
+      console.log('clicked');
+      if(_.includes(globalGame.selections, $(this).attr('data-name'))) {
+	_.remove(globalGame.selections, obj => obj == $(this).attr('data-name'));
+	$(this).css(_.zipObject([optionProperty], [unselectedColor]));
+      } else {
+	globalGame.selections.push($(this).attr('data-name'));
+	$(this).css(_.zipObject([optionProperty], [selectedColor]));
+      }
+    });
+
+  // Update instructions
+  $('#post_test_instruction').html(`We'd like to ask you a few quick questions before you go. We're interested in the meanings of words in your made-up language. As we highlight each ${globalGame.currTargetType} below, please <b>click all of the ${globalGame.currTargetType == 'word' ? 'object' : 'word'}s that apply</b>, then click 'next'. If you didn't use a label or don't think it has a meaning, click next without making a selection.`);
+
 };
 
 var client_addnewround = function(game) {
