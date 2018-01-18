@@ -220,7 +220,8 @@ function setupPostTest () {
 		 globalGame.allObjects.length - 1);
 
     // Send data from current response
-    globalGame.socket.send('postTestData.' + globalGame.currTarget + '.'
+    globalGame.socket.send('postTest_' + globalGame.currTargetType + '.'
+			   + globalGame.currTarget + '.'
 			   + globalGame.selections.join('.'));
 
     // Unselect old target

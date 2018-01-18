@@ -32,10 +32,14 @@ var onMessage = function(client,message) {
   var others = gc.get_others(client.userid);
   switch(message_type) {
 
-  case 'postTestData' :
-    console.log('received meaning message');
+  case 'postTest_word' :
+    console.log('received word post test message');
     break;
-    
+
+  case 'postTest_object' :
+    console.log('received object post test message');
+    break;
+
   case 'clickedObj' :
     // Write event to file
     others[0].player.instance.send('s.feedback.' + message_parts[1]);
@@ -109,19 +113,33 @@ var dataOutput = function() {
     };
   };
 
-  var postTestDataOutput = function(client, message_data) {
-    var label = message_data[1];
-    var objs = message_data.slice(2);
+  var postTestWordOutput = function(client, message_data) {
+    var target = message_data[1];
+    var selections = message_data.slice(2);
     var meaningHeader = _.map(client.game.objects, 'name');
-    var meaning = _.map(client.game.objects, obj => _.includes(objs, obj.name));
+    var meaning = _.map(client.game.objects, obj => _.includes(selections, obj.name));
     return _.extend(
       commonOutput(client, message_data),
       _.zipObject(meaningHeader, meaning), {
-	label,
+	target,
 	finalRole: client.role
       });	
   };
   
+  var postTestObjectOutput = function(client, message_data) {
+    var target = message_data[1];
+    var selections = message_data.slice(2);
+    var meaningHeader = client.game.trialInfo.labels;
+    var meaning = _.map(client.game.trialInfo.labels,
+			label => _.includes(selections, label));
+    return _.extend(
+      commonOutput(client, message_data),
+      _.zipObject(meaningHeader, meaning), {
+	target,
+	finalRole: client.role
+      });	
+  };
+
   var clickedObjOutput = function(client, message_data) {
     var objects = client.game.trialInfo.currStim;
     var intendedName = getIntendedTargetName(objects);
@@ -154,7 +172,8 @@ var dataOutput = function() {
   return {
     'drop' : dropOutput,
     'clickedObj' : clickedObjOutput,
-    'postTestData' : postTestDataOutput
+    'postTest_word' : postTestWordOutput,
+    'postTest_object' : postTestObjectOutput    
   };
 }();
 
