@@ -34,7 +34,7 @@ var game_core = function(options){
   this.email = 'rxdh@stanford.edu';
   this.projectName = 'basicLevel';
   this.experimentName = 'artificialLanguage';
-  this.iterationName = 'experiment1-testing';
+  this.iterationName = 'experiment1';
   this.anonymizeCSV = true;
   this.bonusAmt = 3; // in cents
   
