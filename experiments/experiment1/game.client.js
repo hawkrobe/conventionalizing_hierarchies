@@ -219,6 +219,17 @@ function setupPostTest () {
     var limit = (globalGame.currTargetType == 'word' ? globalGame.labels.length - 1 :
 		 globalGame.allObjects.length - 1);
 
+    // Temporarily disable button to prevent trigger happy people
+    var oldValue = button.value;
+
+    button.setAttribute('disabled', true);
+    button.value = '...';
+
+    setTimeout(function(){
+      button.value = oldValue;
+      button.removeAttribute('disabled');
+    }, 2000);
+
     // Send data from current response
     globalGame.socket.send('postTest_' + globalGame.currTargetType + '.'
 			   + globalGame.currTarget + '.'

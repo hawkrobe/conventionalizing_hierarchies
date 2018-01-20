@@ -62,7 +62,7 @@ var game_core = function(options){
   this.roundNum = -1;
 
   // How many rounds do we want people to complete?
-  this.numRounds = 90;
+  this.numRounds = 96;
   this.feedbackDelay = 300;
 
   // This will be populated with the tangram set
@@ -73,7 +73,7 @@ var game_core = function(options){
     this.expName = options.expName;
     this.player_count = options.player_count;
     this.objects = require('./objects.json');
-    this.condition = 'uniform';// _.sample(['over', 'under', 'basic', 'uniform']);
+    this.condition = _.sample(['mixedLower', 'subOnly', 'intermediateOnly']);
     this.trialList = this.makeTrialList();
     this.language = new ArtificialLanguage();
     this.data = {
@@ -175,9 +175,13 @@ game_core.prototype.coordExtension = function(obj, gridCell) {
 game_core.prototype.makeTrialList = function () {
   var that = this;
   var trialList = [];
-  this.contextTypeList = this.sampleContextSequence();
+  this.contextTypeList = [];
+  var sequence = this.sampleSequence();
+//  console.log(sequence);
   for (var i = 0; i < this.numRounds; i++) {
-    var world = this.sampleTrial(this.contextTypeList[i]); // Sample a world state
+    var trialInfo = sequence[i];
+    this.contextTypeList.push(trialInfo['trialType']);
+    var world = this.sampleTrial(trialInfo['target'], trialInfo['trialType']); // Sample a world state
     // construct trial list (in sets of complete rounds)
     trialList.push(_.map(world, function(obj) {
       var newObj = _.clone(obj);
@@ -193,19 +197,44 @@ game_core.prototype.makeTrialList = function () {
   return(trialList);
 };
 
-game_core.prototype.sampleContextSequence = function() {
-  var designMatrix = _.mapValues({
-    'uniform' : {'sub' : 1/3, 'super' : 1/3, 'basic' : 1/3},
-    'over'    : {'sub' : 1, 'super' : 0, 'basic' : 0},
-    'under'   : {'sub' : 0, 'super' : 1, 'basic' : 0},
-    'basic'   : {'sub' : 0, 'super' : 0, 'basic' : 1}
-  }, (obj, key) => {
-    return _.mapValues(obj, (innerVal, key) => parseInt(innerVal * this.numRounds));
-  });
-  var seq = (Array(designMatrix[this.condition]['sub']).fill('sub')
-	     .concat(Array(designMatrix[this.condition]['basic']).fill('basic'))
-	     .concat(Array(designMatrix[this.condition]['super']).fill('super')));
-  return _.shuffle(seq);
+var designMatrix = {
+  'mixedLower'       : ['sub', 'basic'],
+  'subOnly'          : ['sub'],
+  'intermediateOnly' : ['basic']
+};
+
+// Ensure each object appears even number of times, evenly spaced across trial types...?
+game_core.prototype.sampleSequence = function() {
+  var trials = designMatrix[this.condition];
+  var targetRepetitions = this.numRounds / this.objects.length;
+  var trialTypeSequenceLength = trials.length;
+  var that = this;
+  var proposal = _.flattenDeep(_.map(_.range(targetRepetitions / trialTypeSequenceLength), i => {
+    return _.shuffle(_.flatten(_.map(that.objects, function(target) {
+      return _.map(trials, function(trialType) {
+	return {target, trialType};
+      });
+    })));
+  }));
+  if( checkSequence(proposal) ) {
+    return proposal;
+  } else {
+    return this.sampleSequence();
+  }
+};
+
+// Want to make sure there are no adjacent targets (e.g. gap is at least 1 apart?)
+function mapPairwise(arr, func){
+  var l = [];
+  for(var i=0;i<arr.length-1;i++){
+    l.push(func(arr[i], arr[i+1]));
+  }
+  return l;
+}
+var checkSequence = function(proposalList) {
+  return _.every(mapPairwise(proposalList, function(curr, next) {
+    return curr.target.subID !== next.target.subID;
+  }));
 };
 
 // For basic/sub conditions, want to make sure there's at least one distractor at the
@@ -233,8 +262,7 @@ game_core.prototype.sampleDistractors = function(target, contextType) {
 };
 
 // take context type as argument
-game_core.prototype.sampleTrial = function(contextType) {
-  var target = _.sample(this.objects);
+game_core.prototype.sampleTrial = function(target, contextType) {
   var distractors = this.sampleDistractors(target, contextType);
   var locs = this.sampleStimulusLocs();
   return _.map(distractors.concat(target), function(obj, index) {
