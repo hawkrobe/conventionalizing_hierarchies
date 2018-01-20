@@ -3,7 +3,9 @@ title: "Basic-level emergence"
 output:
   pdf_document: default
   html_notebook: default
-  html_document: default
+  html_document: 
+    smart: false
+    
 ---
 
 # Import libraries
@@ -11,6 +13,7 @@ output:
 ```{r results="hide"}
 library(tidyverse)
 library(ggthemes)
+library(lme4)
 ```
 
 # Import data  
@@ -42,6 +45,15 @@ d <- raw_clicks %>%
   ungroup() %>%
   left_join(raw_drops, by = c('gameid', 'trialNum', 'intendedName')) %>%
   select(-ends_with('y'), -ends_with('x'), -correct)
+
+# Exclude people who are below 50% in final quarter
+nonConvergers <- (d %>% 
+  filter(quarter == 3) %>%
+  group_by(gameid) %>%
+  summarize(percentCorrect = mean(acc)) %>%
+  filter(percentCorrect < 0.75))$gameid
+    
+cat('excluded', length(nonConvergers), 'games that never converged')
 ```
 
 ## Number games per condition
@@ -57,12 +69,55 @@ d %>%
 ## Write out for BDA
 
 ```{r}
-d %>% filter(gameid == '0234-6e789adc-7489-4d55-b032-287910407ed7') %>% select(-condition, -contextType, -acc, -numRounds, -quarter, -cumAcc, -overallAcc, -timeFromRoundStart) %>% mutate(text = paste0('word', as.numeric(factor(text)))) %>% write_csv(path = '../models/bdaInput/singleGame.csv') 
+d %>% 
+  filter(gameid == '0234-6e789adc-7489-4d55-b032-287910407ed7') %>% 
+  select(-condition, -contextType, -acc, -numRounds, -quarter, -cumAcc, -overallAcc, -timeFromRoundStart) %>% 
+  mutate(label = text, text = paste0('word', as.numeric(factor(text)))) %>% 
+  write_csv(path = '../models/bdaInput/singleGame.csv') 
 ```
 
-# Results 
+# Behavioral Results 
 
-## Individual accuracy curves
+## Accuracy distributions by quartile of game
+
+```{r}
+d %>% 
+  #filter(numRounds == 90) %>%
+  group_by(gameid, quarter) %>%
+  summarize(percentCorrect = mean(acc)) %>%
+  ggplot(aes(x = percentCorrect)) +
+    geom_histogram(bins = 10) +
+    theme_few() + 
+    guides(color = FALSE) +
+    facet_wrap(~ quarter) 
+```
+
+We see a bimodal distribution where some people never converge (exclude for subsequent analyses).
+
+## Overall accuracy over time
+
+```{r}
+d %>% 
+  group_by(trialNum) %>%
+  summarize(percentCorrect = mean(acc)) %>%
+  ggplot(aes(x = trialNum, y = percentCorrect)) +
+    geom_point() +
+    theme_few() + 
+    guides(color = FALSE) +
+    geom_smooth(method = 'loess') +
+    ylab("accuracy") +
+    ylim(0,1.15)
+```
+
+This overall increase is significant... 
+
+```{r}
+summary(glmer(acc ~ trialNum + (1 + trialNum | gameid), family = 'binomial', data = d))
+```
+
+## *Individual* accuracy curves over time
+
+Here we see very clearly the different pairs separate out (some never converge)
 
 ```{r}
 ggplot(d, aes(x = trialNum, y = cumAcc, group = gameid)) +
@@ -110,9 +165,27 @@ d %>%
     theme(aspect.ratio = 1)
 ```
 
+## Reaction times
+
+```{r}
+d %>% 
+  group_by(trialNum) %>%
+  summarize(RT = mean(timeFromRoundStart)) %>%
+  ggplot(aes(x = trialNum, y = RT/1000)) +
+    geom_point() +
+    theme_few() + 
+    guides(color = FALSE) +
+    geom_smooth(method = 'loess') +
+    ylab("reaction time (seconds)")
+```
+
+```{r}
+summary(lmer(timeFromRoundStart ~ trialNum + (1 | gameid),  data = d))
+```
+
 # Post-test results
 
-Import 
+Import, filter out nonConvergers, pull in condition information
 
 ```{r results="hide"}
 postTest <- read_delim('../data/pilot1/postTestData/postTestData.csv', '\t') %>%
@@ -124,14 +197,12 @@ postTest <- read_delim('../data/pilot1/postTestData/postTestData.csv', '\t') %>%
          striped = grepl('striped', object),
          spotted = grepl('spotted', object),
          circle = grepl("Circle", object),
-         square = grepl("Square", object))
-```
-
-## 'Validate' meanings against trajectory data
-
-How do these post-test ratings compare to 'situtated' language use? Do players actually use the label during the game to mean the thing they explicitly say it means at the end?
-
-```{r}
+         square = grepl("Square", object)) %>%
+  filter(!(gameid %in% nonConvergers)) %>%
+  right_join(d %>% filter(!(gameid %in% nonConvergers))) %>%
+  select(iterationName:square, condition) %>%
+  group_by_at(vars(-condition)) %>%
+  summarize(condition = first(condition))
 ```
 
 ## Distribution of meanings 
@@ -140,10 +211,9 @@ How many objects does each label correspond to (i.e. how many meanings at sub-le
 
 ```{r}
 postTest %>%
-  group_by(gameid, finalRole, label) %>%
+  group_by(gameid, finalRole, label, condition) %>%
   summarize(numObjects = sum(meaning)) %>%
-  left_join(d) %>%
-  ggplot(aes(x = numObjects, y = ..density..)) +
+  ggplot(aes(x = numObjects, y = ..count..)) +
     geom_histogram() +
     facet_wrap(~ condition) +
     theme_few()
@@ -151,7 +221,7 @@ postTest %>%
 
 ## How often do players align on meanings?
 
-On average, pairs only match on about 30% of the meanings they mark... 
+On average, pairs exactly match on about 50% of the meanings they mark... 
 
 ```{r}
 postTest %>%
@@ -204,17 +274,50 @@ When people fail to perfectly align, do they do so in a predictable way? (e.g. o
 
 ```{r}
 postTest %>%
-  group_by(gameid, finalRole, label) %>%
+  group_by(gameid, finalRole, label, condition) %>%
   summarize(numObjects = sum(meaning)) %>%
   filter(numObjects > 0) %>%
-  group_by(gameid, finalRole) %>%
+  group_by(gameid, finalRole, condition) %>%
   tally() %>%
-  right_join(d) %>%
+  group_by(condition, gameid) %>%
+  summarize(vocabSize = mean(n, na.rm = T)) %>%
   group_by(condition) %>%
-  summarize(vocabSize = mean(n, na.rm = T))
+  summarize(se = sd(vocabSize)/sqrt(length(vocabSize)), vocabSize = mean(vocabSize)) %>%
+  arrange(vocabSize) %>%
+  mutate(condition = factor(condition, levels = unique(condition))) %>%
+  ggplot(aes(x = condition, y = vocabSize)) +
+    geom_bar(stat = 'identity') +
+    geom_errorbar(aes(ymax = vocabSize + se, ymin = vocabSize - se), width = 0) +
+    theme_few()
+
+ggsave('../writing/cogsci18/lexiconSize.pdf', height = 3.5, width = 5)
 ```
 
-## Do basic-level & sub-level coexist?
+## How many abstract vs. specific terms overall?
+
+```{r}
+postTest %>% 
+  group_by(gameid, finalRole, label, condition) %>%
+  summarize(specific = sum(meaning) == 1, abstract = sum(meaning) > 1) %>%
+  group_by(gameid, finalRole, condition) %>%
+  summarize(numAbstract = sum(abstract), numSpecific = sum(specific)) %>%
+  group_by(condition) %>%
+  summarize(numAbstract_m = mean(numAbstract), numSpecific_m = mean(numSpecific),
+            numAbstract_se = sd(numAbstract)/sqrt(length(numAbstract)), 
+            numSpecific_se = sd(numSpecific)/sqrt(length(numSpecific))) %>%
+  gather(metric, value, numAbstract_m:numSpecific_se) %>%
+  separate(metric, c('wordType', 'measure')) %>%
+  spread(measure, value) %>%
+  ggplot(aes(x = wordType, y = m)) +
+    geom_bar(stat = 'identity') +
+    geom_errorbar(aes(ymax = m + se, ymin = m - se), width = 0) +
+    facet_wrap(~ condition) +
+    theme_few()
+
+ggsave('../writing/cogsci18/lexiconContent.pdf', width = 5, height = 5)
+```
+
+## Proportion of specific & abstract within single lexicon?
 
 ```{r}
 postTest %>% 
@@ -299,16 +402,17 @@ postTest %>%
 Import lexical posteriors
 
 ```{r}
-BDAparams <- read_csv('../../models/artificial/bdaOutput/lexicalInferenceParams.csv') %>%
+BDAparams <- read_csv('../models/bdaOutput/lexicalInferenceParams.csv') %>%
   mutate(sample = row_number()) %>%
   gather(param, value, -sample) %>%
   separate(param, into = c('word', 'object', 'trialNum'))
 ```
 
 ```{r}
-driftRates <- read_csv('../../models/artificial/bdaOutput/lexicalInferenceDrifts.csv') %>%
-  mutate(sample = row_number()) %>%
-  gather(trialNum, value, -sample)
+read_csv('../models/bdaOutput/lexicalInferenceDrifts.csv') %>%
+  mutate(sample = row_number())  %>%
+  ggplot(aes(x = driftRates)) +
+    geom_histogram()
 ```
 
 ## Visualize inferred lexica example
@@ -320,16 +424,74 @@ BDAparams %>%
   #filter(trialNum %in% c(first(trialNum), last(trialNum))) %>% 
   filter(object == 'blueSquare2') %>%
   filter(word == 2) %>% 
-  filter(as.integer(trialNum) %% 2 == 0) %>%
+  filter(as.integer(trialNum) %% 5 == 1) %>%
   ggplot(aes(x = value)) + 
     geom_histogram() + 
-    facet_wrap(~ trialNum ) +
+    facet_wrap(~ as.numeric(trialNum )) +
     theme_bw()
 
 ggsave('wordFormation.pdf', width = 6, height = 3)
 ```
 
 ```{r}
-driftRates %>% group_by(trialNum) %>% summarize(m = median(value))
-driftRates %>% ggplot(aes(x = value)) + geom_histogram() + facet_wrap(~ trialNum) + theme_few()
+driftRates %>% group_by(as.numeric(trialNum)) %>% summarize(m = median(value))
+driftRates %>% ggplot(aes(x = value)) + geom_histogram() + facet_wrap(~ as.integer(trialNum)) + theme_few()
+```
+
+## How well does behavior predict post-test?
+
+Check labels 
+
+```{r}
+postTest %>% 
+  filter(gameid == '0234-6e789adc-7489-4d55-b032-287910407ed7') %>% 
+  group_by(gameid,finalRole) %>%
+  mutate(word = as.numeric(factor(label))) %>%
+  ungroup() %>%
+  select(word, label)
+
+wordNumToLabelLookup <- d %>% 
+  filter(gameid == '0234-6e789adc-7489-4d55-b032-287910407ed7') %>% 
+  mutate(label = text, word = as.character(as.numeric(factor(text)))) %>%
+  group_by(word) %>% summarize(label = first(label)) %>%
+  select(word, label)
+```
+
+```{r}
+estimate_left <- function(s) {
+  d0 <- density(s, from=0, to=0.05, n=1)
+  return(d0$y)
+}
+
+estimate_right <- function(s) {
+  d1 <- density(s, from=0.95, to=1, n=1)
+  return(d1$y)
+}
+
+correctedPostTest <- postTest %>% 
+  filter(gameid == '0234-6e789adc-7489-4d55-b032-287910407ed7') %>% 
+  group_by(gameid,finalRole) %>%
+  mutate(word = as.character(as.numeric(factor(label)))) %>%
+  group_by(label, finalRole) %>%
+  filter(sum(meaning) > 0) %>%
+  rename(empiricalMeaning = meaning) %>%
+  select(finalRole, label, object, empiricalMeaning)
+       
+BDAparams %>% 
+  filter(trialNum == max(trialNum)) %>%
+  left_join(wordNumToLabelLookup) %>%
+  group_by(label, object) %>%
+  summarize(prob0 = estimate_left(value),
+            prob1 = estimate_right(value),
+            prediction = prob1/prob0) %>%
+  filter(!is.na(label))%>%
+  left_join(correctedPostTest, by = c('label', 'object')) %>% 
+  ggplot(aes(y = empiricalMeaning, x = prediction)) +
+    geom_point() +
+    geom_smooth(method="glm", method.args = list(family = "binomial"), se = F) +
+    xlab('P(meaning = 1) / P(meaning = 0)') +
+    ylab('true meaning') +
+    theme_bw()
+
+ggsave('postTestPrediction.pdf', width = 3, height = 2)
 ```
