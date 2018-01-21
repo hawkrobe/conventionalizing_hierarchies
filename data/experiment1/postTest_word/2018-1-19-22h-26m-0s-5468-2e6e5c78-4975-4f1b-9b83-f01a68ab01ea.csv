@@ -1,0 +1,17 @@
+iterationName	gameid	time	blueSquare1	blueSquare2	redSquare1	redSquare2	spottedCircle1	spottedCircle2	stripedCircle1	stripedCircle2	target	finalRole	eventType
+experiment1	5468-2e6e5c78-4975-4f1b-9b83-f01a68ab01ea	1516429560712	false	false	false	false	false	false	false	false	weki	speaker	postTest_word
+experiment1	5468-2e6e5c78-4975-4f1b-9b83-f01a68ab01ea	1516429567470	false	false	false	false	false	false	false	false	gawe	speaker	postTest_word
+experiment1	5468-2e6e5c78-4975-4f1b-9b83-f01a68ab01ea	1516429573779	false	false	false	false	false	false	true	true	lope	speaker	postTest_word
+experiment1	5468-2e6e5c78-4975-4f1b-9b83-f01a68ab01ea	1516429580834	false	true	false	false	false	false	false	false	gogo	speaker	postTest_word
+experiment1	5468-2e6e5c78-4975-4f1b-9b83-f01a68ab01ea	1516429583786	false	false	false	false	true	false	true	false	hige	speaker	postTest_word
+experiment1	5468-2e6e5c78-4975-4f1b-9b83-f01a68ab01ea	1516429587890	false	false	false	false	false	false	false	false	hawi	speaker	postTest_word
+experiment1	5468-2e6e5c78-4975-4f1b-9b83-f01a68ab01ea	1516429590122	false	false	false	false	false	false	false	false	kelu	speaker	postTest_word
+experiment1	5468-2e6e5c78-4975-4f1b-9b83-f01a68ab01ea	1516429592570	false	false	false	false	false	false	false	false	noni	speaker	postTest_word
+experiment1	5468-2e6e5c78-4975-4f1b-9b83-f01a68ab01ea	1516429595090	false	false	false	false	false	false	false	false	papo	speaker	postTest_word
+experiment1	5468-2e6e5c78-4975-4f1b-9b83-f01a68ab01ea	1516429597491	false	false	false	false	false	false	false	false	newa	speaker	postTest_word
+experiment1	5468-2e6e5c78-4975-4f1b-9b83-f01a68ab01ea	1516429600032	false	false	false	false	true	true	false	false	lipa	speaker	postTest_word
+experiment1	5468-2e6e5c78-4975-4f1b-9b83-f01a68ab01ea	1516429603309	false	false	false	false	false	false	false	false	pelo	speaker	postTest_word
+experiment1	5468-2e6e5c78-4975-4f1b-9b83-f01a68ab01ea	1516429605735	false	false	false	false	false	false	false	false	gihe	speaker	postTest_word
+experiment1	5468-2e6e5c78-4975-4f1b-9b83-f01a68ab01ea	1516429608397	false	false	true	false	false	false	false	false	wona	speaker	postTest_word
+experiment1	5468-2e6e5c78-4975-4f1b-9b83-f01a68ab01ea	1516429610785	true	false	false	false	false	false	false	false	hohu	speaker	postTest_word
+experiment1	5468-2e6e5c78-4975-4f1b-9b83-f01a68ab01ea	1516429614096	false	false	false	true	false	false	false	false	moko	speaker	postTest_word

@@ -1,0 +1,17 @@
+iterationName	gameid	time	blueSquare1	blueSquare2	redSquare1	redSquare2	spottedCircle1	spottedCircle2	stripedCircle1	stripedCircle2	target	finalRole	eventType
+experiment1	2484-7efd89bc-956a-4dd5-9a9e-3119bf988e87	1516434169679	false	false	true	false	false	false	false	false	maha	listener	postTest_word
+experiment1	2484-7efd89bc-956a-4dd5-9a9e-3119bf988e87	1516434174243	true	true	false	false	false	false	false	false	pine	listener	postTest_word
+experiment1	2484-7efd89bc-956a-4dd5-9a9e-3119bf988e87	1516434178235	false	false	true	false	false	false	false	false	geni	listener	postTest_word
+experiment1	2484-7efd89bc-956a-4dd5-9a9e-3119bf988e87	1516434180942	false	false	false	false	false	true	false	false	neka	listener	postTest_word
+experiment1	2484-7efd89bc-956a-4dd5-9a9e-3119bf988e87	1516434184054	false	false	false	false	false	false	true	false	moli	listener	postTest_word
+experiment1	2484-7efd89bc-956a-4dd5-9a9e-3119bf988e87	1516434187693	false	false	false	false	false	false	false	false	hale	listener	postTest_word
+experiment1	2484-7efd89bc-956a-4dd5-9a9e-3119bf988e87	1516434191487	false	true	false	false	false	false	false	false	wema	listener	postTest_word
+experiment1	2484-7efd89bc-956a-4dd5-9a9e-3119bf988e87	1516434194215	false	false	false	true	false	false	false	false	luno	listener	postTest_word
+experiment1	2484-7efd89bc-956a-4dd5-9a9e-3119bf988e87	1516434198775	false	false	false	false	false	false	false	false	kega	listener	postTest_word
+experiment1	2484-7efd89bc-956a-4dd5-9a9e-3119bf988e87	1516434202396	true	true	false	false	false	false	false	false	pame	listener	postTest_word
+experiment1	2484-7efd89bc-956a-4dd5-9a9e-3119bf988e87	1516434206835	false	true	false	false	false	false	false	false	puwa	listener	postTest_word
+experiment1	2484-7efd89bc-956a-4dd5-9a9e-3119bf988e87	1516434210043	false	false	false	false	false	false	true	false	mewu	listener	postTest_word
+experiment1	2484-7efd89bc-956a-4dd5-9a9e-3119bf988e87	1516434212612	false	false	false	false	false	false	false	true	mila	listener	postTest_word
+experiment1	2484-7efd89bc-956a-4dd5-9a9e-3119bf988e87	1516434218747	false	false	true	false	false	false	false	false	giko	listener	postTest_word
+experiment1	2484-7efd89bc-956a-4dd5-9a9e-3119bf988e87	1516434222553	false	false	false	false	false	false	false	false	wonu	listener	postTest_word
+experiment1	2484-7efd89bc-956a-4dd5-9a9e-3119bf988e87	1516434229575	false	false	false	false	true	true	false	false	nupi	listener	postTest_word

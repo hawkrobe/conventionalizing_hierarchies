@@ -1,0 +1,17 @@
+iterationName	gameid	time	blueSquare1	blueSquare2	redSquare1	redSquare2	spottedCircle1	spottedCircle2	stripedCircle1	stripedCircle2	target	finalRole	eventType
+experiment1	3850-bfcd68c1-0806-476a-b0e6-e0586c1a12b8	1516482523312	false	false	false	true	false	false	false	false	mago	listener	postTest_word
+experiment1	3850-bfcd68c1-0806-476a-b0e6-e0586c1a12b8	1516482527840	false	false	true	false	false	false	false	false	kohu	listener	postTest_word
+experiment1	3850-bfcd68c1-0806-476a-b0e6-e0586c1a12b8	1516482531048	false	false	false	false	false	false	false	true	lige	listener	postTest_word
+experiment1	3850-bfcd68c1-0806-476a-b0e6-e0586c1a12b8	1516482533742	false	false	false	false	false	false	false	false	kunu	listener	postTest_word
+experiment1	3850-bfcd68c1-0806-476a-b0e6-e0586c1a12b8	1516482536890	false	false	false	false	false	false	false	false	muwa	listener	postTest_word
+experiment1	3850-bfcd68c1-0806-476a-b0e6-e0586c1a12b8	1516482539685	false	false	false	false	false	false	false	false	hawu	listener	postTest_word
+experiment1	3850-bfcd68c1-0806-476a-b0e6-e0586c1a12b8	1516482542062	false	false	false	false	false	false	false	false	hewo	listener	postTest_word
+experiment1	3850-bfcd68c1-0806-476a-b0e6-e0586c1a12b8	1516482544276	true	false	false	false	false	false	false	false	polo	listener	postTest_word
+experiment1	3850-bfcd68c1-0806-476a-b0e6-e0586c1a12b8	1516482556350	false	false	false	false	true	false	false	false	wiga	listener	postTest_word
+experiment1	3850-bfcd68c1-0806-476a-b0e6-e0586c1a12b8	1516482558837	false	false	false	false	false	false	true	false	niki	listener	postTest_word
+experiment1	3850-bfcd68c1-0806-476a-b0e6-e0586c1a12b8	1516482561550	false	false	false	false	false	false	false	false	neno	listener	postTest_word
+experiment1	3850-bfcd68c1-0806-476a-b0e6-e0586c1a12b8	1516482563718	false	true	false	false	false	false	false	false	lapa	listener	postTest_word
+experiment1	3850-bfcd68c1-0806-476a-b0e6-e0586c1a12b8	1516482567007	false	false	false	false	false	false	false	false	kame	listener	postTest_word
+experiment1	3850-bfcd68c1-0806-476a-b0e6-e0586c1a12b8	1516482573442	false	false	true	false	false	false	false	false	huna	listener	postTest_word
+experiment1	3850-bfcd68c1-0806-476a-b0e6-e0586c1a12b8	1516482576468	false	false	false	false	false	true	false	false	wogu	listener	postTest_word
+experiment1	3850-bfcd68c1-0806-476a-b0e6-e0586c1a12b8	1516482579123	false	false	false	false	false	false	false	false	gawe	listener	postTest_word
