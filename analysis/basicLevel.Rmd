@@ -18,13 +18,22 @@ library(lme4)
 
 # Import data  
 
+Import, filter out nonConvergers, pull in condition information
+
 ```{r results="hide"}
-raw_clicks = read_delim('../data/pilot1/clickedObj/clickedObjData.csv', '\t')
-raw_drops = read_delim('../data/pilot1/drop/dropData.csv', '\t')
+raw_clicks = read_delim('../data/experiment1/clickedObj/allClicks.csv', '\t')
+raw_drops = read_delim('../data/experiment1/drop/allDrops.csv', '\t')
 incompletes <- (raw_clicks %>% 
   group_by(gameid, condition) %>%
   tally() %>%
-  filter(n < 60))$gameid
+  filter(n < 90))$gameid
+
+masterWordIDLookup <- read_delim('../data/experiment1/postTest_word/allWordPostTest.csv', '\t') %>%
+  group_by(gameid) %>%
+  mutate(wordID = paste0('word', as.numeric(factor(target)))) %>%
+  rename(text = target) %>%
+  select(gameid, text, wordID) %>%
+  distinct()
 ```
 
 Filter out incompletes & compute cumulative accuracy. We also divide into quarters to compare games that ran different amounts of trials.
@@ -34,26 +43,28 @@ d <- raw_clicks %>%
   filter(!(gameid %in% incompletes)) %>%
   mutate(acc = ifelse(correct == 'true', 1, 0)) %>%
   group_by(gameid) %>%
-  mutate(condition = case_when(condition == 'over' ~ 'sub-majority',
-                               condition == 'under' ~ 'super-majority',
-                               condition == 'basic' ~ 'basic-majority',
-                               condition == 'uniform' ~ 'uniform')) %>%
-  mutate(numRounds = last(trialNum)) %>%
   mutate(quarter = floor((trialNum - 1) / (last(trialNum)/4))) %>%
   mutate(cumAcc = cumsum(acc)) %>%
   mutate(overallAcc = last(cumAcc)/last(trialNum)) %>%
-  ungroup() %>%
   left_join(raw_drops, by = c('gameid', 'trialNum', 'intendedName')) %>%
-  select(-ends_with('y'), -ends_with('x'), -correct)
+  select(-ends_with('y'), -ends_with('x'), -correct) %>%
+  left_join(masterWordIDLookup)#, by = c('gameid', 'text')) 
 
 # Exclude people who are below 50% in final quarter
 nonConvergers <- (d %>% 
   filter(quarter == 3) %>%
-  group_by(gameid) %>%
+  group_by(gameid, condition) %>%
   summarize(percentCorrect = mean(acc)) %>%
   filter(percentCorrect < 0.75))$gameid
     
 cat('excluded', length(nonConvergers), 'games that never converged')
+d %>% 
+  filter(quarter == 3) %>%
+  group_by(gameid, condition) %>%
+  summarize(percentCorrect = mean(acc)) %>%
+  filter(percentCorrect < 0.75) %>%
+  group_by(condition) %>%
+  tally()
 ```
 
 ## Number games per condition
@@ -82,7 +93,6 @@ d %>%
 
 ```{r}
 d %>% 
-  #filter(numRounds == 90) %>%
   group_by(gameid, quarter) %>%
   summarize(percentCorrect = mean(acc)) %>%
   ggplot(aes(x = percentCorrect)) +
@@ -92,7 +102,7 @@ d %>%
     facet_wrap(~ quarter) 
 ```
 
-We see a bimodal distribution where some people never converge (exclude for subsequent analyses).
+We see a bimodal distribution where some people never converge (we'll exclude these for lexicon analyses).
 
 ## Overall accuracy over time
 
@@ -109,13 +119,7 @@ d %>%
     ylim(0,1.15)
 ```
 
-This overall increase is significant... 
-
-```{r}
-summary(glmer(acc ~ trialNum + (1 + trialNum | gameid), family = 'binomial', data = d))
-```
-
-## *Individual* accuracy curves over time
+## *Individual* cumulative accuracy curves over time
 
 Here we see very clearly the different pairs separate out (some never converge)
 
@@ -131,38 +135,51 @@ ggplot(d, aes(x = trialNum, y = cumAcc, group = gameid)) +
 
 ```{r}
 d %>% 
-  group_by(condition, trialNum) %>%
-  summarize(meanAcc = mean(cumAcc), se = sd(cumAcc)/sqrt(length(cumAcc))) %>%
-  ggplot(aes(x = trialNum, y = meanAcc, color = condition)) +
+  group_by(condition, quarter) %>%
+  summarize(percentCorrect = mean(acc), se = sd(acc)/sqrt(length(acc))) %>%
+  ungroup() %>%
+  mutate(condition = ifelse(condition == 'intermediateOnly', 'pure intermediate',
+                            ifelse(condition == 'mixedLower', 'mixed', 'pure subordinate'))) %>%
+  ggplot(aes(x = quarter, y = percentCorrect, color = condition)) +
     geom_line() +
-#    geom_errorbar(aes(ymin = meanAcc - se, ymax = meanAcc + se)) +
+    geom_errorbar(aes(ymin = percentCorrect - se, ymax = percentCorrect + se), width = 0.01) +
     theme_few() +
-    scale_color_colorblind()
+    #geom_smooth(method = 'loess') +
+    scale_color_colorblind() +
+    theme(    
+      legend.position="top"
+    )
+
+ggsave('../writing/cogsci18/figures/accuracyByCondition.pdf', width = 5, height = 4)
+```
+
+
+The overall increase is significant... 
+
+```{r}
+summary(glmer(acc ~ condition + trialNum + (1 + trialNum | gameid), family = 'binomial', data = d))
 ```
 
 ## Accuracy by contextType
 
-```{r}
-d %>% 
-  group_by(contextType, quarter) %>%
-  summarize(meanAcc = mean(acc), se = sd(acc)/sqrt(length(acc))) %>%
-  ggplot(aes(x = quarter, y = meanAcc)) +
-    geom_line() +
-    theme_few() + 
-  facet_wrap(~ contextType)
-```
-
-One hypothesis is that in conditions where you don't see very many sub contexts, performance on those contexts should stay really bad or go down as you specialize for the other trials (especially in the 'under' condition). In the uniform condition, though, you should see it still going up because people need all the words. 
+Within the mixed condition, you might expect slower improvement in sub trials?
 
 ```{r}
 d %>% 
-  group_by(condition, contextType, quarter) %>%
-  summarize(meanAcc = mean(acc), se = sd(acc)/sqrt(length(acc))) %>%
-  ggplot(aes(x = quarter, y = meanAcc)) +
+  filter(condition == 'mixedLower') %>%
+  group_by(gameid, contextType, quarter) %>%
+  summarize(meanAcc = mean(acc)) %>%
+  spread(contextType, value = meanAcc) %>%
+  mutate(diff = basic - sub) %>%
+  group_by(quarter) %>%
+  summarize(meanDiff = mean(diff)) %>%
+  ggplot(aes(x = quarter, y = meanDiff)) +
     geom_line() +
     theme_few() + 
-    facet_grid(condition ~ contextType) +
-    theme(aspect.ratio = 1)
+    theme(aspect.ratio = 1) +
+    ylim(0,0.2) +
+    ylab("mean accuracy difference (intermediate - sub)") +
+    ggtitle("accuracy gap between trial types in mixed condition")
 ```
 
 ## Reaction times
@@ -185,12 +202,35 @@ summary(lmer(timeFromRoundStart ~ trialNum + (1 | gameid),  data = d))
 
 # Post-test results
 
-Import, filter out nonConvergers, pull in condition information
+```{r}
+postTest_word = read_delim('../data/experiment1/postTest_word/allWordPostTest.csv', '\t') %>%
+  mutate_each(funs(ifelse(. == "true", 1, 0)), 
+              -iterationName, -gameid, -time, -target, -finalRole, -eventType) %>%
+  gather(object, meaning, blueSquare1:stripedCircle2) %>%
+  mutate(blue = grepl('blue', object),
+         red = grepl('red', object),
+         striped = grepl('striped', object),
+         spotted = grepl('spotted', object),
+         circle = grepl("Circle", object),
+         square = grepl("Square", object)) %>%
+  right_join(d %>% filter(!(gameid %in% nonConvergers))) %>%
+  select(iterationName:square, condition) %>%
+  group_by_at(vars(-condition)) %>%
+  summarize(condition = first(condition)) %>%
+  rename(text = target) %>%
+  left_join(masterWordIDLookup)
+
+length(unique(postTest_word$gameid))
+```
+
+## Consistency across two post-tests?
+
+TODO: read this in file-by-file to convert headers to wordIDs...
 
 ```{r results="hide"}
-postTest <- read_delim('../data/pilot1/postTestData/postTestData.csv', '\t') %>%
+postTest_obj <- read_delim('../data/experiment1/postTest_object/allObjectPostTest.csv', '\t') %>%
   mutate_each(funs(ifelse(. == "true", 1, 0)), 
-              -iterationName, -gameid, -time, -label, -finalRole, -eventType) %>%
+              -iterationName, -gameid, -time, -target, -finalRole, -eventType) %>%
   gather(object, meaning, blueSquare1:stripedCircle2) %>%
   mutate(blue = grepl('blue', object),
          red = grepl('red', object),
@@ -205,17 +245,117 @@ postTest <- read_delim('../data/pilot1/postTestData/postTestData.csv', '\t') %>%
   summarize(condition = first(condition))
 ```
 
+## Result 1: Vocab size by condition.
+
+```{r}
+lexiconSize <- postTest_word %>%
+  group_by(gameid, finalRole, text, condition) %>%
+  summarize(numObjects = sum(meaning)) %>%
+  filter(numObjects > 0) %>%
+  group_by(gameid, finalRole, condition) %>%
+  tally() %>%
+  group_by(condition, gameid) %>%
+  summarize(vocabSize = mean(n, na.rm = T)) 
+
+lexiconSize %>%
+  group_by(condition) %>%
+  summarize(se = sd(vocabSize)/sqrt(length(vocabSize)), vocabSize = mean(vocabSize)) %>%
+  arrange(vocabSize) %>%
+  mutate(condition = factor(condition, levels = unique(condition))) %>%
+  ggplot(aes(x = condition, y = vocabSize)) +
+    geom_bar(stat = 'identity') +
+    geom_errorbar(aes(ymax = vocabSize + se, ymin = vocabSize - se), width = 0) +
+    theme_few()
+
+ggsave('../writing/cogsci18/figures/lexiconSize.pdf', height = 3.5, width = 5)
+```
+
+```{r}
+summary(lm(vocabSize ~ condition, data = lexiconSize))
+```
+
+## How many abstract vs. specific terms overall?
+
+```{r}
+postTest_word %>% 
+  group_by(gameid, finalRole, text, condition) %>%
+  summarize(specific = sum(meaning) == 1, abstract = sum(meaning) > 1) %>%
+  group_by(gameid, finalRole, condition) %>%
+  summarize(numAbstract = sum(abstract), numSpecific = sum(specific)) %>%
+  group_by(condition) %>%
+  summarize(numAbstract_m = mean(numAbstract), numSpecific_m = mean(numSpecific),
+            numAbstract_se = sd(numAbstract)/sqrt(length(numAbstract)), 
+            numSpecific_se = sd(numSpecific)/sqrt(length(numSpecific))) %>%
+  gather(metric, value, numAbstract_m:numSpecific_se) %>%
+  separate(metric, c('wordType', 'measure')) %>%
+  spread(measure, value) %>%
+  mutate(wordType = ifelse(wordType == 'numAbstract', '# abstract', '# specific')) %>%
+  ggplot(aes(x = wordType, y = m)) +
+    geom_bar(stat = 'identity') +
+    geom_errorbar(aes(ymax = m + se, ymin = m - se), width = 0) +
+    facet_wrap(~ condition) +
+    theme_few() 
+
+ggsave('../writing/cogsci18/figures/lexiconContent.pdf', width = 5, height = 4)
+```
+
+## Proportion of specific & abstract within single lexicon?
+
+```{r}
+postTest_word %>% 
+  group_by(gameid, finalRole, text) %>%
+  filter(meaning == 1) %>%
+  summarize(subordinate = sum(meaning) == 1,
+            basic = (sum(meaning) == 2 & 
+                       (all(red) | all(blue) | all(striped) | all(spotted)))) %>%
+  group_by(gameid, finalRole) %>%
+  summarize(numSub = sum(subordinate),
+            numBasic = sum(basic)) %>%
+  left_join(d) %>%
+  group_by(gameid, finalRole, condition) %>%
+  summarize(numSub = mean(numSub), numBasic=mean(numBasic)) %>%
+  ggplot(aes(x = numSub, y = numBasic)) +#, color = numSub > 0 & numBasic > 0)) +
+    geom_jitter(width = .2, height = .2, size = 3)  +
+    facet_grid(~ condition) +
+    theme_few() +
+    xlab("# subordinate meanings") +
+    ylab("# basic meanings") +
+    theme(aspect.ratio=1) 
+  #guides(color=FALSE)
+  
+ggsave("../../writing/evolang18/result.png")
+# postTest %>% 
+#   group_by(gameid, finalRole, label) %>%
+#   summarize(subordinate = sum(meaning) == 1,
+#             basic = 
+```
+
 ## Distribution of meanings 
 
 How many objects does each label correspond to (i.e. how many meanings at sub-level vs. basic-level vs. super-level)
 
 ```{r}
-postTest %>%
-  group_by(gameid, finalRole, label, condition) %>%
+postTest_word %>%
+  group_by(gameid, finalRole, condition) %>%
+  filter(sum(meaning) < 16) %>%
+  group_by(gameid, finalRole, text, condition) %>%
   summarize(numObjects = sum(meaning)) %>%
-  ggplot(aes(x = numObjects, y = ..count..)) +
-    geom_histogram() +
-    facet_wrap(~ condition) +
+  filter(numObjects > 0) %>%
+  group_by(gameid, finalRole, condition) %>%
+  mutate(numMeanings = length(numObjects), abstract = numObjects > 1) %>%
+  group_by(gameid, finalRole, abstract, condition) %>%
+  summarize(pct = n()/mean(numMeanings)) %>%
+  #ungroup() %>%
+  group_by(condition) %>%
+  complete(gameid, finalRole, abstract, fill = list(pct = 0)) %>%
+  spread(abstract, pct) %>%
+  mutate(entropy = -`TRUE`*log(`TRUE`) -`FALSE`*log(`FALSE`),
+         entropy = ifelse(is.na(entropy), 0, entropy)) %>%
+  group_by(condition) %>%
+  summarize(m = mean(entropy)) %>%
+  ggplot(aes(x = condition, y = m)) +
+    geom_bar(stat = 'identity') +
+    #facet_wrap(~ condition) +
     theme_few()
 ```
 
@@ -268,85 +408,6 @@ But note that pairs that didn't technically align that well could still perform 
 When people fail to perfectly align, do they do so in a predictable way? (e.g. one meaning a subset of the other?)
 
 ```{r}
-```
-
-## Vocab size by condition... 
-
-```{r}
-postTest %>%
-  group_by(gameid, finalRole, label, condition) %>%
-  summarize(numObjects = sum(meaning)) %>%
-  filter(numObjects > 0) %>%
-  group_by(gameid, finalRole, condition) %>%
-  tally() %>%
-  group_by(condition, gameid) %>%
-  summarize(vocabSize = mean(n, na.rm = T)) %>%
-  group_by(condition) %>%
-  summarize(se = sd(vocabSize)/sqrt(length(vocabSize)), vocabSize = mean(vocabSize)) %>%
-  arrange(vocabSize) %>%
-  mutate(condition = factor(condition, levels = unique(condition))) %>%
-  ggplot(aes(x = condition, y = vocabSize)) +
-    geom_bar(stat = 'identity') +
-    geom_errorbar(aes(ymax = vocabSize + se, ymin = vocabSize - se), width = 0) +
-    theme_few()
-
-ggsave('../writing/cogsci18/lexiconSize.pdf', height = 3.5, width = 5)
-```
-
-## How many abstract vs. specific terms overall?
-
-```{r}
-postTest %>% 
-  group_by(gameid, finalRole, label, condition) %>%
-  summarize(specific = sum(meaning) == 1, abstract = sum(meaning) > 1) %>%
-  group_by(gameid, finalRole, condition) %>%
-  summarize(numAbstract = sum(abstract), numSpecific = sum(specific)) %>%
-  group_by(condition) %>%
-  summarize(numAbstract_m = mean(numAbstract), numSpecific_m = mean(numSpecific),
-            numAbstract_se = sd(numAbstract)/sqrt(length(numAbstract)), 
-            numSpecific_se = sd(numSpecific)/sqrt(length(numSpecific))) %>%
-  gather(metric, value, numAbstract_m:numSpecific_se) %>%
-  separate(metric, c('wordType', 'measure')) %>%
-  spread(measure, value) %>%
-  ggplot(aes(x = wordType, y = m)) +
-    geom_bar(stat = 'identity') +
-    geom_errorbar(aes(ymax = m + se, ymin = m - se), width = 0) +
-    facet_wrap(~ condition) +
-    theme_few()
-
-ggsave('../writing/cogsci18/lexiconContent.pdf', width = 5, height = 5)
-```
-
-## Proportion of specific & abstract within single lexicon?
-
-```{r}
-postTest %>% 
-  group_by(gameid, finalRole, label) %>%
-  filter(meaning == 1) %>%
-  summarize(subordinate = sum(meaning) == 1,
-            basic = (sum(meaning) == 2 & 
-                       (all(red) | all(blue) | all(striped) | all(spotted)))) %>%
-  group_by(gameid, finalRole) %>%
-  summarize(numSub = sum(subordinate),
-            numBasic = sum(basic)) %>%
-  left_join(d) %>%
-  filter(condition %in% c('uniform', 'sub-majority', 'basic-majority')) %>%
-  group_by(gameid, finalRole, condition) %>%
-  summarize(numSub = mean(numSub), numBasic=mean(numBasic)) %>%
-  ggplot(aes(x = numSub, y = numBasic)) +#, color = numSub > 0 & numBasic > 0)) +
-    geom_jitter(width = .2, height = .2, size = 3)  +
-  facet_grid(~ condition) +
-  theme_few() +
-  xlab("# subordinate meanings") +
-  ylab("# basic meanings") +
-  theme(aspect.ratio=1) 
-  #guides(color=FALSE)
-  
-ggsave("../../writing/evolang18/result.png")
-# postTest %>% 
-#   group_by(gameid, finalRole, label) %>%
-#   summarize(subordinate = sum(meaning) == 1,
-#             basic = 
 ```
 
 Next, can just look at means...
