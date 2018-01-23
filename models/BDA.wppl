@@ -2,7 +2,9 @@
 // webppl BDA.wppl --require ./refModule/
 
 // Load in experimental data to condition on
-var rawData = _.slice(refModule.readCSV('./bdaInput/singleGame.csv'));
+var gameid = argv.gameid;
+console.log(gameid);
+var rawData = _.slice(refModule.readCSV('./bdaInput/' + gameid + '.csv'));
 
 var softplus = function(x) {
   return ad.scalar.log(ad.scalar.add(1, ad.scalar.exp(x)));
@@ -29,28 +31,30 @@ var globalConfig = {
 // their new lexicon mechanistically to what happened on the previous round,
 // just trying to learn what it is on the basis of what they said.
 // Critically, for now, lexical uncertainty is from POV of analyst, not agent
-var observeRound = function(previousParams, datum) {
-  var drift = softplus(sample(Gaussian({mu: 0, sigma: 1})));
-  var newParams = (_.isEmpty(previousParams.params) ? sampleParams() :
-		   transition(_.last(previousParams.params), drift));
+var observeRound = function(previousParams, datum, drift) {
+  var newParams = (_.isEmpty(previousParams) ? sampleParams() :
+		   transition(previousParams, globalStore.drift));
+
   // transition happens on raw params; must transform to [0,1] before passing as lexicon
   var speakerScore = refModule.getSpeakerScore(datum.text, datum.intendedName,
 					       datum.context, T.sigmoid(newParams),
 					       {utterances: utterances, alpha: 5});
   factor(speakerScore);
-  return {params : previousParams.params.concat(newParams),
-	  driftRates: previousParams.driftRates.concat(drift)};
+  return newParams;
 };
 
-var model = function(data, previousSamples) {
-  var newObservation = observeRound(previousSamples, data[0]);
-  return data.length === 1 ? newObservation : model(_.tail(data), newObservation);
+var model = function(data, previousParams) {
+  var newParams = observeRound(previousParams[0], data[0]);
+  return (data.length === 1 ?
+	  previousParams.concat(newParams) :
+	  previousParams.concat(model(_.tail(data), [newParams])));
 };
 
 // TODO: add alpha as global param
 var modelPosterior = function() {
-  var modelResult = model(data, {params: [], driftRates: []});
-  return refModule.reformatParams(modelResult, data);
+  globalStore.drift = softplus(sample(Gaussian({mu:0,sigma:0.1})));
+  var modelResult = model(data, []);
+  return refModule.reformatParams(modelResult, data, globalStore.drift);
   
   //return output; // {
   //  'params' : T.toScalars(T.split(lexicon, [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8])[1])
@@ -64,7 +68,7 @@ var modelPosterior = function() {
 
 //Optimize(modelShell, {verbose: true, steps: 10000});//_.omit(options, 'samples', 'onlyMAP'));
 
-var outputERP = Infer({method: 'optimize', verbose: true, samples: 250, steps: 10000, model: modelPosterior});
+var outputERP = Infer({method: 'optimize', verbose: true, samples: 250, steps: 1000, optMethod: {adam: {stepSize: 0.01}}, model: modelPosterior});
 //var outputERP = Infer({method: 'optimize', verbose: true, steps: 10000, samples: 250, model: modelAnalysis})//, particles: 10000, rejuvSteps: 100, onlyMAP: true, model: modelAnalysis});
 //console.log(outputERP);
 refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
