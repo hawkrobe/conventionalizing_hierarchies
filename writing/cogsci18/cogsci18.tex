@@ -85,9 +85,9 @@ Even in the absence of strong prior conventions, agents use their inductive bias
 
 In this paper, we argue that just as communicative pressures for informativity can lead to the lexicalization of specific terms when fine distinctions must be drawn, conceptual abstractions become lexicalized precisely when meaning is under-constrained by context. When the pragmatics of the context allow for ambiguity in the intended level of reference, adaptive speakers can get away with extending the term more broadly. 
 			
-\section{Experiment 1: Hierarchical Reference}
+\section{Experiment: Emergence of Abstractions}
 
-To test this hypothesis, we conducted a repeated reference game in which pairs of participants interactively developed an artificial language to communicate with each other about objects in context (e.g. Winters, Kirby, \& Smith, 2014; Galantucci \& Garrod, 2011). This paradigm allows us to fix a set of stimuli in a conceptual hierarchy and manipulate the communicative constraints of context across repeated interaction.
+To test this hypothesis, we conducted a repeated reference game in which pairs of participants interactively developed an artificial language to communicate with each other about objects in context \cite{WintersKirbySmith14_LanguagesAdapt, GalantucciGarrod11_ExperimentalSemiotics}. This paradigm allows us to fix a set of stimuli in a conceptual hierarchy and manipulate the communicative constraints of context across repeated interaction.
 
 \begin{figure*}[t]
 \begin{center}
@@ -128,29 +128,64 @@ We predicted that in contexts where speakers were not often required to draw fin
 
 \subsubsection{Context affects lexicon content}
 
-If participants in the intermediate-only condition can get away with fewer words in their lexicon, what are the meanings of the words they do have? To test the emergence of abstract terms, we counted the numbers of specific or holistic terms (e.g. words that refer to only one object) and abstract terms (e.g. words that refer to multiple objects) in the post-test. We found that the likelihood of lexicalizing abstractions differed significantly across conditions. Participants in the pure subordinate condition reported lexica containing only specific terms, while participants in the pure intermediate condition reported significantly more ($m = 2.5$ \textbf{stat}). The mixed condition lay in between, indicating graded pressure to develop specific terms at the cost of abstract terms.
+If participants in the intermediate-only condition can get away with fewer words in their lexicon, what are the meanings of the words they do have? We counted the numbers of specific or holistic terms (e.g. words that refer to only one object) and abstract terms (e.g. words that refer to multiple objects) in the post-test. We found that the likelihood of lexicalizing abstractions differed systematically across conditions (see Fig. \ref{fig:lexiconContent}). Participants in the pure subordinate condition reported lexica containing only specific terms, while participants in the pure intermediate condition reported significantly more abstract terms ($m = 2.5$ \textbf{stat}). The mixed condition lay in between, indicating graded pressure to develop specific terms at the cost of abstract terms. 
+
+These data also reveal an interesting asymmetry in lexicon content across conditions: while abstractions are entirely absent from the pure subordinate condition, specific terms often coexist with abstract terms in the other conditions. In the pure intermediate condition, for instance, participants could in principle perform optimally with only four abstract terms and no subordinate terms. While this was the modal system that emerged (reported in the post-test by nearly 1/3 of participants), abstract terms often coexisted with specific terms. Indeed, the average entropy of the distribution of abstract vs. specific terms within each participant's lexicon was highest in the pure intermediate condition ($m = 0.20$ \textbf{stat}). 
 
 \begin{figure}[t]
 \begin{center}
 {\includegraphics[scale=0.6]{accuracyByCondition.pdf}}
 %{\includegraphics[scale=.64]{lexiconSize.pdf}}
-{\caption{{\footnotesize \todo[inline]{Fix font size, y label; bootstrap error bars instead of SE}   \label{fig:accuracy}}}}
+{\caption{{\footnotesize \todo[inline]{TODO: Fix font size, y label; bootstrap error bars instead of SE}   \label{fig:accuracy}}}}
 \end{center}
 \end{figure}
-
-\subsection{Model-based Results}
-
-\subsubsection{Inferring participant's lexica over time}
-
-How does the speaker's lexicon develop over the course of the game? We begin by analyzing this progression at a purely statistical level, without assuming any learning mechanisms in the mind of the agent. That is, we assume that on any given round, the speaker is using some fixed lexicon, and we invert a model of a pragmatic speaker to infer what that lexicon is. The goal of this is to (1) validate the post-test measures, (2) look at the time-course of basic-level vs. subordinate-level terms, (3) measure convergence, e.g. lexica changing less from round to round as game goes on? (4) measure path-dependence, e.g. how 
 
 \begin{figure}[t]
 \begin{center}
 {\includegraphics[scale=.64]{lexiconContent.pdf}}
 %{\includegraphics[scale=.64]{lexiconSize.pdf}}
-{\caption{{\footnotesize \todo[inline]{Fix conditions; labels}  \label{exp}}}}
+{\caption{{\footnotesize \todo[inline]{TODO: Fix conditions; labels}  \label{fig:lexiconContent}}}}
 \end{center}
 \end{figure}
+\subsection{Model-based Results}
+
+Our post-test provides some insight into the end-result of lexicalization under different communicative contexts, but understanding the \emph{dynamics} of lexicalization requires finer-grained analysis of behavioral trajectories. How do lexica shift and develop over the course of interaction? A recent cognitive model of convention formation has explained the rapid coordination on efficient but informative lexical terms as a process of mutual lexical learning \cite{HawkinsFrankGoodman17_ConventionFormation}. This model extends the Rational Speech Act (RSA) framework, which formalizes pragmatic language understanding as recursive social reasoning \cite{FrankGoodman12_PragmaticReasoningLanguageGames,GoodmanFrank16_RSATiCS}. Each agent assumes their partner is rationally producing cooperative utterances under some latent lexicon; given initial uncertainty over the contents of that lexicon, agents can invert their model of a communicative agent to infer their partner's lexicon from their observable behavior \cite{BergenLevyGoodman16_LexicalUncertainty}. 
+
+Here, we present a purely statistical model of this progression without attributing any learning mechanisms to the agent. That is, we assume that on any given round, the speaker is rationally producing utterances given some internal lexicon, and we invert a model of a pragmatic speaker to infer what that lexicon is. First, this analysis validates our post-test measures of lexical meaning against actual behavioral usage throughout the game --- if participant reports are internally consistent, the model's posterior on the last round of the game should be able to independently predict their post-test responses. Second, by evaluating predictive accuracy at earlier rounds of the game, we can compare the time-course of lexical emergence. Finally, because our statistical model learns from the same data that agents in principle learn from, it provides some insight into the path-dependent effects of early communicative pressures on the available meanings. %basic-level vs. subordinate-level terms, (4) measure path-dependence, e.g. how 
+
+\subsubsection{Generative model}
+
+We begin by defining the lexicon at time $t$ as a function 
+$$\mathcal{L}^{t} : (w, o) \rightarrow [0,1]$$ 
+assigning any word-object pair a real-valued meaning in the unit interval. This can be represented as a $\mathcal{W} \times \mathcal{O}$ matrix of real values $\ell_{w,o}^t \in \mathbb{R}$ mapped to the unit interval with a logistic function $f(x) = 1/(1 + e^{x})$. To capture our initial uncertainty about the lexicon being used by participants (who are likely to have weak expectations for the artificial words in our experiment), we place a relatively uninformative (and independent) prior $$\ell_{w,o}^0 \sim \mathcal{N}(0, 1)$$ on the entries of this matrix. 
+
+We capture the temporal dependence of subsequent lexica by placing a Gaussian random walk on lexical entries: the lexicon at time $t+1$ is sampled from a Gaussian distribution centered at the lexicon on the previous trial: $$\ell_{w,o}^{t+1} \sim \mathcal{N}(\ell_{w,o}^t, \sigma)$$ where sigma is a hyperparameter determining the drift rate. \todo[inline]{Is this related to the bayesian RL thing in Mathys et al, 2011?}
+Finally, we must define a linking function from this underlying lexicon to the speaker utterances and listener choices we observe on each round. To capture our assumption that participants attempt to communicate pragmatically, thereby strengthening our ability to make lexical inferences, we use the probabilistic RSA framework. RSA models ground out in a \emph{literal listener} agent, who uses its lexicon to directly interpret a word $w$ in context: $P_{L_0}(o_i | w, \mathcal{L}^t) \propto \mathcal{L}^t(w,o)$. A pragmatic speaker, reasoning about this listener, produces utterances by soft-maximizing a utility function taking into account the relative \emph{informativity} of saying different words in context. Formally, this informativity is given by the likelihood of the literal listener correctly interpreting the utterance to mean the intended target: $$P_{S_1}(w | o_i, \mathcal{L}) \propto \exp\{\alpha \ln P_{L_0}(o_i | w, \mathcal{L}^t)\}$$
+where $\alpha$ is another hyperparameter determining the soft-max optimality of the speaker. Finally, we define a pragmatic listener who inverts this speaker model to infer the intended referent $o_i$ given the utterance they heard $P_{L_1}(o_i | w, \mathcal{L}) \propto P_{S_1}(w | o_i, \mathcal{L}^t) P(w)$.
+\todo[inline]{TODO: Be explicit about how this allows us to strengthen our inferences? Allows us to learn about meanings of words and objects we haven't seen. e.g. suppose we hear a speaker say `mimi' to refer to one of the blue squares in the context of the other blue square. If `mimi` applied to both blue squares equally well in their lexicon, then the data would be extremely unlikely: the speaker would have avoided such an underinformative utterance. The data is much more likely under a lexicon where `mimi` only refers to the target blue square much more strongly.  Similarly, if another word in their lexicon was more informative in distinguishing these items, we assume they would have used it. Note that when the same utterance is used in an intermediate-neighbor trial, where only one of the blue squares is in context, it is ambiguous whether or not it can also apply to the other blue square.} 
+
+These linking functions assign a fully differentiable likelihood to our dataset for any given sequence of lexica. We therefore use mean-field variational inference, implemented in the probabilistic programming language WebPPL, to approximate the joint posterior over all lexical entries (and shared hyperparameters) used at all rounds for all games. 
+
+\subsubsection{Validating post-test responses}
+
+
+
+\begin{figure}[t]
+\begin{center}
+{\includegraphics[scale=.55]{wordFormationExample.pdf}}
+%{\includegraphics[scale=.64]{lexiconSize.pdf}}
+{\caption{{\footnotesize \todo[inline]{TODO: placeholder for more schematic figure showing example of how lexicon inference changes as we see more and more data; would ideally make clear effect of different contexts}  \label{exp}}}}
+\end{center}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+{\includegraphics[scale=.64]{postTestPrediction.pdf}}
+%{\includegraphics[scale=.64]{lexiconSize.pdf}}
+{\caption{{\footnotesize \todo[inline]{TODO: placeholder for plot showing predictions for all games (currently only one game\dots)}  \label{exp}}}}
+\end{center}
+\end{figure}
+
 
 \section{Discussion}
 
