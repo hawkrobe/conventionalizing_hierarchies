@@ -53,7 +53,7 @@
 \newcommand{\appref}[1]{Appendix \ref{#1}}
 \newcommand{\sectionref}[1]{Section \ref{#1}}
 
-\title{Learning to communicate about conceptual hierarchies}
+\title{Learning to communicate about abstractions}
  
 \author{{\large \bf Robert X.D. Hawkins, Michael Franke, Kenny Smith, Noah D.~Goodman} \\
   \{rxdh,ngoodman\}@stanford.edu\\
@@ -65,7 +65,7 @@
 
 
 \begin{abstract}
-\todo[inline]{TODO: finish abstract} In addition to several qualitative measures of differences in the lexical conventions that emerge, we introduce a model-based approach to infer participants' developing lexica throughout the game. 
+\todo[inline]{TODO: finish abstract} A remarkable feature of our language is the existence of abstract feature of natural languages is What shapes the ? In addition to several qualitative measures of differences in the lexical conventions that emerge, we introduce a model-based approach to infer participants' developing lexica throughout the game. 
 \end{abstract}
 
 \section{Introduction}
@@ -79,6 +79,8 @@ Recent computational approaches to language evolution have argued that the lexic
 
 %% Make the case for zooming into dyadic convention formation
 While globally shared conventions of a language are shaped over the multi-generational timescales of cultural evolution, similar pressures operate at the shorter timescales of dyadic interaction. In a matter of minutes, communication partners coordinate on efficient but informative local conventions for the task at hand \cite{ClarkWilkesGibbs86_ReferringCollaborative, BrennanClark96_ConceptualPactsConversation,HawkinsFrankGoodman17_ConventionFormation}. To understand how \emph{languages} are globally shaped by communicative constraints, it may therefore be worth understanding the local conventions formed by adaptive cognitive agents as they repeatedly interact. 
+
+\todo[inline]{TODO: perfectly natural default to coordinate on specific names but that's not what people do}
 
 \todo[inline]{TODO: paragraph informally setting up scenario in experiment; maybe reference to Quine's gavagai? Suppose agent is using unfamiliar words to refer to something in context (e.g. a rabbit in the context of many other rabbits in the forest). If the native speaker said gavagai to refer to the same rabbit in the context of many other rabbits, however, you would infer a different meaning...?}
 
@@ -129,6 +131,10 @@ We predicted that in contexts where speakers were not often required to draw fin
 
 \subsubsection{Context affects lexicon content}
 
+\todo[inline]{Omnibus histogram (0,1,2,3,4) collapsing across pairs}
+\todo[inline]{Diversity of strategies across pairs}
+\todo[inline]{Don't exclude 0}
+
 If participants in the intermediate-only condition can get away with fewer words in their lexicon, what are the meanings of the words they do have? We counted the numbers of specific or holistic terms (e.g. words that refer to only one object) and abstract terms (e.g. words that refer to multiple objects) in the post-test. We found that the likelihood of lexicalizing abstractions differed systematically across conditions (see Fig. \ref{fig:lexiconContent}). Participants in the pure subordinate condition reported lexica containing only specific terms, while participants in the pure intermediate condition reported significantly more abstract terms ($m = 2.5$ \textbf{stat}). The mixed condition lay in between, indicating graded pressure to develop specific terms at the cost of abstract terms. 
 
 These data also reveal an interesting asymmetry in lexicon content across conditions: while abstractions are entirely absent from the pure subordinate condition, specific terms often coexist with abstract terms in the other conditions. In the pure intermediate condition, for instance, participants could in principle perform optimally with only four abstract terms and no subordinate terms. While this was the modal system that emerged (reported in the post-test by nearly 1/3 of participants), abstract terms often coexisted with specific terms. Indeed, the average entropy of the distribution of abstract vs. specific terms within each participant's lexicon was highest in the pure intermediate condition ($m = 0.20$ \textbf{stat}). 
@@ -137,7 +143,7 @@ These data also reveal an interesting asymmetry in lexicon content across condit
 \begin{center}
 {\includegraphics[scale=0.6]{accuracyByCondition.pdf}}
 %{\includegraphics[scale=.64]{lexiconSize.pdf}}
-{\caption{{\footnotesize \todo[inline]{TODO: Fix font size, y label; bootstrap error bars instead of SE}   \label{fig:accuracy}}}}
+{\caption{{\footnotesize \todo[inline]{TODO: Fix font size, y label; bootstrap error bars instead of SE; 'quartile'}   \label{fig:accuracy}}}}
 \end{center}
 \end{figure}
 
@@ -161,6 +167,7 @@ $$\mathcal{L}^{t} : (w, o) \rightarrow [0,1]$$
 assigning any word-object pair a real-valued meaning in the unit interval. This can be represented as a $\mathcal{W} \times \mathcal{O}$ matrix of real values $\ell_{w,o}^t \in \mathbb{R}$ mapped to the unit interval with a logistic function $f(x) = 1/(1 + e^{x})$. To capture our initial uncertainty about the lexicon being used by participants (who are likely to have weak expectations for the artificial words in our experiment), we place a relatively uninformative (and independent) prior $$\ell_{w,o}^0 \sim \mathcal{N}(0, 1)$$ on the entries of this matrix. 
 
 We capture the temporal dependence of subsequent lexica by placing a Gaussian random walk on lexical entries: the lexicon at time $t+1$ is sampled from a Gaussian distribution centered at the lexicon on the previous trial: $$\ell_{w,o}^{t+1} \sim \mathcal{N}(\ell_{w,o}^t, \sigma)$$ where sigma is a hyperparameter determining the drift rate. \todo[inline]{Is this related to the bayesian RL thing in Mathys et al, 2011?}
+
 Finally, we must define a linking function from this underlying lexicon to the speaker utterances and listener choices we observe on each round. To capture our assumption that participants attempt to communicate pragmatically, thereby strengthening our ability to make lexical inferences, we use the probabilistic RSA framework. RSA models ground out in a \emph{literal listener} agent, who uses its lexicon to directly interpret a word $w$ in context: $P_{L_0}(o_i | w, \mathcal{L}^t) \propto \mathcal{L}^t(w,o)$. A pragmatic speaker, reasoning about this listener, produces utterances by soft-maximizing a utility function taking into account the relative \emph{informativity} of saying different words in context. Formally, this informativity is given by the likelihood of the literal listener correctly interpreting the utterance to mean the intended target: $$P_{S_1}(w | o_i, \mathcal{L}) \propto \exp\{\alpha \ln P_{L_0}(o_i | w, \mathcal{L}^t)\}$$
 where $\alpha$ is another hyperparameter determining the soft-max optimality of the speaker. Finally, we define a pragmatic listener who inverts this speaker model to infer the intended referent $o_i$ given the utterance they heard $P_{L_1}(o_i | w, \mathcal{L}) \propto P_{S_1}(w | o_i, \mathcal{L}^t) P(w)$.
 \todo[inline]{TODO: Be explicit about how this allows us to strengthen our inferences? Allows us to learn about meanings of words and objects we haven't seen. e.g. suppose we hear a speaker say `mimi' to refer to one of the blue squares in the context of the other blue square. If `mimi` applied to both blue squares equally well in their lexicon, then the data would be extremely unlikely: the speaker would have avoided such an underinformative utterance. The data is much more likely under a lexicon where `mimi` only refers to the target blue square much more strongly.  Similarly, if another word in their lexicon was more informative in distinguishing these items, we assume they would have used it. Note that when the same utterance is used in an intermediate-neighbor trial, where only one of the blue squares is in context, it is ambiguous whether or not it can also apply to the other blue square.} 
@@ -171,7 +178,7 @@ These linking functions assign a fully differentiable likelihood to our dataset 
 
 We begin by addressing concerns about the robustness of our post-test lexicon measurements. It is not clear \emph{a priori} how well participants are able to explicitly access their lexical representations. In addition, some participants may have been confused about the instructions (e.g. listing meanings for all sixteen words, including those that never appeared in the game), or simply giving noisy or inconsistent responses. 
 
-\todo[inline]{TODO: basic checks: compare symmetry of two post-tests; report how well both participants in a game aligned?}
+\todo[inline]{TODO: basic checks: compare symmetry of two post-tests; report how well both participants in a game aligned? Correlation b/w accuracy and post-test correspondance?}
 
 \todo[inline]{TODO: report logistic regression predicting post-test responses from posteriors on final round, e.g. Fig }
 
@@ -186,7 +193,7 @@ We begin by addressing concerns about the robustness of our post-test lexicon me
 
 \subsection{Examining early time course}
 
-\todo[inline]{TODO: show predictive accuracy trajectories for each condition; walk through examples of early rounds in different contexts; show timecourse of abstractions, e.g. are initially specific terms extended or are initially abstract terms narrowed?}
+\todo[inline]{TODO: show predictive accuracy trajectories for each condition; walk through examples of early rounds in different contexts; show timecourse of abstractions, e.g. are initially specific terms extended or are initially abstract terms narrowed? Report posterior predictive accuracy that actually accomodates the data; use >0.5 threshold, maybe with some learned decision offset. Collapse into quartiles instead of diffusion. Distribution over word extensions at each point in time, i.e. change in lexicon. Do you tend to move from big to small or small to big quarter-to-quarter. }
 
 \begin{figure}[t]
 \begin{center}
