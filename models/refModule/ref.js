@@ -1,31 +1,10 @@
 var _ = require('lodash');
 var fs = require('fs');
 var babyparse = require('babyparse');
-// var JSONStream = require('JSONStream');
-// var es = require('event-stream');
 
-
-function _logsumexp(a) {
-  var m = Math.max.apply(null, a);
-  var sum = 0;
-  for (var i = 0; i < a.length; ++i) {
-    sum += (a[i] === -Infinity ? 0 : Math.exp(a[i] - m));
-  }
-  return m + Math.log(sum);
-}
-
-var normalizeWithEdgeCases = function(n, truth, sum) {
-  // console.log('truth:' +JSON.stringify(truth))
-  // console.log('sum:' + sum);
-  // if(sum <= 0) {
-  //   return -Number.MIN_VALUE;//Math.log(1/n);
-  // } else if (truth === -Infinity) {
-  //   return -Number.MIN_VALUE;
-  // } else {
-
+var normalize = function(truth, sum) {
   return ad.scalar.sub(truth, ad.scalar.log(sum));
-//  }
-}
+};
 
 var states = ['blueSquare1', 'blueSquare2', 'redSquare1', 'redSquare2',
 	      'spottedCircle1', 'spottedCircle2', 'stripedCircle1', 'stripedCircle2'];
@@ -40,29 +19,44 @@ var getLexiconElement = function(lexicon, utt, target) {
 
 // P(target | sketch) \propto e^{scale * sim(t, s)}
 // => log(p) = scale * sim(target, sketch) - log(\sum_{i} e^{scale * sim(t, s)})
-var getL0score = function(target, utt, context, lexicon) {
+var getL0score = function(target, utt, params) {
   var scores = [];
   var sum = 0;
-  var truth = getLexiconElement(lexicon, utt, target);
-  for(var i=0; i<context.length; i++){
-    sum = ad.scalar.add(sum,
-			ad.scalar.exp(getLexiconElement(lexicon, utt, context[i])));
+  var truth = getLexiconElement(params.lexicon, utt, target);
+  for(var i=0; i<params.context.length; i++){
+    sum = ad.scalar.add(
+      sum, ad.scalar.exp(
+	getLexiconElement(params.lexicon, utt, params.context[i])));
   }
-  return normalizeWithEdgeCases(context.length, truth, sum);
+  return normalize(truth, sum);
 };
 
-var getSpeakerScore = function(trueUtt, targetObj, context, lexicon, params) {
+// return log P(u | o, c, l)
+var getSpeakerScore = function(utt, targetObj, params) {
   var scores = [];
   var sum = 0;
-  var truth = ad.scalar.mul(params.alpha, getL0score(targetObj, trueUtt, context, lexicon));
+  var truth = ad.scalar.mul(params.alpha, getL0score(targetObj, utt, params));
   for(var i=0; i< params.utterances.length; i++){
-    var inf = getL0score(targetObj, params.utterances[i], context, lexicon);
-    sum = ad.scalar.sum(sum, ad.scalar.exp(ad.scalar.mul(params.alpha, inf)));
+    var inf = getL0score(targetObj, params.utterances[i], params);
+    sum = ad.scalar.add(sum, ad.scalar.exp(ad.scalar.mul(params.alpha, inf)));
   }
-  return normalizeWithEdgeCases(params.utterances.length, truth, sum);
+  return normalize(truth, sum);
 };
 
-var reformatParams = function(modelOutput, data) {
+// if P(o | u, c, l) = P(u | o, c, l) P(u | c, l) / sum_o P(u | o, c, l)
+// then log(o | u, c, l) = log P(u | o, c, l) - log(sum_{o in context} P(u | o, c, l))
+var getListenerScore = function(trueObj, utt, params) {
+  var scores = [];
+  var sum = 0;
+  var truth = getSpeakerScore(utt, trueObj, params);
+  for(var i=0; i< params.context.length; i++){
+    var prob = getSpeakerScore(utt, params.context[i], params);
+    sum = ad.scalar.add(sum, ad.scalar.exp(prob));
+  }
+  return normalize(truth, sum);
+};
+
+var reformatParams = function(modelOutput, data, drift) {
   // Makes analysis a lot easier if there's a separate col for every word in the csv
   var trialNums = _.map(data, 'trialNum');
   var lexiconKeys = _.flattenDeep(_.map(trialNums, function(trialNum) {
@@ -72,7 +66,7 @@ var reformatParams = function(modelOutput, data) {
       });
     });
   }));
-  var lexiconVals = _.flattenDeep(_.map(modelOutput.params, function(l) {
+  var lexiconVals = _.flattenDeep(_.map(modelOutput, function(l) {
     var lexicon = T.sigmoid(l);
     var wordList = T.split(lexicon, [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]);
     return _.map(wordList, function(word) {
@@ -80,14 +74,22 @@ var reformatParams = function(modelOutput, data) {
     });
   }));
   var lexica = _.zipObject(lexiconKeys, lexiconVals);
-  var driftRates = _.zipObject(trialNums, modelOutput.driftRates);
+  var driftRates = drift;
 
   return {
     params : _.values(lexica).join(','),
-    driftRates: _.values(driftRates).join(','),
+    driftRates: driftRates,
     paramsHeader: _.keys(lexica).join(','),
-    driftsHeader: _.keys(driftRates).join(',')
+    driftsHeader: 'driftRates'
   };
+}
+
+var reformatData = function(rawData) {
+  return _.map(rawData, function(row) {
+    return _.omit(_.extend(row, {
+      context: [row.object1name, row.object2name, row.object3name, row.object4name]
+    }), 'object1name', 'object2name', 'object3name', 'object4name');
+  });
 }
 
 function readCSV(filename){
@@ -135,18 +137,7 @@ var bayesianErpWriter = function(erp, filePrefix) {
   console.log('writing complete.');
 };
 
-var getSubset = function(data, properties) {
-  var matchProps = _.matches(properties);
-  return _.filter(data, matchProps);
-};
-
-var locParse = function(filename) {
-  return babyparse.parse(fs.readFileSync(filename, 'utf8'),
-       {header: true,
-        skipEmptyLines : true}).data;
-};
-
 module.exports = {
-  getSubset, getL0score, getSpeakerScore, getLexiconElement, reformatParams,
-  bayesianErpWriter, writeCSV, readCSV, locParse
+  getL0score, getSpeakerScore, getListenerScore, getLexiconElement, reformatParams,
+  reformatData, bayesianErpWriter, writeCSV, readCSV
 };
