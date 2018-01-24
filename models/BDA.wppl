@@ -1,74 +1,133 @@
-// run using:
-// webppl BDA.wppl --require ./refModule/
+// run using, e.g.:
+// WEBPPL_PARAM_PATH='./bdaOutput/'; echo $WEBPPL_PARAM_PATH; webppl BDA.wppl --param-store file --param-id game1 --require ./refModule/ -- --gameid game1
 
-// Load in experimental data to condition on
-var gameid = argv.gameid;
-console.log(gameid);
-var rawData = _.slice(refModule.readCSV('./bdaInput/' + gameid + '.csv'));
-
-var softplus = function(x) {
-  return ad.scalar.log(ad.scalar.add(1, ad.scalar.exp(x)));
-};
-
-// Reformat with context arrays...
-var data = map(function(row) {
-  return _.omit(extend(row, {
-    context: [row.object1name, row.object2name, row.object3name, row.object4name]
-  }), 'object1name', 'object2name', 'object3name', 'object4name');
-}, rawData);
+// Load in experimental data to condition on then reformat
+var rawData = refModule.readCSV('./bdaInput/' + argv.gameid + '.csv');
+var data = refModule.reformatData(rawData);
+var quartileSize = data.length / 4;
 console.log("Loading expt data complete..." + data.length + " data points");
-//console.log(data);
 
-// Package into config
 var globalConfig = {
   aggregate: false,
-  outputFileName : 'lexicalInference'
+  outputFileName : argv.gameid + 'lexicalInference'
 };
 
-// TODO: note that players actually swapped roles every round...
+var utterances = map(function(i) {return 'word' + i;}, _.range(1, 17));
+var states = ['blueSquare1', 'blueSquare2', 'redSquare1', 'redSquare2',
+	      'spottedCircle1', 'spottedCircle2', 'stripedCircle1', 'stripedCircle2'];
+
+var scalarSoftplus = function(x) {
+  return ad.scalar.log(ad.scalar.add(ad.scalar.exp(x), 1));
+};
+
+var tensorSoftplus = function(x) {
+  return T.log(T.add(T.exp(x), 1));
+};
+
+var lexiconGuide = function(paramName, dims) {
+  return function() {
+    DiagCovGaussian({
+      mu: param({name: paramName + 'mu', dims: dims}),
+      sigma: tensorSoftplus(param({name: paramName + 'sigma', dims: dims}))
+    });
+  };
+};
+
+// Hierarchical model with one lexicon each quarter
+// This takes those hierarchical lexica as input and samples a lexicon for round
+var sampleVariances = function(q) {
+  var dims = [utterances.length,states.length];
+  var speakerVar = sample(Gaussian({mu: 0, sigma: 1}), {guide: function() {
+    return Gaussian({mu: param({name: 'speakerVar' + q + 'mu'}),
+		     sigma: scalarSoftplus(param({name: 'speakerVar' + q + 'sigma'}))});
+  }});
+  var listenerVar = sample(Gaussian({mu: 0, sigma: 1}), {guide: function() {
+    return Gaussian({mu: param({name: 'listenerVar' + q + 'mu'}),
+		     sigma: scalarSoftplus(param({name: 'listenerVar' + q + 'sigma'}))});
+  }});
+  return {
+    finalSpeaker:  T.mul(ones(dims), scalarSoftplus(speakerVar)),
+    finalListener: T.mul(ones(dims), scalarSoftplus(listenerVar))
+  };
+};
+
+var sampleHyperlexica = function(q) {
+  var dims = [utterances.length,states.length];
+  var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: ones(dims) });
+  return {
+    finalSpeaker:  sample(lexDist, {guide: lexiconGuide('speakerHyp' + q, dims)}),
+    finalListener: sample(lexDist, {guide: lexiconGuide('listenerHyp' + q, dims)})
+  };
+};
+
+var reparam = function(s, m, s) {
+  return T.mul(T.add(s, m), s);
+};
+
+// Hierarchical model with one lexicon each quarter
+// This takes those hierarchical lexica as input and samples a lexicon for round
+var sampleLexiconParams = function(hyperparams, datum) {
+  var i = datum.trialNum;
+  var dims = [utterances.length,states.length];
+  var lexDist = DiagCovGaussian({ mu: zeros(dims), 
+				  sigma: ones(dims) });  
+  return {
+    finalSpeaker:  reparam(sample(lexDist, {guide: lexiconGuide('speaker'  + i, dims)}),
+			   hyperparams.mu.finalSpeaker, hyperparams.sigma.finalSpeaker),
+    finalListener: reparam(sample(lexDist, {guide: lexiconGuide('listener' + i, dims)}),
+			   hyperparams.mu.finalListener, hyperparams.sigma.finalListener)
+  };
+};
 
 // For now, we are just doing a pure statistical model -- not trying to tie
 // their new lexicon mechanistically to what happened on the previous round,
 // just trying to learn what it is on the basis of what they said.
-// Critically, for now, lexical uncertainty is from POV of analyst, not agent
-var observeRound = function(previousParams, datum, drift) {
-  var newParams = (_.isEmpty(previousParams) ? sampleParams() :
-		   transition(previousParams, globalStore.drift));
-
-  // transition happens on raw params; must transform to [0,1] before passing as lexicon
-  var speakerScore = refModule.getSpeakerScore(datum.text, datum.intendedName,
-					       datum.context, T.sigmoid(newParams),
-					       {utterances: utterances, alpha: 5});
-  factor(speakerScore);
-  return newParams;
-};
-
-var model = function(data, previousParams) {
-  var newParams = observeRound(previousParams[0], data[0]);
-  return (data.length === 1 ?
-	  previousParams.concat(newParams) :
-	  previousParams.concat(model(_.tail(data), [newParams])));
-};
-
-// TODO: add alpha as global param
-var modelPosterior = function() {
-  globalStore.drift = softplus(sample(Gaussian({mu:0,sigma:0.1})));
-  var modelResult = model(data, []);
-  return refModule.reformatParams(modelResult, data, globalStore.drift);
+var observeRound = function(params, datum) {
+  // Align role swapping with final post-test measures
+  var llex = datum.trialNum % 2 == 1 ? params.finalSpeaker : params.finalListener;
+  var slex = datum.trialNum % 2 == 1 ? params.finalListener : params.finalSpeaker;
   
-  //return output; // {
-  //  'params' : T.toScalars(T.split(lexicon, [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8])[1])
-  //   //{'params' : _.last(modelSample.lexica)['word2']};
-  // };
+  // transition happens on raw params; must transform to [0,1] before passing as lexicon
+  var speakerScore = refModule.getSpeakerScore(datum.wordID, datum.intendedName, {
+    context: datum.context,
+    lexicon: T.sigmoid(slex),
+    utterances: utterances,
+    alpha: globalStore.alpha
+  });
+  factor(speakerScore);
+
+  var listenerScore = refModule.getListenerScore(datum.clickedName, datum.wordID,{
+    context: datum.context,
+    lexicon: T.sigmoid(llex),
+    utterances: utterances,
+    alpha: globalStore.alpha
+  });
+  //var listenerScore2 = L1(datum.wordID, datum.context, T.sigmoid(llex)).score(datum.clickedName);
+  factor(listenerScore);
 };
 
-//var outputERP = Infer({method: 'MCMC', samples:50000, onlyMAP:true,verbose:true, model: modelAnalysis});
+var model = function() {
+  // Sample hyperparams
+  // globalStore.alpha = scalarSoftplus(sample(Gaussian({mu:0,sigma:1}), {guide: function() {
+  //   return Gaussian({mu: param({name: 'alpha_mu'}),
+  // 		     sigma: scalarSoftplus(param({name: 'alpha_sigma'}))});
+  // }}));
+  globalStore.alpha = 5;
+  var mus = map(function(q) {return sampleHyperlexica(q);}, _.range(1,5));
+  var sigmas = map(function(q) {return sampleVariances(q);}, _.range(1,5));
 
-//var outputERP = Infer({method: 'MCMC', verbose: true, samples: 10000, kernel: {HMC: {steps: 100, stepSize: .001}}, model: modelAnalysis});
+  mapData({data: data}, function(trialDatum) {
+    var currQ = Math.floor((trialDatum.trialNum - 1) / quartileSize);
+    var hyperparams = {mu: mus[currQ], sigma: sigmas[currQ]};
+    var lexiconParams = sampleLexiconParams(hyperparams, trialDatum);
+    observeRound(lexiconParams, trialDatum);
+  });
 
-//Optimize(modelShell, {verbose: true, steps: 10000});//_.omit(options, 'samples', 'onlyMAP'));
+  // return refModule.reformatParams(params, data,
+  // 				  globalStore.drift, globalStore.alpha);
+};
+  
+Optimize({model: model, steps: 10000, verbose: true,
+	  optMethod: {adam: {stepSize: 0.01}}});
 
-var outputERP = Infer({method: 'optimize', verbose: true, samples: 250, steps: 1000, optMethod: {adam: {stepSize: 0.01}}, model: modelPosterior});
-//var outputERP = Infer({method: 'optimize', verbose: true, steps: 10000, samples: 250, model: modelAnalysis})//, particles: 10000, rejuvSteps: 100, onlyMAP: true, model: modelAnalysis});
-//console.log(outputERP);
-refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
+//refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
