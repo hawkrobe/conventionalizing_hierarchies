@@ -108,11 +108,11 @@ var observeRound = function(params, datum) {
 
 var model = function() {
   // Sample hyperparams
-  // globalStore.alpha = scalarSoftplus(sample(Gaussian({mu:0,sigma:1}), {guide: function() {
-  //   return Gaussian({mu: param({name: 'alpha_mu'}),
-  // 		     sigma: scalarSoftplus(param({name: 'alpha_sigma'}))});
-  // }}));
-  globalStore.alpha = 5;
+  globalStore.alpha = scalarSoftplus(sample(Gaussian({mu:0,sigma:1}), {guide: function() {
+    return Gaussian({mu: param({name: 'alpha_mu'}),
+  		     sigma: scalarSoftplus(param({name: 'alpha_sigma'}))});
+  }}));
+//  globalStore.alpha = 5;
   var mus = map(function(q) {return sampleHyperlexica(q);}, _.range(1,5));
   var sigmas = map(function(q) {return sampleVariances(q);}, _.range(1,5));
 
@@ -128,6 +128,6 @@ var model = function() {
 };
   
 Optimize({model: model, steps: 10000, verbose: true,
-	  optMethod: {adam: {stepSize: 0.01}}});
+	  optMethod: {adam: {stepSize: 0.001}}});
 
 //refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
