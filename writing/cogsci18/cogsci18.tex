@@ -55,9 +55,10 @@
 
 \title{Learning to communicate about abstractions}
  
-\author{{\large \bf Robert X.D. Hawkins, Michael Franke, Kenny Smith, Noah D.~Goodman} \\
-  \{rxdh,ngoodman\}@stanford.edu\\
-  Department of Psychology, Stanford University}
+\author{{\large \bf Robert X.D. Hawkins \textsuperscript{1}, Michael Franke\textsuperscript{2}, Kenny Smith\textsuperscript{3}, Noah D.~Goodman\textsuperscript{1}} \\
+   \textsuperscript{1}Department of Psychology, Stanford University (\{rxdh,ngoodman\}@stanford.edu) \\
+  \textsuperscript{2}Department of Linguistics, University of T\"ubingen (mchfranke@gmail.com)\\
+  \textsuperscript{3}Centre for Language Evolution, University of Edinburgh (Kenny.Smith@ed.ac.uk)}
 
 \begin{document}
 
@@ -69,8 +70,6 @@
 \end{abstract}
 
 \section{Introduction}
-  \todo[inline]{TODO: Add other institutions to author line}
-
 %% Set up problem
 Natural languages provide speakers with remarkable flexibility in the labels they may use to refer to things \cite{Brown58_HowShallAThingBeCalled,Cruse77_PragmaticsLexicalSpecificity}. In addition to the combinatorial explosion of modifiers afforded by compositionality \cite{Partee95_LexicalSemanticsCompositionality}, we have a number of overlapping and nested terms in our lexicon. \emph{Fido}, \emph{Dalmatian}, \emph{dog}, and \emph{animal} can all reasonably be used to talk about the same entity at different levels of abstraction. How these overlapping meanings are learned, and why speakers choose different levels of specificity in different contexts, is increasingly well-understood \cite<e.g.>{XuTenenbaum07_WordLearningBayesian,GrafEtAl16_BasicLevel} but there remains a more fundamental question about the structure of our lexicon: how do abstractions become lexicalized in the first place? 
 
@@ -78,39 +77,34 @@ Natural languages provide speakers with remarkable flexibility in the labels the
 Recent computational approaches to language evolution have argued that the lexical conventions of languages balance simplicity, or learnability, with the communicative needs of their users. This optimal expressivity hypothesis accounts well for the lexical distributions found in natural languages across semantic domains like color words and kinship categories \cite{RegierKempKay15_WordMeaningsEfficientCommunication}, as well as the compositional systems that emerge under iterated learning with communication in the lab \cite{WintersKirbySmith14_LanguagesAdapt, KirbyTamarizCornishSmith15_CompressionCommunication}.
 
 %% Make the case for zooming into dyadic convention formation
-While globally shared conventions of a language are shaped over the multi-generational timescales of cultural evolution, similar pressures operate at the shorter timescales of dyadic interaction. In a matter of minutes, communication partners coordinate on efficient but informative local conventions for the task at hand \cite{ClarkWilkesGibbs86_ReferringCollaborative, BrennanClark96_ConceptualPactsConversation,HawkinsFrankGoodman17_ConventionFormation}. To understand how \emph{languages} are globally shaped by communicative constraints, it may therefore be worth understanding the local conventions formed by adaptive cognitive agents as they repeatedly interact. 
+While globally shared conventions of a language are shaped over the multi-generational timescales of cultural evolution, similar pressures operate at the shorter timescales of dyadic interaction. In a matter of minutes, communication partners coordinate on efficient but informative local conventions, or conceptual pacts, for the task at hand \cite{ClarkWilkesGibbs86_ReferringCollaborative, BrennanClark96_ConceptualPactsConversation,HawkinsFrankGoodman17_ConventionFormation}. To understand how \emph{languages} are globally shaped by communicative constraints, it may therefore be worth understanding the local conventions formed by adaptive cognitive agents over the course of their interaction.
 
-\todo[inline]{TODO: perfectly natural default to coordinate on specific names but that's not what people do}
+Suppose, mixing thought experiments from \citeA{Wittgenstein09_PhilosophicalInvestigations} and \citeA{Quine13_WordAndObject}, that two travelers meet in a forest, with no language in common. One is cooking dinner, and the other agrees to help in exchange for food and shelter. What kind of micro-language do they coordinate on to solve this joint task, and how is it shaped by context? 
+%To test intuitions about how pragmatics and context might affect the communication system they develop, we consider two cases. 
+Because there are only a small number of objects around, and by virtue of the task the local is always referring to singleton entities, a perfectly natural solution is to assume that each word is a name for a specific thing, in a one-to-one mapping. If the cook repeatedly says \emph{gavagai}, pointing to a particular rabbit carcass, it is safe to assume it just means that rabbit carcass. 
 
-\todo[inline]{TODO: paragraph informally setting up scenario in experiment; maybe reference to Quine's gavagai? Suppose agent is using unfamiliar words to refer to something in context (e.g. a rabbit in the context of many other rabbits in the forest). If the native speaker said gavagai to refer to the same rabbit in the context of many other rabbits, however, you would infer a different meaning...?}
-
-\todo[inline]{TODO: set up tension more clearly. Having specific terms for everything would actually be pretty natural regardless of context. Only eight objects, so not even that hard, plus task requires \emph{referring to specific objects} on every round. So seeing the amount of abstract words we see is surprising!}
-
-In this paper, we argue that just as communicative pressures for informativity can lead to the lexicalization of specific terms when fine distinctions must be drawn, conceptual abstractions become lexicalized precisely when meaning is under-constrained by context. When the pragmatics of the context allow for ambiguity in the intended level of reference, adaptive speakers can get away with extending the term more broadly. 
+In this paper, however, we show that just as communicative pressures for informativity can lead to the lexicalization of specific names when fine distinctions must be drawn, conceptual abstractions become lexicalized precisely when meaning is under-constrained by context. If there are multiple rabbits around, the travelers may need a specific conventionalized term for each; otherwise, they can achieve the same communicative success with fewer words by learning generalizations. When the pragmatics of the context allow for ambiguity in the intended level of reference, adaptive speakers can get away with extending the term more broadly. 
 			
 \section{Experiment: Emergence of Abstractions}
 
-To test this hypothesis, we conducted a repeated reference game in which pairs of participants interactively developed an artificial language to communicate with each other about objects in context \cite{WintersKirbySmith14_LanguagesAdapt, GalantucciGarrod11_ExperimentalSemiotics}. This paradigm allows us to fix a set of stimuli in a conceptual hierarchy and manipulate the communicative constraints of context across repeated interaction.
+We conducted a repeated reference game in which pairs of participants interactively developed an artificial language to communicate with each other about objects in context \cite{WintersKirbySmith14_LanguagesAdapt, GalantucciGarrod11_ExperimentalSemiotics}. This paradigm allows us to fix a set of stimuli in a conceptual hierarchy and manipulate the communicative constraints of context across repeated interaction.
 
 \begin{figure*}[t]
 \begin{center}
-{\includegraphics[scale=.64]{fig.png}}
-{\caption{\footnotesize{(A) Example array of elements the matcher must choose from. The target is highlighted for the speaker with a black square. In this \emph{subordinate-required} trial there is a distractor at the same intermediate level (striped circle) as the target, so using any abstract label would be insufficient. (B) Drag-and-drop chat box interface. (C) Hierarchical organization of stimuli, with shape at the top-level and color/texture at intermediate levels.  \label{exp}}}}
+{\includegraphics[scale=.65]{fig.png}}
+{\caption{{(A) Example array of elements the matcher must choose from. The target is highlighted for the speaker with a black square. In this \emph{subordinate-required} trial there is a distractor at the same intermediate level (striped circle) as the target, so using any abstract label would be insufficient. (B) Drag-and-drop chat box interface. (C) Hierarchical organization of stimuli, with shape at the top-level and color/texture at intermediate levels.  \label{exp}}}}
 \end{center}
 \end{figure*}
 
 \subsection{Methods}
-
 \subsubsection{Participants}
 
 We recruited 278 participants from Amazon Mechanical Turk to play an interactive, multi-player game using the framework described in \citeA{Hawkins15_RealTimeWebExperiments}. Pairs were randomly assigned to one of three different conditions, yielding between $n=36$ and $n=53$ dyads per condition, after excluding participants who disconnected before completion.
 
 \subsubsection{Stimuli}
-
 The objects that served as referents were designed to cluster in a fixed three-level hierarchy with shape at the top-most level, and color/texture at the intermediate levels (see Fig. 1C). Each communicative context contained four objects. Distractors could differ from the target at various level of the hierarchy, creating different types of contexts defined by the finest distinction that had to be drawn. We focus on two: \emph{subordinate-neighbor} trials, where the closest distractor belongs to the same subordinate category (e.g. a lighter shade of blue square; see Fig. 1A), and \emph{intermediate-neighbor} trials, where the closest distractor belongs to the same intermediate category (e.g. red square instead of blue square). Fixed arrays of 16 utterances were randomly generated in each game by stringing together consonant-vowel pairs into pronounceable 2-syllable words.
 
 \subsubsection{Procedure}
-
 Participants were paired over the web and placed in a shared environment containing an array of four objects (Fig. 1A) and a `chatbox' to send messages from a randomly generated vocabulary (Fig. 1B). On each of 96 trials, one player -- the `speaker' -- was privately shown a highlighted target object and allowed to send a single word to communicate the identity of this object to their partner, who subsequently made a selection from the array. Players swapped roles each round and were rewarded with bonus payment when the listener successfully chose the intended object.
 
 Critically, we manipulated the statistics of the context in a between-subjects design to test the effect of communicative relevance on lexicalization. In the \emph{pure subordinate} condition, all trials had a subordinate-neighbor context; in the \emph{pure intermediate} condition, all trials had a intermediate-neighbor context; in the \emph{mixed} condition, these two contexts were equally likely, thus providing some diversity in the relevant distinctions that must be drawn. Sequences of trials were constructed by randomly shuffling targets and trial types within blocks and ensuring no target appeared more than once in a row.
@@ -121,7 +115,11 @@ In addition to behavioral responses collected over the course of the game, we de
 
 \subsubsection{People successfully learn to communicate}
 
-Although participants began with no common basis for label meanings, most pairs were nonetheless able to coordinate on a successful communication system over repeated interaction (see Fig. \ref{fig:accuracy}). Accuracy improves significantly over the course of the experiment in all conditions ($b = 0.04, p < 0.001$). Accuracy also differs significantly \emph{across} conditions: participants in the \emph{pure intermediate} condition performed better throughout the game than participants in the other two conditions who were required to make finer distinctions [stat]. Looking more closely at games in the \emph{mixed} condition, we also found that performance on intermediate trials improved \emph{before} subordinate trials \todo[inline]{Include this plot?} Finally, the reaction time taken by the speaker to choose an utterance also decreases significantly over the course of the game, indicating that the lexical mappings may be  [stat]. \todo[inline]{Refine how to say this\dots}
+Although participants began with no common basis for label meanings, most pairs were nonetheless able to coordinate on a successful communication system over repeated interaction (see Fig. \ref{fig:accuracy}). 
+Accuracy improves significantly over the course of the experiment in all conditions ($b = 0.04, p < 0.001$). 
+Accuracy also differs significantly \emph{across} conditions: participants in the \emph{pure intermediate} condition performed better throughout the game than participants in the other two conditions who were required to make finer distinctions [stat]. 
+Looking more closely at games in the \emph{mixed} condition, we also found that performance on intermediate trials improved \emph{before} subordinate trials %\todo[inline]{Include this plot?} 
+Finally, the reaction time taken by the speaker to choose an utterance also decreases significantly over the course of the game, indicating that the lexical mappings may be  [stat]. \todo[inline]{Refine how to say this\dots}
 
 Still, the accuracy distribution was multi-modal: a subpopulation of 29 games (4 from the intermediate condition, 10 from the mixed condition, and 15 from the subordinate condition) still showed relatively poor  performance (i.e. below 75\%) in the fourth quarter. For the subsequent analyses, we exclude these games to ensure we are examining successful lexica.
 
