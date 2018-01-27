@@ -112,52 +112,53 @@ We recruited 278 participants from Amazon Mechanical Turk to play an interactive
 \subsubsection{Procedure}
 Participants were paired over the web and placed in a shared environment containing an array of four objects (Fig. 1A) and a `chatbox' to send messages from a randomly generated vocabulary (Fig. 1B). On each of 96 trials, one player -- the `speaker' -- was privately shown a highlighted target object and allowed to send a single word to communicate the identity of this object to their partner, who subsequently made a selection from the array. Players swapped roles each round and were rewarded with bonus payment when the listener successfully chose the intended object.
 
-Critically, we manipulated the statistics of the context in a between-subjects design to test the effect of communicative relevance on lexicalization. In the \emph{pure subordinate} condition, all trials had a subordinate-neighbor context; in the \emph{pure intermediate} condition, all trials had a intermediate-neighbor context; in the \emph{mixed} condition, these two contexts were equally likely, thus providing some diversity in the relevant distinctions that must be drawn. Sequences of trials were constructed by randomly shuffling targets and trial types within blocks and ensuring no target appeared more than once in a row.
+Critically, we manipulated the statistics of the context in a between-subjects design to test the effect of communicative relevance on lexicalization. In the \emph{pure subordinate} condition, all trials had a subordinate-neighbor context; in the \emph{pure intermediate} condition, all trials had a intermediate-neighbor context; in the \emph{mixed} condition, the two contexts were equally likely, thus providing diversity in the relevant distinctions that must be drawn. Sequences of trials were constructed by randomly shuffling targets and trial types within blocks and ensuring no target appeared more than once in a row.
 
-In addition to behavioral responses collected over the course of the game, we designed a post-test to explicitly probe players' final lexica. For each word, we asked players to select all objects that word can refer to, and for each object, we asked players to select all words that can refer to it. These measures allow us to distinguish between subordinate terms that apply to only one element and abstract terms that apply to all elements underneath higher nodes in the hierarchy.
+In addition to behavioral responses collected over the course of the game, we designed a post-test to explicitly probe players' final lexica. For each word, we asked players to select all objects that word can refer to, and for each object, we asked players to select all words that can refer to it. These bidirectional measures allow us to check the internal validity of the lexica reported, to compare lexica across partners, and to distinguish between subordinate terms that apply to only one element and abstract terms that apply to all elements underneath higher nodes in the hierarchy. 
 
 \subsubsection{Stimuli}
 The objects that served as referents were designed to cluster in a fixed three-level hierarchy with shape at the top-most level, and color/texture at the intermediate levels (see Fig. 1C). Each communicative context contained four objects. Distractors could differ from the target at various level of the hierarchy, creating different types of contexts defined by the finest distinction that had to be drawn. We focus on two: \emph{subordinate-neighbor} trials, where the closest distractor belongs to the same subordinate category (e.g. a lighter shade of blue square; see Fig. 1A), and \emph{intermediate-neighbor} trials, where the closest distractor belongs to the same intermediate category (e.g. red square instead of blue square). Fixed arrays of 16 utterances were randomly generated in each game by stringing together consonant-vowel pairs into pronounceable 2-syllable words.
 
 \subsection{Behavioral Results}
 
-\subsubsection{People successfully learn to communicate}
+\subsubsection{Partners successfully learn to communicate}
 
-Although participants began with no common basis for label meanings, most pairs were nonetheless able to coordinate on a successful communication system over repeated interaction (see Fig. \ref{fig:accuracy}). 
-Accuracy improves significantly over the course of the experiment in all conditions ($b = 0.04, p < 0.001$). 
-Accuracy also differs significantly \emph{across} conditions: participants in the \emph{pure intermediate} condition performed better throughout the game than participants in the other two conditions who were required to make finer distinctions [stat]. 
-Looking more closely at games in the \emph{mixed} condition, we also found that performance on intermediate trials improved \emph{before} subordinate trials %\todo[inline]{Include this plot?} 
-Finally, the reaction time taken by the speaker to choose an utterance also decreases significantly over the course of the game, indicating that the lexical mappings are increasingly established [stat]. \todo[inline]{Refine how to say this\dots}
-
-Still, the accuracy distribution was multi-modal: a subpopulation of 29 games (4 from the intermediate condition, 10 from the mixed condition, and 15 from the subordinate condition) still showed relatively poor  performance (i.e. below 75\%) in the fourth quarter. For the subsequent analyses, we exclude these games to ensure we are examining successful lexica.
-
-\subsubsection{Context affects lexicon size}
-
-We predicted that in contexts where speakers were not often required to draw fine distinctions at low levels of the conceptual hierarchy they would develop abstractions applying to everything below a particular node. One coarse consequence of this effect is on lexicon size: we found that participants in the pure intermediate condition reported meanings for significantly fewer words in the post-test ($m = 6.5$) than participants in the mixed and pure subordinate conditions ($b = 2.8, t = 5.0, p <0.001$ and $b = 3.2, t = 4.8, p < 0.001$, respectively). 
+Although participants began with no common basis for label meanings, performing approximately at chance (25\%) on the first round, most pairs were nonetheless able to coordinate on a successful communication system over repeated interaction (see Fig. \ref{fig:accuracy}). 
+A mixed-effects logistic regression on listener responses with trial number as a fixed effect and including random slopes and intercepts for each game, showed a significant improvement in accuracy overall, $z = 14.4, p < 0.001$. 
+Accuracy also differed significantly \emph{across} conditions (Fig. \ref{fig:accuracy}): adding an additional main effect of condition to our logistic model provided a significantly better fit, $\chi^2(2) = 10.8, p = 0.004$. Qualitatively, the \emph{intermediate} condition was easiest for participants, the \emph{subordinate} condition was hardest, and the \emph{mixed} condition was roughly in between. % Looking more closely at games within the mixed condition, we found that performance on subordinate and intermediate trial types roughly mirrored the gap between the .
+Finally, the (log) response time taken by the speaker to choose an utterance also decreased significantly over the course of the game, $t = -19.7, p < 0.001$, indicating that lexical mappings became increasingly established or accessible.
 
 \begin{figure}[t]
 \begin{center}
-{\includegraphics[scale=0.6]{accuracyByCondition.pdf}}
+{\includegraphics[scale=0.65]{accuracyByCondition_edited.pdf}}
 %{\includegraphics[scale=.64]{lexiconSize.pdf}}
-{\caption{{\footnotesize \todo[inline]{TODO: Fix font size, y label; bootstrap error bars instead of SE; 'quartile'}   \label{fig:accuracy}}}}
+{\caption{{Players learn to coordinate on a successful communication system through interaction. Each point is the mean proportion of correct responses by listeners in the given condition on the given round; smoothing curves are nonparametric regression fits.  \todo[inline]{rdh questions: Use semantically meaningful condition codes, e.g. red/blue/purple? Is this too far aggregated from data (e.g. show error bars on each point? fit curves to individual-level binary responses instead of through group means?)}   \label{fig:accuracy}}}}
 \end{center}
 \end{figure}
+
+Another indicator of successful learning is convergence or alignment of lexica across partners in a dyad. Before computing similarity \emph{across} partners, however, we validate our dependent variable by examining the internal consistency \emph{within} an individual's post-test responses (we return to this issue in the Model-Based Results below). For each participant, we counted the number of mismatches between the two directions of the lexicon question (e.g. if they clicked the word `mawa' when we showed them one of the blue squares, but failed to click one that same blue square when we showed them the same word). In general, participants were very consistent: the median number of mismatches was 2 out of 128 (98\% agreement), though the distribution has a long tail (mean $= 7.3$). We therefore conservatively take a participant's final lexicon to be the \emph{intersection} of their word-to-object and object-to-word responses.
+
+Given these estimates of each participant's lexicon, we compute the overlap across partners. Most participants aligned strongly by the end, with a median post-test overlap of 97.6\% (125 out of 128 entries in the matrix). Because these matrices were extremely sparse, however, a small number of mismatches could have a large impact on performance. Overall accuracy in the game is strongly correlated with alignment: partners who reported more similar lexica at the end tended to perform better at the task ($r = 0.77$).  
+
+Despite these markers of success at the group level, individual performance was somewhat bimodal: a subpopulation of 29 games (4 from the intermediate condition, 10 from the mixed condition, and 15 from the subordinate condition) still showed relatively poor performance, sometimes still at chance, in the fourth quartile. For the subsequent analyses focusing on the content of the lexicon, we exclude games with fourth-quartile accuracy below 75\% to ensure we are examining only successful lexica.
+ 
+\subsubsection{Contextual pressures shape the lexicon}
+
+We predicted that contexts regularly requiring speakers to make fine distinctions among objects at subordinate levels of the hierarchy would lead to lexicalization of specific terms for each object. Conversely, when no such distinctions were required, we expected participants to adaptively lexicalize more abstract terms. One coarse signature of this prediction lies in the \emph{efficiency} of the resulting lexicon: lexicalizing abstract terms should allow participants to get away with fewer terms.
+
+To test this prediction, we counted the number of words in the group's shared lexicon (i.e. words assigned the same positive meaning by both participants). We found that participants in the \emph{intermediate} condition shared significantly smaller, more efficient lexica ($m = 4.9$ words) than participants in the mixed and pure subordinate conditions ($m = 7.4, t = 10.3, p <0.001$ and $m = 7.6, t = 9.5, p < 0.001$, respectively; see Fig. \ref{fig:lexiconContent}). At the same time, the smaller lexicon provided equivalent coverage of objects: the median number of objects where participants agreed on the same word or words for it was 7, 6.5, and 7, respectively.
 
 \begin{figure*}[t]
 \begin{center}
 {\includegraphics[scale=0.87]{lexiconContent.pdf}}
 {\includegraphics[scale=0.87]{fullLexiconReport.pdf}}
-{\caption{{\footnotesize \todo[inline]{TODO: Fix condition names; labels; bootstrap error bars for histogram}  \label{fig:lexiconContent}}}}
+{\caption{{Pragmatic demands of context shape the formation of abstractions. (A) Distribution of extension sizes in lexica reported across conditions, including those with no extensions. In the subordinate condition, nearly every word reported in every pair only referred to a single object; in the intermediate condition, 50\% of reported words were abstractions applying to more than one object. The mixed condition is more similar to the subordinate condition than the intermediate condition. (B) Diversity of lexica within pairs: many pairs in the intermediate condition reported a mixture of abstract and specific terms. \todo[inline]{TODO: Fix condition names; A/B labels; change axis labels in B to ``\# words referring to single object'' and ``\# words referring to multiple objects''; change B to heatmap}  \label{fig:lexiconContent}}}}
 \end{center}
 \end{figure*}
 
-\subsubsection{Context affects lexicon content}
+If participants in the intermediate-only condition can get away with fewer words in their lexicon, what are the meanings of the words they do have? We counted the numbers of specific or holistic terms (e.g. words that refer to only one object) and abstract terms (e.g. words that refer to multiple objects) in the post-test. We found that the likelihood of lexicalizing abstractions differed systematically across conditions (see Fig. \ref{fig:lexiconContent}A). Participants in the pure subordinate condition reported lexica containing only specific terms, while participants in the pure intermediate condition reported significantly more abstract terms ($m = 2.5$ \textbf{stat}). 
 
-\todo[inline]{Diversity of strategies across pairs}
-
-If participants in the intermediate-only condition can get away with fewer words in their lexicon, what are the meanings of the words they do have? We counted the numbers of specific or holistic terms (e.g. words that refer to only one object) and abstract terms (e.g. words that refer to multiple objects) in the post-test. We found that the likelihood of lexicalizing abstractions differed systematically across conditions (see Fig. \ref{fig:lexiconContent}). Participants in the pure subordinate condition reported lexica containing only specific terms, while participants in the pure intermediate condition reported significantly more abstract terms ($m = 2.5$ \textbf{stat}). The mixed condition lay in between, indicating graded pressure to develop specific terms at the cost of abstract terms. 
-
-These data also reveal an interesting asymmetry in lexicon content across conditions: while abstractions are entirely absent from the pure subordinate condition, specific terms often coexist with abstract terms in the other conditions. In the pure intermediate condition, for instance, participants could in principle perform optimally with only four abstract terms and no subordinate terms. While this was the modal system that emerged (reported in the post-test by nearly 1/3 of participants), abstract terms often coexisted with specific terms. Indeed, the average entropy of the distribution of abstract vs. specific terms within each participant's lexicon was highest in the pure intermediate condition ($m = 0.20$ \textbf{stat}). 
+These data also reveal an interesting asymmetry in lexicon content across conditions: while abstractions are entirely absent from the pure subordinate condition, specific terms often coexist with abstract terms in the other conditions. In the pure intermediate condition, for instance, participants could in principle perform optimally with only four abstract terms and no subordinate terms. While this was the modal system that emerged (reported in the post-test by nearly 1/3 of participants), abstract terms often coexisted with specific terms (see Fig. \ref{fig:lexiconContent}B). Indeed, the average entropy of the distribution of abstract vs. specific terms within each participant's lexicon was highest in the pure intermediate condition ($m = 0.20$ \textbf{stat}). 
 
 \section{Model-based Analysis}
 
@@ -169,44 +170,48 @@ Here, we present a purely statistical model of this progression without attribut
 
 We begin by defining the lexicon at time $t$ as a function 
 $$\mathcal{L}^{t} : (w, o) \rightarrow [0,1]$$ 
-assigning any word-object pair a real-valued meaning in the unit interval. This can be represented as a $\mathcal{W} \times \mathcal{O}$ matrix of real values $\ell_{w,o}^t \in \mathbb{R}$ mapped to the unit interval with a logistic function $f(x) = 1/(1 + e^{x})$. To capture our initial uncertainty about the lexicon being used by participants (who are likely to have weak expectations for the artificial words in our experiment), we place a relatively uninformative (and independent) prior $$\ell_{w,o}^0 \sim \mathcal{N}(0, 1)$$ on the entries of this matrix. 
+assigning any word-object pair a real-valued meaning in the unit interval. This can be represented as a $\mathcal{W} \times \mathcal{O}$ matrix of real values $\ell_{w,o}^t \in \mathbb{R}$ mapped to the unit interval with a logistic function $f(x) = 1/(1 + e^{x})$. 
 
-We capture the temporal dependence of subsequent lexica by placing a Gaussian random walk on lexical entries: the lexicon at time $t+1$ is sampled from a Gaussian distribution centered at the lexicon on the previous trial: $$\ell_{w,o}^{t+1} \sim \mathcal{N}(\ell_{w,o}^t, \sigma)$$ where sigma is a hyperparameter determining the drift rate. \todo[inline]{Is this related to the bayesian RL thing in Mathys et al, 2011?}
+Because observations on each round are incredibly sparse, we use a hierarchical Bayesian model to share statistical strength across periods of time. While more deeply hierarchical designs are possible, we simply divide the game into quartiles and assume that the lexicon $\mathcal{L}^t$ used by a particular participant on a particular round is sampled from a Gaussian centered at that quartile's hyper-lexicon $\mathcal{L}^{0q}$ with some quartile-level dispersion $\sigma^{0q}$. 
+
+%To capture our initial uncertainty about the lexicon being used by participants (who are likely to have weak expectations for the artificial words in our experiment), we place a relatively uninformative (and independent) prior $$\ell_{w,o}^0 \sim \mathcal{N}(0, 1)$$ on the entries of this matrix. 
+
+%We capture the temporal dependence of subsequent lexica by placing a Gaussian random walk on lexical entries: the lexicon at time $t+1$ is sampled from a Gaussian distribution centered at the lexicon on the previous trial: $$\ell_{w,o}^{t+1} \sim \mathcal{N}(\ell_{w,o}^t, \sigma)$$ where sigma is a hyperparameter determining the drift rate. \todo[inline]{Is this related to the bayesian RL thing in Mathys et al, 2011?}
 
 Finally, we must define a linking function from this underlying lexicon to the speaker utterances and listener choices we observe on each round. To capture our assumption that participants attempt to communicate pragmatically, thereby strengthening our ability to make lexical inferences, we use the probabilistic RSA framework. RSA models ground out in a \emph{literal listener} agent, who uses its lexicon to directly interpret a word $w$ in context: $P_{L_0}(o_i | w, \mathcal{L}^t) \propto \mathcal{L}^t(w,o)$. A pragmatic speaker, reasoning about this listener, produces utterances by soft-maximizing a utility function taking into account the relative \emph{informativity} of saying different words in context. Formally, this informativity is given by the likelihood of the literal listener correctly interpreting the utterance to mean the intended target: $$P_{S_1}(w | o_i, \mathcal{L}) \propto \exp\{\alpha \ln P_{L_0}(o_i | w, \mathcal{L}^t)\}$$
 where $\alpha$ is another hyperparameter determining the soft-max optimality of the speaker. Finally, we define a pragmatic listener who inverts this speaker model to infer the intended referent $o_i$ given the utterance they heard $P_{L_1}(o_i | w, \mathcal{L}) \propto P_{S_1}(w | o_i, \mathcal{L}^t) P(w)$.
-\todo[inline]{TODO: Be explicit about how this allows us to strengthen our inferences? Allows us to learn about meanings of words and objects we haven't seen. e.g. suppose we hear a speaker say `mimi' to refer to one of the blue squares in the context of the other blue square. If `mimi` applied to both blue squares equally well in their lexicon, then the data would be extremely unlikely: the speaker would have avoided such an underinformative utterance. The data is much more likely under a lexicon where `mimi` only refers to the target blue square much more strongly.  Similarly, if another word in their lexicon was more informative in distinguishing these items, we assume they would have used it. Note that when the same utterance is used in an intermediate-neighbor trial, where only one of the blue squares is in context, it is ambiguous whether or not it can also apply to the other blue square.} 
+
+\todo[inline]{TODO: Be explicit about how this allows us to strengthen our inferences? Needs to be cleaned up.}
+This allows us to learn about meanings of words and objects we haven't seen. e.g. suppose we hear a speaker say `mimi' to refer to one of the blue squares in the context of the other blue square. If `mimi` applied to both blue squares equally well in their lexicon, then the data would be extremely unlikely: the speaker would have avoided such an underinformative utterance. The data is much more likely under a lexicon where `mimi` only refers to the target blue square much more strongly.  Similarly, if another word in their lexicon was more informative in distinguishing these items, we assume they would have used it. Note that when the same utterance is used in an intermediate-neighbor trial, where only one of the blue squares is in context, it is ambiguous whether or not it can also apply to the other blue square.
 
 These linking functions assign a fully differentiable likelihood to our dataset for any given sequence of lexica. We can therefore use mean-field variational inference \cite{RanganathGerrishBlei13_BlackBoxVariationalInference}, implemented in the probabilistic programming language WebPPL \cite{GoodmanStuhlmuller14_DIPPL}, to approximate the joint posterior over all lexical entries (and shared hyperparameters) used for each round in each game. 
+
+\begin{figure}[t]
+\begin{center}
+{\includegraphics[scale=.4]{modelSchematic}}
+%{\includegraphics[scale=.64]{lexiconSize.pdf}}
+{\caption{{\footnotesize \todo[inline]{rxdh questions: I want some kind of schematic of the model, but I'm not sure this plate notation is the best way of doing it (whether supplementing plate with a cartoon, or replacing it)\dots Notation is kind of icky right now, too\dots this would ideally lay out very clearly the intuition behind how early contexts affect lexicon learning}  \label{fig:modelSchematic}}}}
+\end{center}
+\end{figure}
+
 
 \subsection{Validating post-test responses}
 
 We begin by addressing concerns about the robustness of our post-test lexicon measurements. It is not clear \emph{a priori} how well participants are able to explicitly access their lexical representations. In addition, some participants may have been confused about the instructions (e.g. listing meanings for all sixteen words, including those that never appeared in the game), or simply giving noisy or inconsistent responses. 
 
-\todo[inline]{TODO: basic checks: compare symmetry of two post-tests; report how well both participants in a game aligned? Correlation b/w accuracy and post-test correspondance?}
-
-\todo[inline]{TODO: report logistic regression predicting post-test responses from posteriors on final round, e.g. Fig }
-
-\begin{figure}[t]
-\begin{center}
-{\includegraphics[scale=.55]{wordFormationExample.pdf}}
-%{\includegraphics[scale=.64]{lexiconSize.pdf}}
-{\caption{{\footnotesize \todo[inline]{TODO: placeholder for more schematic figure showing example of how lexicon inference changes as we see more and more data; would ideally make clear effect of different contexts}  \label{fig:modelSchematic}}}}
-\end{center}
-\end{figure}
-
+\todo[inline]{TODO: talk through ROC curve in Fig.   \ref{fig:postTestPrediction}}
 
 \subsection{Examining early time course}
 
-Having validated our final-round lexicon estimates against post-test measures, we proceed to analyze the dynamics of the lexicon over time. The first 
+Having validated our final-round lexicon estimates against post-test measures, we proceed to analyze the dynamics of the lexicon over time \dots
 
-\todo[inline]{TODO: walk through examples of early rounds in different contexts; show timecourse of abstractions, e.g. are initially specific terms extended or are initially abstract terms narrowed? Report posterior predictive accuracy that actually accomodates the data; use >0.5 threshold, maybe with some learned decision offset. Collapse into quartiles instead of diffusion. Distribution over word extensions at each point in time, i.e. change in lexicon. Do you tend to move from big to small or small to big quarter-to-quarter. }
+\todo[inline]{TODO: walk through examples of early rounds in different contexts; show timecourse of abstractions, e.g. are initially specific terms extended or are initially abstract terms narrowed? Distribution over word extensions at each point in time, i.e. change in lexicon. Do you tend to move from big to small or small to big quarter-to-quarter. }
 
 \begin{figure}[t]
 \begin{center}
 {\includegraphics[scale=0.8]{modelPerformance.pdf}}
 %{\includegraphics[scale=.64]{lexiconSize.pdf}}
-{\caption{{\footnotesize \todo[inline]{TODO: fill bottom-right empty space with inset, or text stating 4th round area under curve (0.98)?\dots)}  \label{fig:postTestPrediction}}}}
+{\caption{{\footnotesize \todo[inline]{TODO: directly label lines, fill bottom-right empty space with inset showing area under curve as little bar plot (e.g. 4th quarter: 0.98) \dots )}  \label{fig:postTestPrediction}}}}
 \end{center}
 \end{figure}
 
@@ -215,9 +220,11 @@ Having validated our final-round lexicon estimates against post-test measures, w
 
 How do abstractions emerge in the lexicon? Motivated by recent computational accounts of lexical adaptation at both global and local time scales, we hypothesized that while constrained communicative contexts would favor informative one-to-one object-word mappings, under-constrained contexts would allow language users to get away with extending meanings to broader features. By manipulating the statistics of communicative context in a repeated reference game with novel labels, we found both qualitative behavioral evidence and finer-grained model-based evidence for pragmatic influences on convention formation.
 
-These results also help illuminate the relationship between our concepts and words, which are often treated interchangeably. While our individual mental representations of taxonomies are indpendently adaptive to the natural perceptual structure of the world (Rosch et al, 1976; Mervis \& Rosch ,1981; Murphy \& Smith, 1982), it is far from inevitable that all levels of these conceptual hierarchies become conventionalized as lexical items. There are many perfectly natural concepts that are not represented by distinct words in the English language: for instance, we do not have words for each individual tree in our yards, or for abstract but ad-hoc concepts like \emph{things to sell at a garage sale} (Barsalou, 1983). Indeed, English speakers are often fascinated by difficult to express concepts like ``hygge'' or ``tartle'' that are lexicalized as simple words in foreign languages.
+\todo[inline]{TODO: Some comments on the more cognitive model of convention formation by mutual learning}
 
-While we showed how abstractions emerge even in a task requiring only reference to individual object, there are other clear functional advantages to having abstract terms in the lexicon. For one, they allow speakers to efficiently refer to large, potentially infinite, sets of things, and make generalizations about categories, e.g. ``Dogs bark'' (Tessler \& Goodman, 2016) \dots
+While we showed how abstractions emerge even in a task requiring only reference to individual object, there are other clear functional advantages to having abstract terms in the lexicon. For one, they allow speakers to efficiently refer to large, potentially infinite, sets of things, and make generalizations about categories, e.g. ``Dogs bark'' (Tessler \& Goodman, 2016). In future work, we expect that pragmatic pressures to refer to entire sets, or conjunctions of objects, may also give rise to the kind of nestedness seen in natural lexical distributions through similar mechanisms.
+
+These results also help illuminate the relationship between our concepts and words, which are often treated interchangeably. While our individual mental representations of taxonomies are indpendently adaptive to the natural perceptual structure of the world (Rosch et al, 1976; Mervis \& Rosch ,1981; Murphy \& Smith, 1982), it is far from inevitable that all levels of these conceptual hierarchies become conventionalized as lexical items. There are many perfectly natural concepts that are not represented by distinct words in the English language: for instance, we do not have words for each individual tree in our yards, or for abstract but ad-hoc concepts like \emph{things to sell at a garage sale} (Barsalou, 1983). Indeed, English speakers are often fascinated by difficult to express concepts like ``hygge'' or ``tartle'' that are lexicalized as simple words in foreign languages.
 
 \todo[inline]{Should we comment on some methodlogical things people put in the `strategy' box? e.g. some people seem to be taking notes or using sound-symbolic associations like "nogo" to mean "red" (not a problem; should just help memory or help make initial meanings not entirely arbitrary but shouldn't change contextual demands\dots)}
 
