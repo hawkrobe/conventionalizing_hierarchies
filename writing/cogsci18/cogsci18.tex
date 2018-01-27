@@ -96,7 +96,7 @@ Here, we developed an experimental paradigm to examine the causal factors drivin
 %Suppose, mixing thought experiments from \citeA{Wittgenstein09_PhilosophicalInvestigations} and \citeA{Quine13_WordAndObject}, that two travelers meet in a forest, with no language in common. One is cooking dinner, and the other agrees to help in exchange for food and shelter. What kind of micro-language do they coordinate on to solve this joint task, and how is it shaped by context? 
 %To test intuitions about how pragmatics and context might affect the communication system they develop, we consider two cases. If there are multiple rabbits around, the travelers may need a specific conventionalized term for each; otherwise, they can achieve the same communicative success with fewer words by learning generalizations. 
 			
-\section{Methods}
+\section{Experiment: Repeated reference game}
 
 \begin{figure*}[t]
 \begin{center}
@@ -105,7 +105,6 @@ Here, we developed an experimental paradigm to examine the causal factors drivin
 \end{center}
 \end{figure*}
 
-\subsection{Methods}
 \subsubsection{Participants}
 
 We recruited 278 participants from Amazon Mechanical Turk to play an interactive, multi-player game using the framework described in \citeA{Hawkins15_RealTimeWebExperiments}. Pairs were randomly assigned to one of three different conditions, yielding between $n=36$ and $n=53$ dyads per condition, after excluding participants who disconnected before completion.
@@ -136,16 +135,6 @@ Still, the accuracy distribution was multi-modal: a subpopulation of 29 games (4
 
 We predicted that in contexts where speakers were not often required to draw fine distinctions at low levels of the conceptual hierarchy they would develop abstractions applying to everything below a particular node. One coarse consequence of this effect is on lexicon size: we found that participants in the pure intermediate condition reported meanings for significantly fewer words in the post-test ($m = 6.5$) than participants in the mixed and pure subordinate conditions ($b = 2.8, t = 5.0, p <0.001$ and $b = 3.2, t = 4.8, p < 0.001$, respectively). 
 
-\subsubsection{Context affects lexicon content}
-
-\todo[inline]{Omnibus histogram (0,1,2,3,4) collapsing across pairs}
-\todo[inline]{Diversity of strategies across pairs}
-\todo[inline]{Don't exclude 0}
-
-If participants in the intermediate-only condition can get away with fewer words in their lexicon, what are the meanings of the words they do have? We counted the numbers of specific or holistic terms (e.g. words that refer to only one object) and abstract terms (e.g. words that refer to multiple objects) in the post-test. We found that the likelihood of lexicalizing abstractions differed systematically across conditions (see Fig. \ref{fig:lexiconContent}). Participants in the pure subordinate condition reported lexica containing only specific terms, while participants in the pure intermediate condition reported significantly more abstract terms ($m = 2.5$ \textbf{stat}). The mixed condition lay in between, indicating graded pressure to develop specific terms at the cost of abstract terms. 
-
-These data also reveal an interesting asymmetry in lexicon content across conditions: while abstractions are entirely absent from the pure subordinate condition, specific terms often coexist with abstract terms in the other conditions. In the pure intermediate condition, for instance, participants could in principle perform optimally with only four abstract terms and no subordinate terms. While this was the modal system that emerged (reported in the post-test by nearly 1/3 of participants), abstract terms often coexisted with specific terms. Indeed, the average entropy of the distribution of abstract vs. specific terms within each participant's lexicon was highest in the pure intermediate condition ($m = 0.20$ \textbf{stat}). 
-
 \begin{figure}[t]
 \begin{center}
 {\includegraphics[scale=0.6]{accuracyByCondition.pdf}}
@@ -154,13 +143,22 @@ These data also reveal an interesting asymmetry in lexicon content across condit
 \end{center}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \begin{center}
-{\includegraphics[scale=.64]{lexiconContent.pdf}}
-%{\includegraphics[scale=.64]{lexiconSize.pdf}}
-{\caption{{\footnotesize \todo[inline]{TODO: Fix conditions; labels; bootstrap}  \label{fig:lexiconContent}}}}
+{\includegraphics[scale=0.87]{lexiconContent.pdf}}
+{\includegraphics[scale=0.87]{fullLexiconReport.pdf}}
+{\caption{{\footnotesize \todo[inline]{TODO: Fix condition names; labels; bootstrap error bars for histogram}  \label{fig:lexiconContent}}}}
 \end{center}
-\end{figure}
+\end{figure*}
+
+\subsubsection{Context affects lexicon content}
+
+\todo[inline]{Diversity of strategies across pairs}
+
+If participants in the intermediate-only condition can get away with fewer words in their lexicon, what are the meanings of the words they do have? We counted the numbers of specific or holistic terms (e.g. words that refer to only one object) and abstract terms (e.g. words that refer to multiple objects) in the post-test. We found that the likelihood of lexicalizing abstractions differed systematically across conditions (see Fig. \ref{fig:lexiconContent}). Participants in the pure subordinate condition reported lexica containing only specific terms, while participants in the pure intermediate condition reported significantly more abstract terms ($m = 2.5$ \textbf{stat}). The mixed condition lay in between, indicating graded pressure to develop specific terms at the cost of abstract terms. 
+
+These data also reveal an interesting asymmetry in lexicon content across conditions: while abstractions are entirely absent from the pure subordinate condition, specific terms often coexist with abstract terms in the other conditions. In the pure intermediate condition, for instance, participants could in principle perform optimally with only four abstract terms and no subordinate terms. While this was the modal system that emerged (reported in the post-test by nearly 1/3 of participants), abstract terms often coexisted with specific terms. Indeed, the average entropy of the distribution of abstract vs. specific terms within each participant's lexicon was highest in the pure intermediate condition ($m = 0.20$ \textbf{stat}). 
+
 \section{Model-based Analysis}
 
 Our post-test provides some insight into the end-result of lexicalization under different communicative contexts, but understanding the \emph{dynamics} of lexicalization requires finer-grained analysis of behavioral trajectories. How do lexica shift and develop over the course of interaction? A recent cognitive model of convention formation has explained the rapid coordination on efficient but informative lexical terms as a process of mutual lexical learning \cite{HawkinsFrankGoodman17_ConventionFormation}. This model extends the Rational Speech Act (RSA) framework, which formalizes pragmatic language understanding as recursive social reasoning \cite{FrankGoodman12_PragmaticReasoningLanguageGames,GoodmanFrank16_RSATiCS}. Each agent assumes their partner is rationally producing cooperative utterances under some latent lexicon; given initial uncertainty over the contents of that lexicon, agents can invert their model of a communicative agent to infer their partner's lexicon from their observable behavior \cite{BergenLevyGoodman16_LexicalUncertainty}. 
@@ -200,13 +198,15 @@ We begin by addressing concerns about the robustness of our post-test lexicon me
 
 \subsection{Examining early time course}
 
-\todo[inline]{TODO: show predictive accuracy trajectories for each condition; walk through examples of early rounds in different contexts; show timecourse of abstractions, e.g. are initially specific terms extended or are initially abstract terms narrowed? Report posterior predictive accuracy that actually accomodates the data; use >0.5 threshold, maybe with some learned decision offset. Collapse into quartiles instead of diffusion. Distribution over word extensions at each point in time, i.e. change in lexicon. Do you tend to move from big to small or small to big quarter-to-quarter. }
+Having validated our final-round lexicon estimates against post-test measures, we proceed to analyze the dynamics of the lexicon over time. The first 
+
+\todo[inline]{TODO: walk through examples of early rounds in different contexts; show timecourse of abstractions, e.g. are initially specific terms extended or are initially abstract terms narrowed? Report posterior predictive accuracy that actually accomodates the data; use >0.5 threshold, maybe with some learned decision offset. Collapse into quartiles instead of diffusion. Distribution over word extensions at each point in time, i.e. change in lexicon. Do you tend to move from big to small or small to big quarter-to-quarter. }
 
 \begin{figure}[t]
 \begin{center}
-{\includegraphics[scale=.94]{postTestPrediction.pdf}}
+{\includegraphics[scale=0.8]{modelPerformance.pdf}}
 %{\includegraphics[scale=.64]{lexiconSize.pdf}}
-{\caption{{\footnotesize \todo[inline]{TODO: placeholder for plot showing predictions for all games (currently only one game\dots)}  \label{fig:postTestPrediction}}}}
+{\caption{{\footnotesize \todo[inline]{TODO: fill bottom-right empty space with inset, or text stating 4th round area under curve (0.98)?\dots)}  \label{fig:postTestPrediction}}}}
 \end{center}
 \end{figure}
 
