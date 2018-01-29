@@ -201,13 +201,15 @@ These linking functions assign a fully differentiable likelihood to our dataset 
 
 \subsection{Validating post-test responses}
 
-We begin by showing that the lexicon learned by this model accurately predicts the post-test responses. 
+We begin by showing that the lexicon learned by this model accurately predicts the post-test responses. We constructed a logistic classifier from the posterior over lexical entries on the final quartile: for each lexical entry $\ell_{o,w}$ in the $[0,1]$ interval, we calculated the marginal posterior predictive $P(\ell_{o,w} > 0.5 | \theta)$, giving the relative likelihood under our model of word $w$ applying to object $o$. We constructed an ROC curve by examining the hits and false alarms produced when using this predictor as we varied the discrimination threshold, and found that it predicts post-test responses with excellent accuracy (AUC: 0.98). 
 
-\todo[inline]{TODO: talk through ROC curve in Fig.   \ref{fig:postTestPrediction}}
+As expected given the gradual coalescence of the final lexicon over the course of the game, we found that the corresponding posterior predicives from lexica learned on earlier quartiles predicted final responses less well (see Fig. 5). 
+
+%\todo[inline]{TODO: talk through ROC curve in Fig.   \ref{fig:postTestPrediction}}
 
 \subsection{Examining early time course}
 
-Having validated our final-round lexicon estimates against post-test measures, we proceed to analyze the dynamics of the lexicon over time \dots
+Having validated our final-round lexicon estimates against post-test measures, we proceeded to analyze the dynamics of the lexicon over time. For this analysis, we elaborated our model to use an underlying feature basis to derive the lexicon instead of independent entries for each object-word combination. 
 
 \todo[inline]{TODO: walk through examples of early rounds in different contexts; show timecourse of abstractions, e.g. are initially specific terms extended or are initially abstract terms narrowed? Distribution over word extensions at each point in time, i.e. change in lexicon. Do you tend to move from big to small or small to big quarter-to-quarter. }
 
@@ -215,7 +217,7 @@ Having validated our final-round lexicon estimates against post-test measures, w
 \begin{center}
 {\includegraphics[scale=0.8]{modelPerformance.pdf}}
 %{\includegraphics[scale=.64]{lexiconSize.pdf}}
-{\caption{{\footnotesize \todo[inline]{TODO: directly label lines, fill bottom-right empty space with inset showing area under curve as little bar plot (e.g. 4th quarter: 0.98) \dots )}  \label{fig:postTestPrediction}}}}
+{\caption{{\footnotesize \todo[inline]{TODO: directly label lines, fill bottom-right empty space with inset showing each quartile's AUC as little bar plot (e.g. 4th quarter: 0.98) \dots )}  \label{fig:postTestPrediction}}}}
 \end{center}
 \end{figure}
 
