@@ -203,19 +203,17 @@ These linking functions assign a fully differentiable likelihood to our dataset 
 
 We begin by showing that the lexicon learned by this model accurately predicts the post-test responses. We constructed a logistic classifier from the posterior over lexical entries on the final quartile: for each lexical entry $\ell_{o,w}$ in the $[0,1]$ interval, we calculated the marginal posterior predictive $P(\ell_{o,w} > 0.5 | \theta)$, giving the relative likelihood under our model of word $w$ applying to object $o$. We constructed an ROC curve by examining the hits and false alarms produced when using this predictor as we varied the discrimination threshold, and found that it predicts post-test responses with excellent accuracy (AUC: 0.98). 
 
-As expected given the gradual coalescence of the final lexicon over the course of the game, we found that the corresponding posterior predicives from lexica learned on earlier quartiles predicted final responses less well (see Fig. 5). 
-
-%\todo[inline]{TODO: talk through ROC curve in Fig.   \ref{fig:postTestPrediction}}
+Furthermore, we found that the corresponding posterior predictives from earlier quartiles predicted final post-test responses less well, even though they were learned from the same number and type of behavioral observations (see Fig. 5). Still, even the classifier based on the earliest quartile performs significantly above chance, indicating that some information about the final lexicon is available from the earliest rounds. These patterns are suggestive of a path-dependent process where the lexicon gradually coalesces from initially arbitrary associations over the course of the game. We next turn to the earliest stages of this emergence to understand this process in more detail.
 
 \subsection{Examining early time course}
 
-Having validated our final-round lexicon estimates against post-test measures, we proceeded to analyze the dynamics of the lexicon over time. For this analysis, we elaborated our model to use an underlying feature basis to derive the lexicon instead of independent entries for each object-word combination. 
+suggests to me they start simple and then abstract later? And the mixed guys can get by with their lexicon of specific terms, and even the intermediate guys are stuck with the residue of their early specific terms? Having validated our final-round lexicon estimates against post-test measures, we proceeded to analyze the dynamics of the lexicon over time. For this analysis, we elaborated our model to use an underlying feature basis to derive the lexicon instead of independent entries for each object-word combination. That is, we 
 
 \todo[inline]{TODO: walk through examples of early rounds in different contexts; show timecourse of abstractions, e.g. are initially specific terms extended or are initially abstract terms narrowed? Distribution over word extensions at each point in time, i.e. change in lexicon. Do you tend to move from big to small or small to big quarter-to-quarter. }
 
 \begin{figure}[t]
 \begin{center}
-{\includegraphics[scale=0.8]{modelPerformance.pdf}}
+{\includegraphics[scale=0.7]{modelPerformance.pdf}}
 %{\includegraphics[scale=.64]{lexiconSize.pdf}}
 {\caption{{\footnotesize \todo[inline]{TODO: directly label lines, fill bottom-right empty space with inset showing each quartile's AUC as little bar plot (e.g. 4th quarter: 0.98) \dots )}  \label{fig:postTestPrediction}}}}
 \end{center}
