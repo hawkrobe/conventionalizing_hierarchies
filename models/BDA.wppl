@@ -4,7 +4,7 @@
 // Load in experimental data to condition on then reformat
 var rawData = refModule.readCSV('./bdaInput/' + argv.gameid + '.csv');
 var data = refModule.reformatData(rawData);
-var quartileSize = data.length / 4;
+var quartileSize = 96 / 4;
 console.log("Loading expt data complete..." + data.length + " data points");
 
 var globalConfig = {
@@ -14,9 +14,9 @@ var globalConfig = {
 
 // Objects defined by features [squirle-ness,red-ness,blue-ness,stripe-ness,spot-ness]
 var numUtterances = 16;
-var numFeatures = 5;
+var numFeatures = 7;
 var dims = [numUtterances, numFeatures];
-var lexPrior = DiagCovGaussian({ mu: zeros(dims), sigma: T.mul(ones(dims), 10)}); 
+var lexPrior = DiagCovGaussian({ mu: zeros(dims), sigma: T.mul(ones(dims), 2)}); 
 
 // Some tensor helpers
 var scalarSoftplus = function(x) {
@@ -28,11 +28,13 @@ var tensorSoftplus = function(x) {
 };
 
 var reparam = function(distSample, mean, sd) {
-  return T.mul(T.add(distSample, mean), sd);
+  return T.add(T.mul(distSample, sd), mean);
 };
 
 // Hierarchical model with one lexicon each quarter
 var sampleHyperlexica = function(q) {
+  // console.log('sampling hyperlexica');
+  // console.log(sample(lexPrior));
   return {
     speaker:  sample(lexPrior, {guide: lexiconGuide('speakerCentHyp' + q, dims)}),
     listener: sample(lexPrior, {guide: lexiconGuide('listenerCentHyp' + q, dims)})
@@ -65,13 +67,14 @@ var lexiconGuide = function(paramName, dims) {
 // };
 
 // On a particular trial, you can accomodate some adjustment from hyper if necessary
+// Could in principle learn this variance but we fix it for computational efficiency
 var sampleLexiconParams = function(hyperparams, datum) {
   var i = datum.trialNum;
   return {
     speaker: reparam(sample(lexPrior, {guide: lexiconGuide('speakerCent'  + i, dims)}),
-		      hyperparams.speaker, 1),
+		      hyperparams.speaker, .1),
     listener: reparam(sample(lexPrior, {guide: lexiconGuide('listenerCent' + i, dims)}),
-		      hyperparams.listener, 1)
+		      hyperparams.listener, .1)
   };
 };
 
@@ -82,7 +85,6 @@ var observeRound = function(params, datum) {
   // Align role swapping with final post-test measures
   var llex = datum.trialNum % 2 == 1 ? params.speaker : params.listener;
   var slex = datum.trialNum % 2 == 1 ? params.listener : params.speaker;
-  
   // transition happens on raw params; must transform to [0,1] before passing as lexicon
   var speakerScore = refModule.getSpeakerScore(datum.wordID, datum.intendedName, {
     context: datum.context,
@@ -107,22 +109,19 @@ var model = function() {
   // 		       sigma: scalarSoftplus(param({name: 'alpha_sigma'}))});
   //   }
   // }));
-  globalStore.alpha = 5;
+  globalStore.alpha = 3;
   var mus = map(function(q) {return sampleHyperlexica(q);}, _.range(1,5));
   //var sigmas = map(function(q) {return sampleVariances(q);}, _.range(1,5));
 
-  mapData({data: data}, function(trialDatum) {
+  mapData({data: data, batchSize: 24}, function(trialDatum) {
     var currQ = Math.floor((trialDatum.trialNum - 1) / quartileSize);
     var hyperparams = mus[currQ];
     var lexiconParams = sampleLexiconParams(hyperparams, trialDatum);
     observeRound(lexiconParams, trialDatum);
   });
-
-  // return refModule.reformatParams(params, data,
-  // 				  globalStore.drift, globalStore.alpha);
 };
   
-Optimize({model: model, steps: 500, verbose: true,
+Optimize({model: model, steps: 1000, verbose: true,
 	  optMethod: {adam: {stepSize: 0.01}}});
 
 //refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);

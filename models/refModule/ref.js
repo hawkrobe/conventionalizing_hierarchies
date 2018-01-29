@@ -7,30 +7,72 @@ var normalize = function(truth, sum) {
 };
 
 var utterances = _.map(_.range(1, 17), function(i) {return 'word' + i;});
-var states = [{'name' : 'blueSquare1',    features: [-2,  0,  5,  0,  0]},
-	      {'name' : 'blueSquare2',    features: [-2,  0, 10,  0,  0]},
-	      {'name' : 'redSquare1',     features: [-2,  5,  0,  0,  0]},
-	      {'name' : 'redSquare2',     features: [-2, 10,  0,  0,  0]},
-	      {'name' : 'spottedCircle1', features: [ 2,  0,  0,  0,  5]},
-	      {'name' : 'spottedCircle2', features: [ 2,  0,  0,  0, 10]},
-	      {'name' : 'stripedCircle1', features: [ 2,  0,  0,  5,  0]},
-	      {'name' : 'stripedCircle2', features: [ 2,  0,  0, 10,  0]}];
+// shape, red1, red2, blue1, blue2, spot1, spot2, stripe1, stripe2
+var states = [
+  {
+    'name' : 'redSquare1',     features: T.fromScalars([-1, 1, 0, 0, 0, 1, 0])
+  }, {
+    'name' : 'redSquare2',     features: T.fromScalars([-1, 1, 0, 0, 0,-1, 0])
+  }, {
+    'name' : 'blueSquare1',    features: T.fromScalars([-1, 0, 1, 0, 0, 1, 0])
+  }, {
+    'name' : 'blueSquare2',    features: T.fromScalars([-1, 0, 1, 0, 0,-1, 0])
+  }, {
+    'name' : 'spottedCircle1', features: T.fromScalars([ 1, 0, 0, 0, 1, 0, 1])
+  }, {
+    'name' : 'spottedCircle2', features: T.fromScalars([ 1, 0, 0, 0, 1, 0,-1])
+  }, {
+    'name' : 'stripedCircle1', features: T.fromScalars([ 1, 0, 0, 1, 0, 0, 1])
+  }, {
+    'name' : 'stripedCircle2', features: T.fromScalars([ 1, 0, 0, 1, 0, 0,-1])
+  }];
+// var states = [
+//   {
+//     'name' : 'redSquare1',     features: T.fromScalars([ 1, 1, 0, 0, 0])
+//   }, {
+//     'name' : 'redSquare2',     features: T.fromScalars([ 1, 2, 0, 0, 0])
+//   }, {
+//     'name' : 'blueSquare1',    features: T.fromScalars([ 1, 0, 1, 0, 0])
+//   }, {
+//     'name' : 'blueSquare2',    features: T.fromScalars([ 1, 0, 2, 0, 0])
+//   }, {
+//     'name' : 'spottedCircle1', features: T.fromScalars([ 0, 0, 0, 0, 1])
+//   }, {
+//     'name' : 'spottedCircle2', features: T.fromScalars([ 0, 0, 0, 0, 2])
+//   }, {
+//     'name' : 'stripedCircle1', features: T.fromScalars([ 0, 0, 0, 1, 0])
+//   }, {
+//     'name' : 'stripedCircle2', features: T.fromScalars([ 0, 0, 0, 2, 0])
+//   }];
 
-var numFeatures = 5;
+var numFeatures = 7;
 
 var l2 = function(x,y) {
-  var squaredDiff = T.pow(T.sub(x, y), 2);
-  return ad.scalar.sqrt(T.sumreduce(squaredDiff));
+  var diff = T.pow(T.sub(x, y), 2);
+  return ad.scalar.sqrt(T.sumreduce(diff));
 };
+
+// var l1 = function(x,y) {
+//   var diff = T.abs(T.sub(x, y));
+//   return T.sumreduce(diff);
+// };
 
 // The meaning of an utterance is its similarity to the target
 var meaning = function(lexicon, utt, target) {
   var utt_i = _.indexOf(utterances, utt);
   var target_i = _.indexOf(_.map(states, 'name'), target);
-  var targetFeatures = T.fromScalars(states[target_i]['features']);
+  var targetFeatures = states[target_i]['features'];
   var lexiconMeans = T.range(lexicon, utt_i * numFeatures,
 			     utt_i * numFeatures + numFeatures);
-  return l2(lexiconMeans, targetFeatures);
+  // console.log('-------')
+  // console.log('lexicon:')
+  // console.log(lexiconMeans.x.data)
+  // console.log('target: ')
+  // console.log(targetFeatures.data)
+  // console.log('distance: ');  
+  //var distance = ad.scalar.mul(l1(lexiconMeans, targetFeatures), -1);
+  //console.log(distance);
+  return ad.scalar.mul(l2(lexiconMeans, targetFeatures), -1);
 };
 
 // P(target | sketch) \propto e^{scale * sim(t, s)}
