@@ -189,19 +189,19 @@ where $\alpha$ is another hyperparameter determining the soft-max optimality of 
 %\todo[inline]{TODO: Be explicit about how this allows us to strengthen our inferences? Needs to be cleaned up.}
 %This allows us to learn about meanings of words and objects we haven't seen. e.g. suppose we hear a speaker say `mimi' to refer to one of the blue squares in the context of the other blue square. If `mimi` applied to both blue squares equally well in their lexicon, then the data would be extremely unlikely: the speaker would have avoided such an underinformative utterance. The data is much more likely under a lexicon where `mimi` only refers to the target blue square much more strongly.  Similarly, if another word in their lexicon was more informative in distinguishing these items, we assume they would have used it. Note that when the same utterance is used in a coarse trial, where only one of the blue squares is in context, it is ambiguous whether or not it can also apply to the other blue square.
 
-These linking functions assign a fully differentiable likelihood to our dataset for any given sequence of lexica. We can therefore use mean-field variational inference \cite{RanganathGerrishBlei13_BlackBoxVariationalInference}, implemented in the probabilistic programming language WebPPL \cite{GoodmanStuhlmuller14_DIPPL}. In particular, we tune a family of Gaussians to approximate the joint posterior over all lexical entries (and shared hyperparameters) used by each participant for each round in each game. 
+These linking functions assign a fully differentiable likelihood to our dataset for any given sequence of lexica. We can therefore use mean-field variational inference \cite{RanganathGerrishBlei13_BlackBoxVariationalInference}, implemented in the probabilistic programming language WebPPL \cite{GoodmanStuhlmuller14_DIPPL}. We optimize a family of Gaussians to minimize the evidence lower bound (ELBO) which approximates the joint posterior over all lexical entries (and shared hyperparameters) used by each participant for each round in each game. 
 
 \begin{figure}[t]
 \begin{center}
 {\includegraphics[scale=.4]{modelSchematic}}
 %{\includegraphics[scale=.64]{lexiconSize.pdf}}
-{\caption{{\footnotesize \todo[inline]{question for NDG: I wanted some kind of schematic of the model, but I'm not sure this plate notation is the best way of doing it (whether supplementing plate with a cartoon, or replacing it)\dots Notation is kind of icky right now, too\dots this would ideally lay out very clearly the intuition behind how early contexts affect lexicon learning}    \label{fig:modelSchematic}}}}
+{\caption{{\footnotesize \todo[inline]{question for NDG: I wanted some kind of schematic of the model, but I'm not sure this plate notation is the best way of doing it (whether supplementing plate with a cartoon, or replacing it?)\dots Notation is kind of icky right now, too\dots this would ideally lay out very clearly the intuition behind how early contexts affect lexicon learning}    \label{fig:modelSchematic}}}}
 \end{center}
 \end{figure}
 
 \subsection{Validating post-test responses}
 
-We begin by showing that this model accurately recovers . It is not clear \emph{a priori} how well participants are able to explicitly access their lexical representations. In addition, some participants may have been confused about the instructions (e.g. listing meanings for all sixteen words, including those that never appeared in the game), or simply giving noisy or inconsistent responses. 
+We begin by showing that the lexicon learned by this model accurately predicts the post-test responses. 
 
 \todo[inline]{TODO: talk through ROC curve in Fig.   \ref{fig:postTestPrediction}}
 
@@ -224,15 +224,13 @@ Having validated our final-round lexicon estimates against post-test measures, w
 
 How do abstractions emerge in the lexicon? Motivated by recent computational accounts of lexical adaptation at both global and local time scales, we hypothesized that while constrained communicative contexts would favor informative one-to-one object-word mappings, coarser contexts would allow language users to get away with extending meanings to broader features. By manipulating the statistics of communicative context in a repeated reference game with novel labels, we found both qualitative behavioral evidence and finer-grained model-based evidence for pragmatic influences on convention formation.
 
-\todo[inline]{TODO: Some comments on the more cognitive model of convention formation by mutual learning}
-
 While we showed how abstractions emerge even in a task requiring only reference to individual object, there are other clear functional advantages to having abstract terms in the lexicon. For one, they allow speakers to efficiently refer to large, potentially infinite, sets of things, and make generalizations about categories, e.g. ``Dogs bark'' (Tessler \& Goodman, 2016). In future work, we expect that pragmatic pressures to refer to entire sets, or conjunctions of objects, may also give rise to the kind of nestedness seen in natural lexical distributions through similar mechanisms.
 
 These results also help illuminate the relationship between our concepts and words, which are often treated interchangeably. While our individual mental representations of taxonomies are indpendently adaptive to the natural perceptual structure of the world (Rosch et al, 1976; Mervis \& Rosch ,1981; Murphy \& Smith, 1982), it is far from inevitable that all levels of these conceptual hierarchies become conventionalized as lexical items. There are many perfectly natural concepts that are not represented by distinct words in the English language: for instance, we do not have words for each individual tree in our yards, or for abstract but ad-hoc concepts like \emph{things to sell at a garage sale} (Barsalou, 1983). Indeed, English speakers are often fascinated by difficult to express concepts like ``hygge'' or ``tartle'' that are lexicalized as simple words in foreign languages.
 
-\todo[inline]{Should we comment on some methodlogical things people put in the `strategy' box? e.g. some people seem to be taking notes or using sound-symbolic associations like "nogo" to mean "red" (not a problem; should just help memory or help make initial meanings not entirely arbitrary but shouldn't change contextual demands\dots)}
+\todo[inline]{question for NDG: Should we comment on some methodlogical things people put in the `strategy' box? e.g. some people seem to be taking notes or using sound-symbolic associations like "nogo" to mean "red" (not a problem; should just help memory or help make initial meanings not entirely arbitrary but shouldn't change contextual demands\dots)}
 
-\todo[inline]{Some broader comment connecting to/contrasting with other cognitive theories of what's going on here? e.g. (1) not a simple associative learning account, where people just store memory traces of word-object co-occurances (can't account for context effects). (2) elaborates on Xu \& Tenenbaum (2007) story by introducing contextual pressures. (3) maybe some whole object inductive bias (Markman, 1990) explaining prevalence of specific terms even in coarse condition (or are  basic-level terms are learned earlier, since most reference to \emph{dog}s is in `coarse` contexts, or higher}
+\todo[inline]{question for NDG: put some broader comment connecting to/contrasting with other cognitive theories of what's going on here? e.g. (1) not a simple associative learning account, where people just store memory traces of word-object co-occurances (can't account for context effects of generation), although note that probably a simpler model just counting co-occurences could account for the post-test responses just as well (it just wouldn't have as flexible an underlying representation). (2) elaborates on Xu \& Tenenbaum (2007) word learning story by introducing contextual pressures?}
 
 We showed how abstractions become lexicalized when participants were restricted to single-word utterances, but how the lexicalization of nominal terms trades off with compositionality is an open question. Following the same argument, we expect that labels become lexicalized when the cost incurred by frequently using a compositional construction exceeds the cost of adding an additional word to the lexicon. 
 
@@ -241,7 +239,7 @@ Our separate minds may organize the world into meaningful conceptual hierarchies
 
 \section{\bf Acknowledgments}
 \small
-This work was supported by ONR grant N00014-13-1-0788 and a James S. McDonnell Foundation Scholar Award to NDG. RXDH was supported by the Stanford Graduate Fellowship and the National Science Foundation Graduate Research Fellowship under Grant No. DGE-114747.  \todo[inline]{KS: If you don't mind, can you add ``This project has received funding from the European Research Council (ERC) under the European Union's Horizon 2020 research and innovation programme (grant agreement 681942, held by KS).''}
+This work was supported by ONR grant N00014-13-1-0788 and a James S. McDonnell Foundation Scholar Award to NDG. RXDH was supported by the Stanford Graduate Fellowship and the National Science Foundation Graduate Research Fellowship under Grant No. DGE-114747. This project has received funding from the European Research Council (ERC) under the European Union's Horizon 2020 research and innovation programme (grant agreement 681942, held by KS).
 
 \bibliographystyle{apacite}
 
