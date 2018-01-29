@@ -6,15 +6,31 @@ var normalize = function(truth, sum) {
   return ad.scalar.sub(truth, ad.scalar.log(sum));
 };
 
-var states = ['blueSquare1', 'blueSquare2', 'redSquare1', 'redSquare2',
-	      'spottedCircle1', 'spottedCircle2', 'stripedCircle1', 'stripedCircle2'];
-var utterances = _.map(_.range(1,17), function(i) {return 'word' + i;});
+var utterances = _.map(_.range(1, 17), function(i) {return 'word' + i;});
+var states = [{'name' : 'blueSquare1',    features: [-2,  0,  5,  0,  0]},
+	      {'name' : 'blueSquare2',    features: [-2,  0, 10,  0,  0]},
+	      {'name' : 'redSquare1',     features: [-2,  5,  0,  0,  0]},
+	      {'name' : 'redSquare2',     features: [-2, 10,  0,  0,  0]},
+	      {'name' : 'spottedCircle1', features: [ 2,  0,  0,  0,  5]},
+	      {'name' : 'spottedCircle2', features: [ 2,  0,  0,  0, 10]},
+	      {'name' : 'stripedCircle1', features: [ 2,  0,  0,  5,  0]},
+	      {'name' : 'stripedCircle2', features: [ 2,  0,  0, 10,  0]}];
 
-var getLexiconElement = function(lexicon, utt, target) {
+var numFeatures = 5;
+
+var l2 = function(x,y) {
+  var squaredDiff = T.pow(T.sub(x, y), 2);
+  return ad.scalar.sqrt(T.sumreduce(squaredDiff));
+};
+
+// The meaning of an utterance is its similarity to the target
+var meaning = function(lexicon, utt, target) {
   var utt_i = _.indexOf(utterances, utt);
-  var target_i = _.indexOf(states, target);
-  var lexiconElement = T.get(lexicon, utt_i * states.length + target_i);
-  return lexiconElement;
+  var target_i = _.indexOf(_.map(states, 'name'), target);
+  var targetFeatures = T.fromScalars(states[target_i]['features']);
+  var lexiconMeans = T.range(lexicon, utt_i * numFeatures,
+			     utt_i * numFeatures + numFeatures);
+  return l2(lexiconMeans, targetFeatures);
 };
 
 // P(target | sketch) \propto e^{scale * sim(t, s)}
@@ -22,11 +38,11 @@ var getLexiconElement = function(lexicon, utt, target) {
 var getL0score = function(target, utt, params) {
   var scores = [];
   var sum = 0;
-  var truth = getLexiconElement(params.lexicon, utt, target);
+  var truth = meaning(params.lexicon, utt, target);
   for(var i=0; i<params.context.length; i++){
     sum = ad.scalar.add(
       sum, ad.scalar.exp(
-	getLexiconElement(params.lexicon, utt, params.context[i])));
+	meaning(params.lexicon, utt, params.context[i])));
   }
   return normalize(truth, sum);
 };
@@ -36,8 +52,8 @@ var getSpeakerScore = function(utt, targetObj, params) {
   var scores = [];
   var sum = 0;
   var truth = ad.scalar.mul(params.alpha, getL0score(targetObj, utt, params));
-  for(var i=0; i< params.utterances.length; i++){
-    var inf = getL0score(targetObj, params.utterances[i], params);
+  for(var i=0; i< utterances.length; i++){
+    var inf = getL0score(targetObj, utterances[i], params);
     sum = ad.scalar.add(sum, ad.scalar.exp(ad.scalar.mul(params.alpha, inf)));
   }
   return normalize(truth, sum);
@@ -56,33 +72,33 @@ var getListenerScore = function(trueObj, utt, params) {
   return normalize(truth, sum);
 };
 
-var reformatParams = function(modelOutput, data, drift) {
-  // Makes analysis a lot easier if there's a separate col for every word in the csv
-  var trialNums = _.map(data, 'trialNum');
-  var lexiconKeys = _.flattenDeep(_.map(trialNums, function(trialNum) {
-    return _.map(_.range(1,17), function(wordNum) {
-      return _.map(states, function(state) {
-	return wordNum + '_' + state + '_' + trialNum;
-      });
-    });
-  }));
-  var lexiconVals = _.flattenDeep(_.map(modelOutput, function(l) {
-    var lexicon = T.sigmoid(l);
-    var wordList = T.split(lexicon, [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]);
-    return _.map(wordList, function(word) {
-      return T.toScalars(word);
-    });
-  }));
-  var lexica = _.zipObject(lexiconKeys, lexiconVals);
-  var driftRates = drift;
+// var reformatParams = function(modelOutput, data, drift) {
+//   // Makes analysis a lot easier if there's a separate col for every word in the csv
+//   var trialNums = _.map(data, 'trialNum');
+//   var lexiconKeys = _.flattenDeep(_.map(trialNums, function(trialNum) {
+//     return _.map(_.range(1,17), function(wordNum) {
+//       return _.map(states, function(state) {
+// 	return wordNum + '_' + state + '_' + trialNum;
+//       });
+//     });
+//   }));
+//   var lexiconVals = _.flattenDeep(_.map(modelOutput, function(l) {
+//     var lexicon = T.sigmoid(l);
+//     var wordList = T.split(lexicon, [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]);
+//     return _.map(wordList, function(word) {
+//       return T.toScalars(word);
+//     });
+//   }));
+//   var lexica = _.zipObject(lexiconKeys, lexiconVals);
+//   var driftRates = drift;
 
-  return {
-    params : _.values(lexica).join(','),
-    driftRates: driftRates,
-    paramsHeader: _.keys(lexica).join(','),
-    driftsHeader: 'driftRates'
-  };
-}
+//   return {
+//     params : _.values(lexica).join(','),
+//     driftRates: driftRates,
+//     paramsHeader: _.keys(lexica).join(','),
+//     driftsHeader: 'driftRates'
+//   };
+// }
 
 var reformatData = function(rawData) {
   return _.map(rawData, function(row) {
@@ -138,6 +154,6 @@ var bayesianErpWriter = function(erp, filePrefix) {
 };
 
 module.exports = {
-  getL0score, getSpeakerScore, getListenerScore, getLexiconElement, reformatParams,
+  getL0score, getSpeakerScore, getListenerScore, 
   reformatData, bayesianErpWriter, writeCSV, readCSV
 };
