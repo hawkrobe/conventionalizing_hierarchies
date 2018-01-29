@@ -125,11 +125,12 @@ Critically, we manipulated the statistics of the context in a between-subjects d
 
 In addition to behavioral responses collected over the course of the game, we designed a post-test to explicitly probe players' final lexica. For all sixteen words, we asked players to select all objects that word can refer to (if any), and for each object, we asked players to select all words that can refer to it (if any). Using a bidirectional measure allows us to check the internal validity of the lexica reported, to compare lexica across partners, and to distinguish between specific terms that apply to only one object and abstract terms that apply to all objects underneath higher nodes in the hierarchy. 
 
-\subsection{Qualitative Results}
+\subsection{Results}
 
 \subsubsection{Partners successfully learn to communicate}
 
 Although participants began with no common basis for label meanings, performing approximately at chance (25\%) on the first round, most pairs were nonetheless able to coordinate on a successful communication system over repeated interaction (see Fig. \ref{fig:accuracy}). 
+\ndg{can we tell if people are actually at chance initially? maybe by comparing to a logistic regression with y-intersect pinned to 0.25?}
 A mixed-effects logistic regression on listener responses with trial number as a fixed effect, and including by-pair random slopes and intercepts, showed a significant improvement in accuracy overall, $z = 14.4, p < 0.001$. 
 Accuracy also differed significantly \emph{across} conditions (Fig. \ref{fig:accuracy}): adding an additional main effect of condition to our logistic model provided a significantly better fit, $\chi^2(2) = 10.8, p = 0.004$. Qualitatively, the \emph{coarse} condition was easiest for participants, the \emph{fine} condition was hardest, and the \emph{mixed} condition was roughly in between. % Looking more closely at games within the mixed condition, we found that performance on subordinate and intermediate trial types roughly mirrored the gap between the .
 Finally, the (log) response time taken by the speaker to choose an utterance also decreased significantly over the course of the game, $t = -19.7, p < 0.001$, indicating that lexical mappings became increasingly established or accessible.
@@ -146,11 +147,14 @@ Finally, the (log) response time taken by the speaker to choose an utterance als
 
 \subsubsection{Partners converge on similar lexica}
 
-Another indicator of successful learning is convergence or alignment of lexica across partners in a dyad. Before computing similarity \emph{across} partners, however, we validate our dependent variable by examining the internal consistency \emph{within} an individual's post-test responses (we return to this issue in the Model-Based Results below). For each participant, we counted the number of mismatches between the two directions of the lexicon question (e.g. if they clicked the word `mawa' when we showed them one of the blue squares, but failed to click one that same blue square when we showed them the same word). In general, participants were very consistent: out of 128 cells in the lexicon matrix (16 words $\times$ 8 objects), the median number of mismatches was 2 (98\% agreement), though the distribution has a long tail (mean $= 7.3$). We therefore conservatively take a participant's final lexicon to be the \emph{intersection} of their word-to-object and object-to-word responses.
+Another indicator of successful learning is convergence or alignment of lexica across partners in a dyad. Before computing similarity \emph{across} partners, however, we validate our dependent variable by examining the internal consistency \emph{within} an individual's post-test responses (we return to this issue in the Model-Based Results below). For each participant, we counted the number of mismatches between the two directions of the lexicon question (e.g. if they clicked the word `mawa' when we showed them one of the blue squares, but failed to click that same blue square when we shown `mawa'). In general, participants were very consistent: out of 128 cells in the lexicon matrix (16 words $\times$ 8 objects), the median number of mismatches was 2 (98\% agreement), though the distribution has a long tail (mean $= 7.3$). We therefore conservatively take a participant's final lexicon to be the \emph{intersection} of their word-to-object and object-to-word responses.
 
 Given these estimates of each participant's lexicon, we compute the overlap across partners. Most participants aligned strongly by the end, with a median post-test overlap of 97.6\% (125 out of 128 entries). Because these matrices were extremely sparse, however, a small number of mismatches could have a large impact on performance. Overall accuracy in the game is strongly correlated with alignment: partners who reported more similar lexica at the end tended to perform better at the task ($r = 0.77$).  
 
-Despite these markers of success at the group level, individual performance was somewhat bimodal: a subpopulation of 29 games (4 from the coarse condition, 10 from the mixed condition, and 15 from the fine condition) still showed relatively poor performance, sometimes still at chance, in the fourth quartile. For the subsequent analyses focusing on the content of the lexicon, we exclude games with fourth-quartile accuracy below 75\% to ensure we are examining only successful lexica.
+\ndg{here or later: biases in which words mapped to which objects? ie kiki-boba effects.}
+
+Despite these markers of success at the group level, individual performance was somewhat bimodal: a subpopulation of 29 games (4 from the coarse condition, 10 from the mixed condition, and 15 from the fine condition) still showed relatively poor performance, sometimes at chance, in the fourth quartile. For the subsequent analyses focusing on the content of the lexicon, we exclude games with fourth-quartile accuracy below 75\% to ensure we are examining only successful lexica.
+\ndg{this was pre-planned, right? say so. more generally if this was pre-registered point out somewhere?}
 
 \subsubsection{Contextual pressures shape the lexicon}
 
