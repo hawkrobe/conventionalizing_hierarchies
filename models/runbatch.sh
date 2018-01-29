@@ -1,7 +1,6 @@
 #!/bin/bash
-for f in ./bdaInput/*.csv; do
-    webppl BDA.wppl --param-store file --param-id "${f%.csv}" --require ./refModule/ -- --gameid "$(basename "$f" .csv)" &
-    sleep 0.5s
-done
+# Need to use gnu parallel to limit number of these running at once (for memory reasons)
+# find bdaInput/*.csv | parallel -j 4 --bar "sh runbatch.sh" {}
 
-wait
+# Run with file input
+webppl BDA.wppl --param-store file --param-id "$(basename "$1" .csv)" --require ./refModule/ -- --gameid "$(basename "$1" .csv)" > "out.tmp"
