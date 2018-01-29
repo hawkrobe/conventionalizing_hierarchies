@@ -203,11 +203,14 @@ These linking functions assign a fully differentiable likelihood to our dataset 
 
 We begin by showing that the lexicon learned by this model accurately predicts the post-test responses. We constructed a logistic classifier from the posterior over lexical entries on the final quartile: for each lexical entry $\ell_{o,w}$ in the $[0,1]$ interval, we calculated the marginal posterior predictive $P(\ell_{o,w} > 0.5 | \theta)$, giving the relative likelihood under our model of word $w$ applying to object $o$. We constructed an ROC curve by examining the hits and false alarms produced when using this predictor as we varied the discrimination threshold, and found that it predicts post-test responses with excellent accuracy (AUC: 0.98). 
 
-Furthermore, we found that the corresponding posterior predictives from earlier quartiles predicted final post-test responses less well, even though they were learned from the same number and type of behavioral observations (see Fig. 5). Still, even the classifier based on the earliest quartile performs significantly above chance, indicating that some information about the final lexicon is available from the earliest rounds. These patterns are suggestive of a path-dependent process where the lexicon gradually coalesces from initially arbitrary associations over the course of the game. We next turn to the earliest stages of this emergence to understand this process in more detail.
+Furthermore, we found that the corresponding posterior predictives from earlier quartiles predicted final post-test responses less well, even though they were learned from the same number and type of behavioral observations (see Fig. 5). Still, even the classifier based on the earliest quartile performs significantly above chance, indicating that some information about the final lexicon is available from the earliest rounds. These patterns are suggestive of a path-dependent process where the lexicon gradually coalesces from initially arbitrary associations over the course of interaction. We next turn to the earliest stages of this emergence to understand this process in more detail.
 
 \subsection{Examining early time course}
 
-suggests to me they start simple and then abstract later? And the mixed guys can get by with their lexicon of specific terms, and even the intermediate guys are stuck with the residue of their early specific terms? Having validated our final-round lexicon estimates against post-test measures, we proceeded to analyze the dynamics of the lexicon over time. For this analysis, we elaborated our model to use an underlying feature basis to derive the lexicon instead of independent entries for each object-word combination. That is, we 
+Computational models of language change distinguish between \emph{semantic broadening}, when an initially narrow word takes on a more inclusive meaning, and \emph{narrowing}, when meanings become more restrictive over time (CITE). Either of these processes could be at work in our task; we use our inferred lexica to look for signatures of these two processes. %Having validated our final-round lexicon estimates against post-test measures, we proceeded to analyze the dynamics of the lexicon over time. 
+For this analysis, we elaborated our model to use an underlying feature basis to derive the lexicon instead of independent entries for each object-word combination. That is, we re-encoded each of the eight objects as a point in a seven-dimensional feature space roughly corresponding to the nodes of the hierarchy\footnote{(shape, red-ness, blue-ness, stripe-ness, spot-ness, pattern frequency, and color intensity)} and learned a .
+
+The mixed pairs can get by with their lexicon of specific terms, and even the coarse pairs are stuck with the residue of their early specific terms. 
 
 \todo[inline]{TODO: walk through examples of early rounds in different contexts; show timecourse of abstractions, e.g. are initially specific terms extended or are initially abstract terms narrowed? Distribution over word extensions at each point in time, i.e. change in lexicon. Do you tend to move from big to small or small to big quarter-to-quarter. }
 
@@ -218,7 +221,6 @@ suggests to me they start simple and then abstract later? And the mixed guys can
 {\caption{{\footnotesize \todo[inline]{TODO: directly label lines, fill bottom-right empty space with inset showing each quartile's AUC as little bar plot (e.g. 4th quarter: 0.98) \dots )}  \label{fig:postTestPrediction}}}}
 \end{center}
 \end{figure}
-
 
 \section{Discussion}
 
