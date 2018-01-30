@@ -207,7 +207,7 @@ where $o_i$ is a chosen object, $w$ an uttered word, and $\alpha$ is a hyperpara
 We use these likelihood functions to define a quartile-wise hierarchical Bayesian model on lexica. We define the lexicon used by participant $p$ at time $t$ as a function 
 $$\mathcal{L}_p^{t} : (w, o) \rightarrow [0,1]$$ 
 assigning any word-object pair a real-valued meaning in the unit interval. This function can be represented as a $\mathcal{W} \times \mathcal{O}$ matrix of real values $\ell_{w,o}^t \in \mathbb{R}$ mapped to the unit interval with a logistic function $\text{logistic}(x) = 1/(1 + e^{x})$. Because observations on each round are sparse relative to the number of entries in the lexicon, we share statistical strength across periods of time by assuming that the lexicon $\mathcal{L}^t_p$ used by participant $p$ on round $t$ is drawn from a multi-variate Gaussian $\mathcal{N}(\mathcal{L}^{0}_p, \sigma_p^{0})$ centered at that quartile's hyper-lexicon with some fixed dispersion. We place a relatively uninformative but regularizing prior $\ell_{w,o}^0 \sim \mathcal{N}(0, 1)$ on the entries of the quartile-level lexica. 
-\ndg{give statistician's notation block defining model. if each lexical entry is treated independently, then just do at that level.... something like:}
+\ndg{this paragraph can be simplified. it will help to give statistician's notation block defining model. if each lexical entry is treated independently, then just do at that level.... something like:}
 
 $$
 \begin{array}{rcl}
