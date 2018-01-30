@@ -158,6 +158,14 @@ trialAndCondition = glmer(acc ~ trialNum + condition + (1 + trialNum | gameid), 
 anova(trialOnly, trialAndCondition)
 ```
 
+What is the intercept?
+
+```{r}
+#trialOnly = glmer(acc ~ trialNum + (1 + trialNum | gameid), family = 'binomial', data = d %>% ungroup())
+#summary(trialOnly)
+t.test((d %>% ungroup() %>% filter(trialNum == 1))$acc, mu = 0.25)
+```
+
 ## Reaction times
 
 ```{r}
@@ -309,9 +317,16 @@ cat('average number of mismatches is ', median((postTest_raw %>%
 postTest_raw %>%
   group_by(gameid, finalRole, condition) %>%
   summarize(pctConsistent = 128- sum(internalConsistency)) %>%
+  group_by(condition) %>%
+  summarize(m = median(pctConsistent))
+
+postTest_raw %>%
+  group_by(gameid, finalRole, condition) %>%
+  summarize(pctConsistent = 128- sum(internalConsistency)) %>%
   ggplot(aes(x = pctConsistent)) +
     geom_histogram(bins = 35) +
     theme_few() +
+    facet_wrap(~ condition) +
     xlab('% of mismatches among post-test responses')
 ```
 
@@ -393,9 +408,25 @@ Basically, only this team?
 
 ```{r}
 postTest_clean <- postTest_raw %>%
-  filter(!(gameid %in% nonConvergers))
-
+  filter(!(gameid %in% nonConvergers)) #%>%
+  # select(-objectToWordMeaning, -wordToObjectMeaning) %>%
+  # spread(finalRole, meaning) %>%
+  # mutate(match = listener & speaker) %>%
 print(length(unique(postTest_clean$gameid)))
+```
+
+### Check whether cleaning out non-covergers basically equates internal consistency
+
+```{r}
+postTest_clean %>%
+  group_by(gameid, finalRole, condition) %>%
+  summarize(pctConsistent = 128- sum(internalConsistency)) %>%
+  group_by(condition) %>%
+  summarize(m = mean(pctConsistent))
+
+# summary(lm(pctConsistent ~ condition, data = postTest_clean %>%
+#   group_by(gameid, finalRole, condition) %>%
+#   summarize(pctConsistent = 128- sum(internalConsistency))))
 ```
 
 ### Result 1: Vocab size by condition.
@@ -456,7 +487,7 @@ ggplot(coverageDF, aes(x = condition, y = numObjectsWithSingleWord)) +
     theme_few()
 ```
 
-## How many abstract vs. specific terms overall?
+### Result 2: How many abstract vs. specific terms overall?
 
 ```{r}
 lexiconCounts <- postTest_clean %>% 
@@ -468,7 +499,7 @@ lexiconCounts <- postTest_clean %>%
   mutate(pct = n/sum(n), ci = 1.96*sqrt(pct*(1-pct)/sum(n))) 
 
 ggplot(lexiconCounts, aes(x = condition, fill = factor(numMeanings), y = pct)) +
-    geom_bar(stat = 'identity', position = position_fill(reverse = FALSE)) +
+    geom_bar(stat = 'identity', position = position_fill(reverse = FALSE), width=.5) +
     #geom_errorbar(aes(ymax = pct + ci, ymin = pct - ci), data = lexiconCounts %>% filter(numMeanings < 3), width = 0, stat = 'identity', position = 'identity') +
     #facet_wrap(~ condition) +
     theme_few() +
@@ -485,10 +516,10 @@ ggplot(lexiconCounts, aes(x = condition, fill = factor(numMeanings), y = pct)) +
   # spread(measure, value) %>%
   # mutate(wordType = ifelse(wordType == 'numAbstract', '# abstract', '# specific')) %>%
 
-ggsave('../writing/cogsci18/figures/lexiconContent.pdf', width = 4, height = 3)
+ggsave('../writing/cogsci18/figures/lexiconContent.pdf', width = 3, height = 3)
 ```
 
-## Proportion of specific & abstract within single lexicon?
+### Proportion of specific & abstract within single lexicon?
 
 ```{r}
 postTest_clean %>% 
@@ -510,11 +541,11 @@ postTest_clean %>%
     theme(aspect.ratio=1, legend.position = 'top') +
     ylim(NA, 6) +
     scale_x_continuous(breaks=c(0,2, 4, 6, 8, 10), limits = c(NA,11)) +
-    scale_fill_gradient(low = "grey90", high = "black") 
+    scale_fill_gradient(low = "grey90", high = "black")  +
     #ylim(0,6)
-    # guides(fill=FALSE)
+    guides(fill=FALSE)
   
-ggsave("../writing/cogsci18/figures/fullLexiconReport.pdf", width = 4, height =3)
+ggsave("../writing/cogsci18/figures/fullLexiconReport.pdf", width = 6, height =3)
 ```
 
 What is modal response in each condition?
@@ -545,29 +576,33 @@ postTest_clean %>%
 How many objects does each label correspond to (i.e. how many meanings at sub-level vs. basic-level vs. super-level)
 
 ```{r}
-postTest_clean %>%
+pctDF <- postTest_clean %>%
+  group_by(gameid, finalRole, wordID, condition) %>%
+  filter(meaning == 1) %>%
+  summarize(specific = sum(meaning) == 1,
+            abstract = sum(meaning) > 1) %>%
   group_by(gameid, finalRole, condition) %>%
-  filter(sum(meaning) < 16) %>%
-  group_by(gameid, finalRole, text, condition) %>%
-  summarize(numObjects = sum(meaning)) %>%
-  filter(numObjects > 0) %>%
-  group_by(gameid, finalRole, condition) %>%
-  mutate(numMeanings = length(numObjects), abstract = numObjects > 1) %>%
-  group_by(gameid, finalRole, abstract, condition) %>%
-  summarize(pct = n()/mean(numMeanings)) %>%
+  summarize(pctSpecific = sum(specific)/(sum(specific) + sum(abstract)),
+            pctAbstract = sum(abstract)/(sum(specific) + sum(abstract))) %>% 
+  group_by(condition) %>%
+  summarize(m = mean(pctSpecific))
+
+summary(lm(pctAbstract ~ condition, data = pctDF))
+
+  #gather(type, number, numSpecific, numAbstract) 
   #ungroup() %>%
-  group_by(condition) %>%
-  complete(gameid, finalRole, abstract, fill = list(pct = 0)) %>%
-  spread(abstract, pct) %>%
-  mutate(entropy = -`TRUE`*log(`TRUE`) -`FALSE`*log(`FALSE`),
-         entropy = ifelse(is.na(entropy), 0, entropy)) %>%
-  group_by(condition) %>%
-  summarize(m = mean(entropy), se = sd(entropy)/sqrt(length(entropy))) %>%
-  ggplot(aes(x = condition, y = m)) +
-    geom_bar(stat = 'identity') +
-    geom_errorbar(aes(ymax = m + se, ymin = m - se), width = 0) +
-    #facet_wrap(~ condition) +
-    theme_few()
+  # group_by(condition) %>%
+  # complete(gameid, finalRole, fill = list(pct = 0)) %>%
+  # spread(abstract, pct) %>%
+  # mutate(entropy = -`TRUE`*log(`TRUE`) -`FALSE`*log(`FALSE`),
+  #        entropy = ifelse(is.na(entropy), 0, entropy)) %>%
+  # group_by(condition) %>%
+  # summarize(m = mean(entropy), se = sd(entropy)/sqrt(length(entropy))) %>%
+  # ggplot(aes(x = condition, y = m)) +
+  #   geom_bar(stat = 'identity') +
+  #   geom_errorbar(aes(ymax = m + se, ymin = m - se), width = 0) +
+  #   #facet_wrap(~ condition) +
+  #   theme_few()
 ```
 
 # Model analysis
