@@ -53,7 +53,7 @@
 \newcommand{\appref}[1]{Appendix \ref{#1}}
 \newcommand{\sectionref}[1]{Section \ref{#1}}
 
-\title{Interacting pairs coordinate on abstractions in lexicon \\ when communicatively relevant}
+\title{Interacting pairs coordinate on lexical conventions for abstractions \\ when communicatively relevant}
  
 \author{{\large \bf Robert X.D. Hawkins \textsuperscript{1}, Michael Franke\textsuperscript{2}, Kenny Smith\textsuperscript{3}, Noah D.~Goodman\textsuperscript{1}} \\
    \textsuperscript{1}Department of Psychology, Stanford University (\{rxdh,ngoodman\}@stanford.edu) \\
@@ -94,9 +94,18 @@ Under the logic of a local efficiency/informativity tradeoff, we expect that
 For example, we are often called upon to make fine distinctions between people in our social circles, hence lexicalizing efficient names for each individual; when referring to green beans or paper towels, however, we can get away without such specific terms -- we are rarely called upon to disambiguate between entities. %\citeA{Wittgenstein09_PhilosophicalInvestigations}
 %\todo[inline]{KS: second unrelated comment at this point. The thing I find interesting from the simplicity/expressivity trade-off perspective is that hierachical terms seem like they are a bad idea - what's the advantage of having multiple terms, and how does it overcome the cost of the increase in the size of the lexicon? Is it worth flagging that up? And does our data speak to it?} 
 
+\begin{figure*}[t]
+\begin{center}
+{\includegraphics[scale=.65]{fig.png}}
+{\caption{{(A) Example of \emph{fine} context where one of the distractors belongs to the same fine-grained branch of the hierarchy as the target (i.e. another striped circle), so any abstract label would be insufficient to disambiguate them. The target is highlighted for the speaker with a black square. (B) Drag-and-drop chat box interface. (C) Hierarchical organization of stimuli.\label{exp}}}}
+\end{center}
+\end{figure*}
+
 Here, we develop an experimental paradigm and analytic approach to examine the causal factors driving the emergence of lexical conventions in real-time. 
-Pairs of participants played a repeated reference game in which they interactively developed an artificial language from scratch  \cite<e.g.>{GalantucciGarrod11_ExperimentalSemiotics}. 
-We manipulated the pragmatic demands of context and found that abstractions only emerged when  that for the optimal expressivity hypothesis in the lexica different pairs converged on, we conducted a Bayesian Data Analysis of a rational communication model to infer the underlying lexica participants were using throughout the game. This analysis suggests learning mechanisms by which pragmatic agents make different inferences about the lexicon in different contexts, and therefore get away with extending terms more broadly when the context allows.  
+We manipulated context in a repeated reference game where pairs of participants interactively coordinated on an artificial language from scratch  \cite<e.g.>{GalantucciGarrod11_ExperimentalSemiotics}. 
+%We manipulated the pragmatic demands of context and found that abstractions only emerged when  that for the optimal expressivity hypothesis in the lexica different pairs converged on, we conducted a Bayesian Data Analysis of a rational communication model to infer the underlying lexica participants were using throughout the game. 
+In both behavioral and model-based analyses, we find that abstractions only emerge when fine-grained distinctions are not necessary. We close by suggesting a learning mechanism by which pragmatic agents initially make different inferences about the lexicon their partner is using in different contexts, and therefore get away with extending terms more broadly when the context allows.  
+
 %\ndg{this paragraph is too vague yet technical. either be more specific about design and results. or describe at the level of take-aways.}
 % rational communication model allowing us to analyze not just what system they converged on but how it got there. % present a learning mechanism at the level of individual agents 
 %Here, we show how the statistics of the communicative environment shape which levels of abstraction are lexicalized by interacting agents. 
@@ -113,23 +122,16 @@ We manipulated the pragmatic demands of context and found that abstractions only
 			
 \section{Experiment: Repeated reference game}
 
-\begin{figure*}[t]
-\begin{center}
-{\includegraphics[scale=.65]{fig.png}}
-{\caption{{(A) Example array of elements the matcher \ndg{matcher or listener? check nomenclature throughout} must choose from. The target is highlighted for the speaker with a black square. In this \emph{fine} trial there is a distractor \ndg{at the lowest level as the target (awk)} (i.e. another striped circle), so using any abstract label would be insufficient. (B) Drag-and-drop chat box interface. (C) Hierarchical organization of stimuli.\label{exp}}}}
-\end{center}
-\end{figure*}
-
 \subsubsection{Participants}
 
 We recruited 278 participants from Amazon Mechanical Turk to play an interactive, multi-player game using the framework described in \citeA{Hawkins15_RealTimeWebExperiments}. Pairs were randomly assigned to one of three different conditions, yielding between $n=36$ and $n=53$ dyads per condition, after excluding participants who disconnected before completion.
 
 \subsubsection{Procedure \& Stimuli}
-Participants were paired over the web and placed in a shared environment containing an array of four objects (Fig. 1A) and a `chatbox' to send messages from a randomly generated vocabulary (Fig. 1B). On each of 96 trials, one player -- the `speaker' -- was privately shown a highlighted target object and allowed to send a single word to communicate the identity of this object to their partner, who subsequently made a selection from the array. Players swapped roles each round and were rewarded with bonus payment when the listener successfully chose the intended object.
+Participants were paired over the web and placed in a shared environment containing an array of four objects (Fig. 1A) and a `chatbox' to send messages from a randomly generated vocabulary (Fig. 1B). On each of 96 trials, one player (the `speaker') was privately shown a highlighted target object and allowed to send a single word to communicate the identity of this object to their partner (the `listener'), who subsequently made a selection from the array. Players swapped roles each round and were rewarded with bonus payment when the listener successfully chose the intended object.
 
 The objects that served as referents were designed to cluster in a fixed three-level hierarchy with shape at the top-most level, color/texture at the intermediate levels, and frequency/intensity at the finest levels (see Fig. 1C). Each communicative context contained four objects. Distractors could differ from the target at various level of the hierarchy, creating different types of contexts defined by the finest distinction that had to be drawn. We focus on two: \emph{fine} trials, where the closest distractor belongs to the same fine-grained subordinate category (e.g. another striped circle; see Fig. 1A), and \emph{coarse} trials, where the closest distractor belongs to a coarser level of the conceptual hierarchy (e.g. dotted circle instead of striped square).\footnote{Even coarser trials with super-ordinate distractors (e.g. a circle target among three square distractors) were logically possible but would have introduced several experimental confounds; we opted to leave these trial types out of our design and conduct the minimal manipulation.} Fixed arrays of 16 utterances were randomly generated in each game (constant across trials) by stringing together consonant-vowel pairs into pronounceable 2-syllable words.
 
-Critically, we manipulated the statistics of the context in a between-subjects design to test the effect of communicative relevance on lexicalization. In the pure \emph{fine} and \emph{coarse} conditions, all targets appeared in fine or coarse contexts, respectively; in the \emph{mixed} condition, the two context types were equally likely, thus providing diversity in the relevant distinctions that must be drawn. Sequences of trials were constructed by randomly shuffling targets and trial types within blocks and ensuring no target appeared more than once in a row. 
+Critically, we manipulated the statistics of the context in a between-subjects design to test the effect of communicative relevance on lexicalization. In the pure \emph{fine} and \emph{coarse} conditions, all targets appeared in fine or coarse contexts, respectively; in the \emph{mixed} condition, the two context types were equally likely, providing diversity in the relevant distinctions that must be drawn. Sequences of trials were constructed by randomly shuffling targets and trial types within blocks and ensuring no target appeared more than once in a row. 
 
 In addition to behavioral responses collected over the course of the game, we designed a post-test to explicitly probe players' final lexica. For all sixteen words, we asked players to select all objects that word can refer to (if any), and for each object, we asked players to select all words that can refer to it (if any). Using a bidirectional measure allows us to check the internal validity of the lexica reported, to compare lexica across partners, and to distinguish between specific terms that apply to only one object and abstract terms that apply to all objects underneath higher nodes in the hierarchy. 
 
@@ -173,10 +175,11 @@ To test this prediction, we counted the number of words in the group's shared le
 \begin{figure*}[t]
 \begin{center}
 {\includegraphics[scale=0.7]{lexiconContent_edited.pdf}}
-{\includegraphics[scale=0.87]{fullLexiconReport.pdf}}
+{\includegraphics[scale=0.7]{fullLexiconReport.pdf}}
 {\caption{{Pragmatic demands of context shape the formation of abstractions. (A) Distribution of extension sizes in lexica reported across conditions, including those with no extensions  
 %\todo[inline]{KS: You'll have to explain how a word can have no extensions, but I'd be tempted to not show these in these graphs? Assuming these are uninteresting (?), showing proportion of  1 vs more-than-1 object words would make the result much clearer. Do you have this in to also show the lexicon size difference? Could show that more straightforwardly with a plot of number of words poer condition?} . 
-In the \emph{fine} condition, nearly every word reported in every pair only referred to a single object; in the \emph{coarse} condition, 50\% of reported words were abstractions applying to more than one object. The \emph{mixed} condition is more similar to the \emph{fine} condition than the \emph{coarse} condition. (B) Diversity of lexica within pairs: many pairs in the \emph{coarse} condition reported a mixture of abstract and specific terms. \todo[inline]{TODO: Fix condition names; A/B labels; use \# words instead of \%; change axis labels in B to ``\# words referring to single object'' and ``\# words referring to multiple objects''; change B to heatmap}  \label{fig:lexiconContent}}}}
+In the \emph{fine} condition, nearly every word reported in every pair only referred to a single object; in the \emph{coarse} condition, 50\% of reported words were abstractions applying to more than one object. The \emph{mixed} condition is more similar to the \emph{fine} condition than the \emph{coarse} condition. (B) Diversity of lexica within pairs: many pairs in the \emph{coarse} condition reported a mixture of abstract and specific terms.% \todo[inline]{TODO: A/B labels; use \# words instead of \%; change axis labels in B to `'' and ``\# words referring to multiple objects'';}  
+\label{fig:lexiconContent}}}}
 \end{center}
 \end{figure*}
 
@@ -216,11 +219,20 @@ where $\alpha$ is another hyperparameter determining the soft-max optimality of 
 
 These linking functions assign a fully differentiable likelihood to our dataset for any given sequence of lexica. We can therefore use mean-field variational inference \cite{RanganathGerrishBlei13_BlackBoxVariationalInference}, implemented in the probabilistic programming language WebPPL \cite{GoodmanStuhlmuller14_DIPPL}. We optimize a family of Gaussians to minimize the evidence lower bound (ELBO) which approximates the joint posterior over all lexical entries (and shared hyperparameters) used by each participant for each round in each game. 
 
+%\begin{figure}[t]
+%\begin{center}
+%{\includegraphics[scale=.4]{modelSchematic}}
+%%{\includegraphics[scale=.64]{lexiconSize.pdf}}
+%{\caption{{\footnotesize \todo[inline]{question for NDG: I wanted some kind of schematic of the model, but I'm not sure this plate notation is the best way of doing it (whether supplementing plate with a cartoon, or replacing it?)\dots Notation is kind of icky right now, too\dots this would ideally lay out very clearly the intuition behind how early contexts affect lexicon learning}  \ndg{i'd cut this. i don't think you need a bda model figure.}   \label{fig:modelSchematic}}}}
+%\end{center}
+%\end{figure}
+
+
 \begin{figure}[t]
 \begin{center}
-{\includegraphics[scale=.4]{modelSchematic}}
+{\includegraphics[scale=0.7]{modelPerformance.pdf}}
 %{\includegraphics[scale=.64]{lexiconSize.pdf}}
-{\caption{{\footnotesize \todo[inline]{question for NDG: I wanted some kind of schematic of the model, but I'm not sure this plate notation is the best way of doing it (whether supplementing plate with a cartoon, or replacing it?)\dots Notation is kind of icky right now, too\dots this would ideally lay out very clearly the intuition behind how early contexts affect lexicon learning}  \ndg{i'd cut this. i don't think you need a bda model figure.}   \label{fig:modelSchematic}}}}
+{\caption{{\footnotesize \todo[inline]{TODO: directly label lines, fill bottom-right empty space with inset showing each quartile's AUC as little bar plot (e.g. 4th quarter: 0.98) \dots )}  \label{fig:postTestPrediction}}}}
 \end{center}
 \end{figure}
 
@@ -241,14 +253,6 @@ That is, we re-encoded each of the eight objects as a point in a discrete seven-
 The mixed pairs can get by with their lexicon of specific terms, and even the coarse pairs are stuck with the residue of their early specific terms. 
 
 \todo[inline]{TODO: walk through examples of early rounds in different contexts; show timecourse of abstractions, e.g. are initially specific terms extended or are initially abstract terms narrowed? Distribution over word extensions at each point in time, i.e. change in lexicon. Do you tend to move from big to small or small to big quarter-to-quarter. }
-
-\begin{figure}[t]
-\begin{center}
-{\includegraphics[scale=0.7]{modelPerformance.pdf}}
-%{\includegraphics[scale=.64]{lexiconSize.pdf}}
-{\caption{{\footnotesize \todo[inline]{TODO: directly label lines, fill bottom-right empty space with inset showing each quartile's AUC as little bar plot (e.g. 4th quarter: 0.98) \dots )}  \label{fig:postTestPrediction}}}}
-\end{center}
-\end{figure}
 
 \section{Discussion}
 
