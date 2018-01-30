@@ -97,7 +97,7 @@ For example, we are often called upon to make fine distinctions between people i
 \begin{figure*}[t]
 \begin{center}
 {\includegraphics[scale=.65]{fig.png}}
-{\caption{{(A) Example of \emph{fine} context where one of the distractors belongs to the same fine-grained branch of the hierarchy as the target (i.e. another striped circle), so any abstract label would be insufficient to disambiguate them. The target is highlighted for the speaker with a black square. (B) Drag-and-drop chat box interface. (C) Hierarchical organization of stimuli.\label{exp}}}}
+{\caption{\footnotesize{(A) Example of \emph{fine} context where one of the distractors belongs to the same fine-grained branch of the hierarchy as the target (i.e. another striped circle), so any abstract label would be insufficient to disambiguate them. The target is highlighted for the speaker with a black square. (B) Drag-and-drop chat box interface. (C) Hierarchical organization of stimuli.\label{exp}}}}
 \end{center}
 \end{figure*}
 
@@ -124,7 +124,7 @@ In both behavioral and model-based analyses, we find that abstractions only emer
 
 \subsubsection{Participants}
 
-We recruited 278 participants from Amazon Mechanical Turk to play an interactive, multi-player game using the framework described in \citeA{Hawkins15_RealTimeWebExperiments}. Pairs were randomly assigned to one of three different conditions, yielding between $n=36$ and $n=53$ dyads per condition, after excluding participants who disconnected before completion.
+We recruited 278 participants from Amazon Mechanical Turk to play an interactive, multi-player game using the framework described in \citeA{Hawkins15_RealTimeWebExperiments}. Pairs were randomly assigned to one of three different conditions, yielding between $n=36$ and $n=53$ dyads per condition, after excluding participants who disconnected before completion.\footnote{All materials and data are available at \url{https://github.com/hawkrobe/conventionalizing_hierarchies}; planned sample sizes, exclusion criteria, and analysis plan were pre-registered at \url{https://osf.io/2hkjc/}}
 
 \subsubsection{Procedure \& Stimuli}
 Participants were paired over the web and placed in a shared environment containing an array of four objects (Fig. 1A) and a `chatbox' to send messages from a randomly generated vocabulary (Fig. 1B). On each of 96 trials, one player (the `speaker') was privately shown a highlighted target object and allowed to send a single word to communicate the identity of this object to their partner (the `listener'), who subsequently made a selection from the array. Players swapped roles each round and were rewarded with bonus payment when the listener successfully chose the intended object.
@@ -140,16 +140,16 @@ In addition to behavioral responses collected over the course of the game, we de
 \subsubsection{Partners successfully learn to communicate}
 
 Although participants began with no common basis for label meanings, performing approximately at chance (25\%) on the first round, most pairs were nonetheless able to coordinate on a successful communication system over repeated interaction (see Fig. \ref{fig:accuracy}). 
-\ndg{can we tell if people are actually at chance initially? maybe by comparing to a logistic regression with y-intersect pinned to 0.25?}
 A mixed-effects logistic regression on listener responses with trial number as a fixed effect, and including by-pair random slopes and intercepts, showed a significant improvement in accuracy overall, $z = 14.4, p < 0.001$. 
-Accuracy also differed significantly \emph{across} conditions (Fig. \ref{fig:accuracy}): adding an additional main effect of condition to our logistic model provided a significantly better fit, $\chi^2(2) = 10.8, p = 0.004$. Qualitatively, the \emph{coarse} condition was easiest for participants, the \emph{fine} condition was hardest, and the \emph{mixed} condition was roughly in between. % Looking more closely at games within the mixed condition, we found that performance on subordinate and intermediate trial types roughly mirrored the gap between the .
+Accuracy also differed significantly \emph{across} conditions (Fig. \ref{fig:accuracy}): adding an additional main effect of condition to our logistic model provided a significantly better fit, $\chi^2(2) = 10.8, p = 0.004$. 
+Qualitatively, the \emph{coarse} condition was easiest for participants, the \emph{fine} condition was hardest, and the \emph{mixed} condition was roughly in between. % Looking more closely at games within the mixed condition, we found that performance on subordinate and intermediate trial types roughly mirrored the gap between the .
 Finally, the (log) response time taken by the speaker to choose an utterance also decreased significantly over the course of the game, $t = -19.7, p < 0.001$, indicating that lexical mappings became increasingly established or accessible.
 
 \begin{figure}[t]
 \begin{center}
 {\includegraphics[scale=0.65]{accuracyByCondition_edited.pdf}}
 %{\includegraphics[scale=.64]{lexiconSize.pdf}}
-{\caption{{Players learn to coordinate on a successful communication system through interaction. Each point is the mean proportion of correct responses by listeners in the given condition on the given round; smoothing curves are nonparametric regression fits.  %\todo[inline]{rdh questions: Use semantically meaningful condition codes, e.g. red/blue/purple? Is this too far aggregated from data (e.g. show error bars on each point? fit curves to individual-level binary responses instead of through group means?)}  
+{\caption{\footnotesize{Players learn to coordinate on a successful communication system through interaction. Each point is the mean proportion of correct responses by listeners in the given condition on the given round; smoothing curves are nonparametric regression fits.  %\todo[inline]{rdh questions: Use semantically meaningful condition codes, e.g. red/blue/purple? Is this too far aggregated from data (e.g. show error bars on each point? fit curves to individual-level binary responses instead of through group means?)}  
 \label{fig:accuracy}}}}
 \vspace{-.5cm}
 \end{center}
@@ -161,10 +161,8 @@ Another indicator of successful learning is convergence or alignment of lexica a
 
 Given these estimates of each participant's lexicon, we compute the overlap across partners. Most participants aligned strongly by the end, with a median post-test overlap of 97.6\% (125 out of 128 entries). Because these matrices were extremely sparse, however, a small number of mismatches could have a large impact on performance. Overall accuracy in the game is strongly correlated with alignment: partners who reported more similar lexica at the end tended to perform better at the task ($r = 0.77$).  
 
-\ndg{here or later: biases in which words mapped to which objects? ie kiki-boba effects.}
-
-Despite these markers of success at the group level, individual performance was somewhat bimodal: a subpopulation of 29 games (4 from the coarse condition, 10 from the mixed condition, and 15 from the fine condition) still showed relatively poor performance, sometimes at chance, in the fourth quartile. For the subsequent analyses focusing on the content of the lexicon, we exclude games with fourth-quartile accuracy below 75\% to ensure we are examining only successful lexica.
-\ndg{this was pre-planned, right? say so. more generally if this was pre-registered point out somewhere?}
+Despite these markers of success at the group level, individual performance was somewhat bimodal: a subpopulation of 29 games (4 from the coarse condition, 10 from the mixed condition, and 15 from the fine condition) still showed relatively poor performance, sometimes at chance, in the fourth quartile. For the subsequent analyses focusing on the content of the lexicon, we exclude games with fourth-quartile accuracy below the pre-registered criterion of 75\% to ensure we are examining only successful lexica.
+%\ndg{this was pre-planned, right? say so. more generally if this was pre-registered point out somewhere?}
 
 \subsubsection{Contextual pressures shape the lexicon}
 
@@ -191,9 +189,7 @@ These data also reveal an interesting asymmetry in lexicon content across condit
 \section{Model-based Analysis}
 
 Our post-test provides some insight into the end-result of lexicalization under different communicative contexts, but understanding the \emph{dynamics} of lexicalization requires more detailed analysis of behavioral trajectories. How do lexica shift and develop over the course of interaction? 
-\ndg{i think you should save the hawkins etal learning story for discussion. here you just need the basic idea that speaker-listener behavior is derived from lexicon by RSA.}
-A recent cognitive model of convention formation has explained the rapid coordination on efficient but informative lexical terms as a process of mutual lexical learning \cite{HawkinsFrankGoodman17_ConventionFormation}. Each agent assumes their partner is rationally producing cooperative utterances under some latent lexicon; given initial uncertainty over the contents of that lexicon, agents can invert their model of a communicative agent to infer their partner's lexicon from their observable behavior \cite{BergenLevyGoodman16_LexicalUncertainty}. %Each individual is trying to infer the lexicon being used by their partner by observing their behavior in context. 
-Listeners assume speakers are trying to be informative and parsimonious, and speakers assume listeners interpret utterances by evaluating meanings in their lexicon against objects in context \cite{FrankGoodman12_PragmaticReasoningLanguageGames,GoodmanFrank16_RSATiCS}. 
+\ndg{here you just need the basic idea that speaker-listener behavior is derived from lexicon by RSA.}
 
 Here, we present a purely statistical model of this progression without attributing any learning mechanisms to the agent. That is, we assume that on any given round, the speaker is rationally producing utterances given some internal lexicon, and we invert a model of a pragmatic speaker to infer what that lexicon is. First, this analysis validates our post-test measures of lexical meaning against actual behavioral usage throughout the game --- if participant reports are internally consistent, the model's posterior on the last round of the game should be able to independently predict their post-test responses. Second, we can compare the time-course of lexical emergence by looking at inferences from earlier rounds of the game. Finally, because our statistical model learns from the same data that agents in principle learn from, it provides some insight into the path-dependent effects of early communicative pressures on the available meanings. %basic-level vs. subordinate-level terms, (4) measure path-dependence, e.g. how 
 \ndg{does it really do that last thing?}
@@ -258,6 +254,10 @@ The mixed pairs can get by with their lexicon of specific terms, and even the co
 
 How do abstractions emerge in the lexicon? Motivated by recent computational accounts of lexical adaptation at both global and local time scales, we hypothesized that while constrained communicative contexts would favor informative one-to-one object-word mappings, coarser contexts would allow language users to get away with extending meanings to broader features. By manipulating the statistics of communicative context in a repeated reference game with novel labels, we found both qualitative behavioral evidence and finer-grained model-based evidence for pragmatic influences on convention formation.
 
+\ndg{add here a discussion of the relation between these results and analyses and cognitive models of lexicon formation. ie contrast the bda here with the learning model of hawkins etal}
+These findings are consistent with a recent cognitive model of convention formation which explained the rapid coordination on efficient but informative lexical terms as a process of mutual lexical learning \cite{HawkinsFrankGoodman17_ConventionFormation}. In this model, each agent assumes their partner is rationally producing cooperative utterances under some latent lexicon; given initial uncertainty over the contents of that lexicon, agents can invert their model of a communicative agent to infer their partner's lexicon from their observable behavior \cite{BergenLevyGoodman16_LexicalUncertainty}. %Each individual is trying to infer the lexicon being used by their partner by observing their behavior in context. 
+Listeners assume speakers are trying to be informative and parsimonious, and speakers assume listeners interpret utterances by evaluating meanings in their lexicon against objects in context \cite{FrankGoodman12_PragmaticReasoningLanguageGames,GoodmanFrank16_RSATiCS}. 
+
 While we showed how abstractions emerge even in a task requiring only reference to individual object, there are other clear functional advantages to having abstract terms in the lexicon. For one, they allow speakers to efficiently refer to large, potentially infinite, sets of things, and make generalizations about categories, e.g. ``Dogs bark'' (Tessler \& Goodman, 2016). In future work, we expect that pragmatic pressures to refer to entire sets, or conjunctions of objects, may also give rise to the kind of nestedness seen in natural lexical distributions through similar mechanisms.
 
 These results also help illuminate the relationship between our concepts and words, which are often treated interchangeably. While our individual mental representations of taxonomies are indpendently adaptive to the natural perceptual structure of the world (Rosch et al, 1976; Mervis \& Rosch ,1981; Murphy \& Smith, 1982), it is far from inevitable that all levels of these conceptual hierarchies become conventionalized as lexical items. There are many perfectly natural concepts that are not represented by distinct words in the English language: for instance, we do not have words for each individual tree in our yards, or for abstract but ad-hoc concepts like \emph{things to sell at a garage sale} (Barsalou, 1983). Indeed, English speakers are often fascinated by difficult to express concepts like ``hygge'' or ``tartle'' that are lexicalized as simple words in foreign languages.
@@ -267,8 +267,6 @@ These results also help illuminate the relationship between our concepts and wor
 
 \todo[inline]{question for NDG: put some broader comment connecting to/contrasting with other cognitive theories of what's going on here? e.g. (1) not a simple associative learning account, where people just store memory traces of word-object co-occurances (can't account for context effects of generation), although note that probably a simpler model just counting co-occurences could account for the post-test responses just as well (it just wouldn't have as flexible an underlying representation). (2) elaborates on Xu \& Tenenbaum (2007) word learning story by introducing contextual pressures?}
 \ndg{could do if there is a short clear point to make...}
-
-\ndg{add here a discussion of the relation between these results and analyses and cognitive models of lexicon formation. ie contrast the bda here with the learning model of hawkins etal}
 
 We showed how abstractions become lexicalized when participants were restricted to single-word utterances, but how the lexicalization of nominal terms trades off with compositionality is an open question. Following the same argument, we expect that labels become lexicalized when the cost incurred by frequently using a compositional construction exceeds the cost of adding an additional word to the lexicon. 
 
