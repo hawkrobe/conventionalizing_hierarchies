@@ -53,7 +53,7 @@
 \newcommand{\appref}[1]{Appendix \ref{#1}}
 \newcommand{\sectionref}[1]{Section \ref{#1}}
 
-\title{Interacting pairs coordinate on lexical conventions for abstractions \\ when communicatively relevant}
+\title{Specificity of lexical conventions is shaped by communicative context}
  
 \author{{\large \bf Robert X.D. Hawkins \textsuperscript{1}, Michael Franke\textsuperscript{2}, Kenny Smith\textsuperscript{3}, Noah D.~Goodman\textsuperscript{1}} \\
    \textsuperscript{1}Department of Psychology, Stanford University (\{rxdh,ngoodman\}@stanford.edu) \\
@@ -66,18 +66,16 @@
 
 %\todo[inline]{KS: title slightly under-sells the fact that they are developing a novel communication system, rather than learning a pre-existing one.  ``Hierarchically-structured lexicons evolve/emerge when hierarchical terms are communicatively relevant'' or ``Interacting pairs developed hierarchically-structured lexicons when hierarchical terms are communicatively relevant" or something like that might give more of as flavour?} 
 
-\mf{title suggestion, something like: ``Emerging lexical conventions in the lab and how to
-  infer them: levels of abstraction \& the statistics of the environment''}
+%\mf{title suggestion, something like: ``Emerging lexical conventions in the lab and how to
+%  infer them: levels of abstraction \& the statistics of the environment''}
 
 \begin{abstract}
-What drives the emergence of levels of abstraction in a communication system? Recent computational theories of language evolution suggest that the communicative demands of the environment may play a deciding role. We hypothesize that interacting pairs are more likely to lexicalize specific names (e.g.\ \emph{Fido}) when the context frequently requires making fine distinctions between entities; conversely, pairs should converge on a more compressed lexicon containing only words for abstract categories (e.g.\ \emph{dog}) when coarser contexts allow them to get away with it. We test this hypothesis by manipulating context in a repeated reference game where pairs of participants must interactively coordinate on an artificial communication system. In addition to showing qualitative differences in the levels of abstraction that emerged in participants' lexicons across different contexts, we introduce a statistical approach to probe the dynamics of the process by which abstractions gradually coalesce through interaction. These findings illuminate the local pragmatic learning mechanisms that may drive global convention formation.
-\mf{first sentence mentions ``levels of abstraction'' but I wonder if this should not first be explained by something like what comes later here; I'm also not sure that just saying ``interacting pairs'' is maximally clear to everybody (hence my feeble attempt at suggesting a new title)}
+Conventions exist for many levels of specificity: from the broadest (\emph{thing}) to the most specific (\emph{Fido}). What drives the emergence of these levels of abstraction? Recent computational theories of language evolution suggest that the communicative demands of the environment may play a deciding role. We hypothesize that language users are more likely to lexicalize specific names (e.g.\ \emph{Fido}) when the context frequently requires making fine distinctions between entities; conversely, they should develop a more compressed lexicon containing only words for abstract categories (e.g.\ \emph{dog}) when coarser contexts allow them to get away with it. We test this hypothesis by manipulating context in a repeated reference game where pairs of participants must interactively coordinate on an artificial communication system. In addition to showing qualitative differences in the levels of abstraction that emerged in participants' lexicons across different contexts, we introduce a statistical approach to probe the dynamics of the process by which abstractions gradually coalesce through interaction. These findings illuminate the local pragmatic learning mechanisms that may drive global language evolution.
+
 \textbf{Keywords:}
-conventions; pragmatics; communication
+conventions; pragmatics; communication; interaction; referring expressions
 
 \end{abstract}
-
-\todo[inline]{Long, clunky sentences; ``still, several limitations'' isn't meaningful without previous paragraph. Split ``Under the logic...' into multiple sentences. Suggest alternative.}
 
 \section{Introduction}
 %% Set up problem
@@ -86,26 +84,25 @@ Natural languages provide speakers with remarkable flexibility in the labels the
 %% Overview of big-picture optimal expressivity theory suggesting an answer
 One functional answer is suggested by recent computational approaches to language evolution, which have argued that the lexical conventions of languages balance simplicity, or learnability, with the communicative needs of their users. This optimal expressivity hypothesis accounts well for the lexical distributions found in natural languages across semantic domains like color words and kinship categories \cite{RegierKempKay15_WordMeaningsEfficientCommunication}, as well as the compositional systems that emerge under iterated learning with communication in the lab \cite{WintersKirbySmith14_LanguagesAdapt, KirbyTamarizCornishSmith15_CompressionCommunication}. A key prediction is that the lexicon of a group should be sensitive to the pragmatic demands of their environment. For example, languages in warm regions ought to be more likely to collapse the distinction between ice and snow into a single word, simply because there are fewer occasions that require distinguishing between the two \cite{RegierCarstensenKemp16_WordsForSnow}. 
 
+%% Limitations of past studies
 Still, there are several limitations to the current evidence for this hypothesis. 
 First, much of the relevant evidence is observational, aggregated at the level of overall language statistics, not by directly manipulating the contextual conditions of individual language users. 
-Second, previous experimental studies have largely focused on the outcomes of an iterated learning process, thus providing a functional argument for \emph{when} different systems may form, but have not provided a cognitive, mechanistic account of the dynamics of the formation process in individual agents.
+Second, previous experimental studies have largely focused on the outcomes of an iterated learning process, thus providing a functional argument for when different systems are appropriate, but have not provided a cognitive, mechanistic account of the dynamics of the formation process in individual agents.
 
 %% Make the case for zooming into dyadic convention formation
 While globally shared conventions of a language are shaped over the multi-generational timescales of cultural evolution, contextual pressures operate on the shorter timescales of dyadic interaction. 
 In a matter of minutes, communication partners coordinate on efficient but informative local conventions, or conceptual pacts, for the task at hand \cite{ClarkWilkesGibbs86_ReferringCollaborative, BrennanClark96_ConceptualPactsConversation,HawkinsFrankGoodman17_ConventionFormation}. 
-To understand how \emph{languages} are globally shaped by communicative constraints, it may therefore be valuable to understand the local conventions rapidly formed by adaptive agents over the course of extended interaction.
+To understand how \emph{languages} are globally shaped by communicative constraints, it may therefore be valuable to understand the local conventions rapidly formed by adaptive agents over extended interactions.
 
-%% Hypothesis & limitations of past studies
-Under the logic of a local efficiency/informativity tradeoff, we expect that 
-(1) communicative pressures for informativity should lead to the lexicalization of specific names when fine distinctions must be drawn, and that 
-(2) abstractions should become lexicalized precisely when the relevant distinctions are at coarser levels of the conceptual hierarchy. 
+%% Hypothesis
+Under the logic of a local efficiency/informativity tradeoff, we make two predictions about the emergence of abstractions. First, we expect that communicative pressures for informativity should lead to the lexicalization of specific names when fine distinctions must be drawn. Second, abstractions should become lexicalized precisely when the relevant distinctions are at coarser levels of the conceptual hierarchy. 
 For example, we are often called upon to make fine distinctions between people in our social circles, hence lexicalizing efficient names for each individual; when referring to green beans or paper towels, however, we can get away without such specific terms -- we are rarely called upon to disambiguate between entities. %\citeA{Wittgenstein09_PhilosophicalInvestigations}
 %\todo[inline]{KS: second unrelated comment at this point. The thing I find interesting from the simplicity/expressivity trade-off perspective is that hierachical terms seem like they are a bad idea - what's the advantage of having multiple terms, and how does it overcome the cost of the increase in the size of the lexicon? Is it worth flagging that up? And does our data speak to it?} 
 
 \begin{figure*}[t]
 \begin{center}
 {\includegraphics[scale=.65]{fig.png}}
-{\caption{\footnotesize{(A) Example of \emph{fine} context where one of the distractors belongs to the same fine-grained branch of the hierarchy as the target (i.e.\ another striped circle), so any abstract label would be insufficient to disambiguate them. The target is highlighted for the speaker with a black square. (B) Drag-and-drop chat box interface. (C) Hierarchical organization of stimuli.\label{exp}}}}
+{\caption{{(A) Example of \emph{fine} context where one of the distractors belongs to the same fine-grained branch of the hierarchy as the target (i.e.\ another striped circle), so any abstract label would be insufficient to disambiguate them. The target is highlighted for the speaker with a black square. (B) Drag-and-drop chat box interface. (C) Hierarchical organization of stimuli.\label{exp}}}}
 \end{center}
 \end{figure*}
 
@@ -157,9 +154,9 @@ Finally, the (log) response time taken by the speaker to choose an utterance als
 \begin{center}
 {\includegraphics[scale=0.65]{accuracyByCondition_edited.pdf}}
 %{\includegraphics[scale=.64]{lexiconSize.pdf}}
-{\caption{\footnotesize{Players learn to coordinate on a successful communication system through interaction. Each point is the mean proportion of correct responses by listeners in the given condition on the given round; smoothing curves are nonparametric regression fits.  %\todo[inline]{rdh questions: Use semantically meaningful condition codes, e.g.\ red/blue/purple? Is this too far aggregated from data (e.g.\ show error bars on each point? fit curves to individual-level binary responses instead of through group means?)}  
+{\caption{{Players learn to coordinate on a successful communication system through interaction. Each point is the mean proportion of correct responses by listeners in the given condition on the given round; smoothing curves are nonparametric regression fits.  %\todo[inline]{rdh questions: Use semantically meaningful condition codes, e.g.\ red/blue/purple? Is this too far aggregated from data (e.g.\ show error bars on each point? fit curves to individual-level binary responses instead of through group means?)}  
 \label{fig:accuracy}}}}
-\vspace{-.5cm}
+\vspace{-.7cm}
 \end{center}
 \end{figure}
 
@@ -195,9 +192,8 @@ These data also reveal an interesting asymmetry in lexicon content across condit
 \section{Model-based Analysis}
 
 Our post-test provides some insight into the end-result of lexicalization under different communicative contexts, but understanding the \emph{dynamics} of lexicalization requires a more detailed analysis of behavioral trajectories. How do lexica shift and develop over the course of interaction? 
-%\ndg{here you just need the basic idea that speaker-listener behavior is derived from lexicon by RSA.}
 
-Here, we present a statistical model of this progression. We assume that on any given round, speakers and listeners are rationally producing and interpreting utterances given some internal lexicon, and we invert models of those agents to infer what their lexicon is. \mf{I know what is meant, but maybe a different formulation to ``we invert models''; e.g., we use ``Bayesian inference \dots''} First, this analysis validates our post-test measures of lexical meaning against actual behavioral usage throughout the game --- if participant reports are internally consistent, the model's posterior on the last round of the game should predict their post-test responses. Second, we can examine the time-course of lexical emergence by inspecting inferred lexica from behavior in earlier rounds of the game. %Finally, because our statistical model learns from the same data that agents in principle learn from, it provides some insight into the path-dependent effects of early communicative pressures on the available meanings. %basic-level vs.\ subordinate-level terms, (4) measure path-dependence, e.g.\ how 
+In this section, we present a statistical model of this progression. We assume that on any given round, speakers and listeners are rationally producing and interpreting utterances given some internal lexicon, and we use Bayesian methods to infer their lexicon from their behavior. First, this analysis validates our post-test measures of lexical meaning against actual behavioral usage throughout the game --- if participant reports are internally consistent, the model's posterior on the last round of the game should predict their post-test responses. Second, we can examine the time-course of lexical emergence by inspecting inferred lexica from behavior in earlier rounds of the game. We expect this latter to be more broadly useful in studies where explicit measurements of the lexicon are not practical. %Finally, because our statistical model learns from the same data that agents in principle learn from, it provides some insight into the path-dependent effects of early communicative pressures on the available meanings. %basic-level vs.\ subordinate-level terms, (4) measure path-dependence, e.g.\ how 
 
 \subsection{Generative model}
 
@@ -208,13 +204,10 @@ We begin with a generative model of how agents use their underlying lexicon to p
 & L_1(o_i | w, \mathcal{L}^t) &\ \ \propto \ \ & S_1(w | o_i, \mathcal{L}^t) P(o_i) 
 \end{alignat*}
 % MF: adjusted this for better vertical spacing wrt adjacent paragraphs
-where $o_i$ is a chosen object, $w$ an uttered word, and $\alpha$ is a hyperparameter determining the soft-max optimality of the speaker. \mf{mention flat listener prior over objects?}
+where $o_i$ is a chosen object, $w$ an uttered word, and $\alpha$ is a hyperparameter determining the soft-max optimality of the speaker. 
 
-We use these likelihood functions to define a quartile-wise hierarchical Bayesian model on lexica. We define the lexicon used by participant $p$ at time $t$ as a function 
-$$\mathcal{L}_p^{t} : (w, o) \rightarrow [0,1]$$ 
-assigning any word-object pair a real-valued meaning in the unit interval. This function can be represented as a $\mathcal{W} \times \mathcal{O}$ matrix of real values $\ell_{w,o}^t \in \mathbb{R}$ mapped to the unit interval with a logistic function $\text{logistic}(x) = 1/(1 + e^{x})$. Because observations on each round are sparse relative to the number of entries in the lexicon, we share statistical strength across periods of time by assuming that the lexicon $\mathcal{L}^t_p$ used by participant $p$ on round $t$ is drawn from a multi-variate Gaussian $\mathcal{N}(\mathcal{L}^{0}_p, \sigma_p^{0})$ centered at that quartile's hyper-lexicon with some fixed dispersion. We place a relatively uninformative but regularizing prior $\ell_{w,o}^0 \sim \mathcal{N}(0, 1)$ on the entries of the quartile-level lexica. 
-\ndg{this paragraph can be simplified. it will help to give statistician's notation block defining model. if each lexical entry is treated independently, then just do at that level.... something like:}
-
+We use these pragmatic speaker and listener likelihood functions to define a Bayesian model on latent lexica, represented as a matrix of real values $\ell_{w,o}^t \in \mathbb{R}$, and mapped to the unit interval with a logistic function: $\text{logistic}(x) = 1/(1 + e^{x})$. %Because observations on each round are sparse relative to the number of entries in the lexicon, 
+We share statistical strength across periods of time by using a quartile-wise hierarchical prior. In particular, we assume that the lexicon $\mathcal{L}^t_p$ used by participant $p$ on round $t$ is drawn from a multi-variate Gaussian $\mathcal{N}(\mathcal{L}^{0}_p, \sigma_p^{0})$ centered at that quartile's hyper-lexicon with some fixed dispersion:
 $$
 \begin{array}{rcl}
 m_{w,o}^q &\sim& \mathcal{N}(0, 1)\\
@@ -222,6 +215,8 @@ m_{w,o}^t &\sim& \mathcal{N}(m_{w,o}^q,  \sigma^{q})\\
 \ell_{w,o}^t &=& \text{logistic}(m_{w,o}^t)
 \end{array}
 $$
+% We place a relatively uninformative but regularizing prior $\ell_{w,o}^0 \sim \mathcal{N}(0, 1)$ on the entries of the quartile-level lexica. 
+%\ndg{this paragraph can be simplified. it will help to give statistician's notation block defining model. if each lexical entry is treated independently, then just do at that level.... something like:}
 
 %We capture the temporal dependence of subsequent lexica by placing a Gaussian random walk on lexical entries: the lexicon at time $t+1$ is sampled from a Gaussian distribution centered at the lexicon on the previous trial: $$\ell_{w,o}^{t+1} \sim \mathcal{N}(\ell_{w,o}^t, \sigma)$$ where sigma is a hyperparameter determining the drift rate. \todo[inline]{Is this related to the bayesian RL thing in Mathys et al, 2011?}
 %\ndg{collect the RSA eqs into one block, with a paragraph of description. don't need much.}
@@ -229,7 +224,7 @@ $$
 %\todo[inline]{TODO: Be explicit about how this allows us to strengthen our inferences? Needs to be cleaned up.}
 %This allows us to learn about meanings of words and objects we haven't seen. e.g.\ suppose we hear a speaker say `mimi' to refer to one of the blue squares in the context of the other blue square. If `mimi` applied to both blue squares equally well in their lexicon, then the data would be extremely unlikely: the speaker would have avoided such an underinformative utterance. The data is much more likely under a lexicon where `mimi` only refers to the target blue square much more strongly.  Similarly, if another word in their lexicon was more informative in distinguishing these items, we assume they would have used it. Note that when the same utterance is used in a coarse trial, where only one of the blue squares is in context, it is ambiguous whether or not it can also apply to the other blue square.
 
-RSA provides a linking function from $\ell^t$ to speaker and listener behavior, which is differentiable with respect to the lexica.
+RSA provides a linking function from $\mathcal{L}^t$ to speaker and listener behavior, which is differentiable with respect to the lexica.
 We can therefore use mean-field variational inference \cite{RanganathGerrishBlei13_BlackBoxVariationalInference}, implemented in the probabilistic programming language WebPPL \cite{GoodmanStuhlmuller14_DIPPL}. We optimize a family of Gaussians to minimize the evidence lower bound (ELBO) which approximates the joint posterior over all lexical entries (and shared hyperparameters) used by each participant for each round in each game. 
 
 %\begin{figure}[t]
@@ -243,7 +238,7 @@ We can therefore use mean-field variational inference \cite{RanganathGerrishBlei
 
 \begin{figure}[t]
 \begin{center}
-{\includegraphics[scale=0.7]{modelPerformance.pdf}}
+{\includegraphics[scale=0.7]{modelPerformance_edited.pdf}}
 %{\includegraphics[scale=.64]{lexiconSize.pdf}}
 {\caption{{\footnotesize \todo[inline]{TODO: directly label lines, fill bottom-right empty space with inset showing each quartile's AUC as little bar plot (e.g.\ 4th quarter: 0.98) \dots )}  \label{fig:postTestPrediction}}}}
 \end{center}
@@ -286,9 +281,9 @@ These results also help illuminate the relationship between our concepts and wor
 
 %\todo[inline]{question for NDG: Should we comment on some methodlogical things people put in the `strategy' box? e.g.\ some people seem to be taking notes or using sound-symbolic associations like "nogo" to mean "red" (not a problem; should just help memory or help make initial meanings not entirely arbitrary but shouldn't change contextual demands\dots)}
 
-\todo[inline]{question for MF: put some broader comment connecting to/contrasting with other cognitive theories of what's going on here? e.g.\ (1) not a simple associative learning account, where people just store memory traces of word-object co-occurances (can't account for context effects of generation), although note that probably a simpler model just counting co-occurences could account for the post-test responses just as well (it just wouldn't have as flexible an underlying representation). (2) elaborates on Xu \& Tenenbaum (2007) word learning story by introducing contextual pressures?}
+%\todo[inline]{question for MF: put some broader comment connecting to/contrasting with other cognitive theories of what's going on here? e.g.\ (1) not a simple associative learning account, where people just store memory traces of word-object co-occurances (can't account for context effects of generation), although note that probably a simpler model just counting co-occurences could account for the post-test responses just as well (it just wouldn't have as flexible an underlying representation). (2) elaborates on Xu \& Tenenbaum (2007) word learning story by introducing contextual pressures?}
 %\ndg{could do if there is a short clear point to make...}
-\mf{phew, not sure there is enough space and hesitant that this might wake sleeping dogs, no matter how careful we are}
+%\mf{phew, not sure there is enough space and hesitant that this might wake sleeping dogs, no matter how careful we are}
 
 We showed how abstractions become lexicalized when participants were restricted to single-word utterances, but how the lexicalization of nominal terms trades off with compositionality is an open question. Following the same argument, we expect that labels become lexicalized when the cost incurred by frequently using a compositional construction exceeds the cost of adding an additional word to the lexicon. 
 
