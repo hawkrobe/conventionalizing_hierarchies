@@ -39,7 +39,7 @@ masterWordIDLookup <- read_delim('../data/experiment1/postTest_word/allWordPostT
 
 masterGameIDLookup <- raw_clicks %>%
   mutate(id = paste0('game', as.numeric(factor(gameid)))) %>%
-  select(gameid, id) %>%
+  select(gameid, id, condition) %>%
   distinct()
 ```
 
@@ -85,7 +85,7 @@ d %>%
   summarize(n = length(n))
 ```
 
-## Write out for BDA
+## Write out in nice format for BDA
 
 Want to run these webppl models in parallel, so the input data should be in separate files, easily indexed from the command-line... 
 
@@ -605,7 +605,21 @@ summary(lm(pctAbstract ~ condition, data = pctDF))
   #   theme_few()
 ```
 
-# Model analysis
+# Model-based results
+
+For each condition, show density plot of entropy (number for each word for each participant)
+
+Split into 8ths; show average difference in entropy from one 8th to the next...
+
+Might be interested in deviation from 
+
+Take entropy of normalized rows of lexicon; 
+
+Clarify in the paper that we're getting the effective lexicon, not what's in peoples' heads. 
+
+Peoples' usage is surprisingly tight... 
+
+Add a sentence about associations, e.g. 'nogo' ; 
 
 Import top-level hierarchical lexical posteriors for each quarter
 
@@ -623,7 +637,7 @@ objects = as.character(c('blueSquare1', 'blueSquare2', 'redSquare1', 'redSquare2
 posteriors <- data.frame()
 for(i in c(gameIDs)) {
   base <- expand.grid(object=objects, wordID=words,stringsAsFactors=T)
-  result <- fromJSON(file = paste0("../models/", i, ".json"))
+  result <- fromJSON(file = paste0("../models/holistic/bdaOutput/", i, ".json"))
   speakerDF <- data.frame(model_4_mu = result$speakerHyp4mu$data, model_4_sigma = softplus(result$speakerHyp4sigma$data),
                           model_3_mu = result$speakerHyp3mu$data, model_3_sigma = softplus(result$speakerHyp3sigma$data),
                           model_2_mu = result$speakerHyp2mu$data, model_2_sigma = softplus(result$speakerHyp2sigma$data),
@@ -675,6 +689,85 @@ ggsave("../writing/cogsci18/figures/modelPerformance.pdf", height = 5, width = 4
 ```
 
 We see that later rounds predict post-test responses quite well.
+
+### Examine entropy across time
+
+One signature of more or less specific words is the size of their extension. We extract this from lexical posteriors by computed the expected entropy on the normalized set of meanings for each word... 
+
+To do this, we first group by participants and words to get the vector of posterior params for each object. We then take a sample from this posterior, feed through a sigmoid function to map to [0,1], normalize these values to sum to 1, and take the entropy. 
+
+We repeat this sampling process many times to get an estimate (mean & sd) of the true entropy for each word for each pair. 
+
+Once we have these we can (1) plot a histogram by condition and quartile, (2) see how well it corresponds to the extensions measured in post-test (In final quartile, the expected entropy should predict the size of the extension... )
+
+This is fairly hacky; below, we show the litener responses from RSA
+
+```{r}
+# element-wise sigmoid function
+# sigmoid <- function(x) {return(1 / (1 + exp(-x*5)))}
+# normalize <- function(x) {return(exp(20*x) / sum(exp(20*x)))}
+# entropy <- function(p) {return(sum(-p*log2(p)))}
+# computeEntropy <- function(df) {
+#   samples <- replicate(10, {
+#     random <- rnorm(df$mu, mean=df$mu, sd = .01)
+#     transformed <- sigmoid(random)
+#     normalized <- normalize(transformed)
+#     entropied <- entropy(normalized)
+#     return(entropied)
+#   })
+#   return(df %>% mutate(entropyEstimate = mean(samples)))
+# }
+# 
+# length((posteriors %>%
+#   inner_join(postTest_clean) %>%
+#   group_by(id, finalRole, quarter, wordID, object, mu, sigma) %>%
+#   summarize(condition = first(condition)))$id)
+# 
+# # Just to get a feel for it, start with just one game and one quarter
+# estimatedEntropies <- posteriors %>%
+#   left_join(postTest_clean) %>%
+#   group_by(id, finalRole, quarter, wordID, object, mu, sigma) %>%
+#   summarize(condition = first(condition)) %>%
+#   #filter(id == 'game4') %>% filter(quarter == 4) %>% filter(wordID == 'word6') %>%
+#   group_by(id, condition, finalRole, quarter, wordID) %>%
+#   do(computeEntropy(.)) 
+# 
+# ggplot(estimatedEntropies %>% ungroup() %>% filter(!(is.na(condition))), aes(x = entropyEstimate)) +
+#   geom_density() +
+#   facet_grid(condition ~ quarter) + 
+#   theme_few()
+```
+
+```{r}
+RSA.entropies <- read_csv('../models/holistic/bdaOutput/lexicalInferencePredictives.csv') %>%
+  mutate(finalRole = ifelse(finalRole == 'finalSpeaker', 'speaker', 'listener')) %>%
+  left_join(masterGameIDLookup) #%>%
+  # group_by(id, finalRole, quarter, wordID, con) %>%
+  # summarize(condition = first(condition), entropy = mean(entropy))
+
+ggplot(RSA.entropies, aes(x = entropy, fill = condition)) +
+  geom_density(alpha = 0.5, adjust = 2/3) +
+  facet_grid( ~ quarter) +
+  theme_few() +
+  theme(aspect.ratio = 1/2) 
+```
+
+Measure change in entropy, word by word... 
+
+```{r}
+RSA.entropies %>% 
+  group_by(wordID,finalRole,id,condition) %>%
+  mutate(entropy.diff = entropy - lag(entropy)) %>%
+  filter(quarter > 0) %>%
+  group_by(quarter, condition) %>%
+  summarize(m = mean(entropy.diff)) %>%
+  ggplot(aes(x = condition, y = m, fill = factor(quarter))) +
+    geom_bar(position = 'dodge', stat='identity') +
+    scale_fill_manual(values = c("red", "blue", "green")) +
+    theme_few()
+```
+
+see how it corresponds to the size of the extensions?
 
 ### Measure accuracy?
 

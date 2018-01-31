@@ -109,6 +109,10 @@ function appendCSV(jsonCSV, filename){
 var bayesianErpWriter = function(erp, filePrefix) {
   var supp = erp.support();
 
+  if(_.has(supp[0], 'predictive')) {
+    var predictiveFile = fs.openSync(filePrefix + "Predictives.csv", 'a');
+  }
+     
   if(_.has(supp[0], 'params')) {
     var paramFile = fs.openSync(filePrefix + "Params.csv", 'w');
     fs.writeSync(paramFile, supp[0]['paramsHeader'] + '\n');
@@ -121,6 +125,8 @@ var bayesianErpWriter = function(erp, filePrefix) {
 
 
   supp.forEach(function(s) {
+    if(_.has(s, 'predictive'))
+      supportWriter(s.predictive, predictiveFile);
     if(_.has(s, 'params'))
       fs.writeSync(paramFile, s.params+'\n');
     if(_.has(s, 'driftRates'))
@@ -137,6 +143,14 @@ var bayesianErpWriter = function(erp, filePrefix) {
   console.log('writing complete.');
 };
 
+var supportWriter = function(s, handle) {
+  var sLst = _.toPairs(s);
+  var l = sLst.length;
+
+  for (var i = 0; i < l; i++) {
+    fs.writeSync(handle, sLst[i].join(',') + '\n');
+  }
+};
 module.exports = {
   getL0score, getSpeakerScore, getListenerScore, getLexiconElement, reformatParams,
   reformatData, bayesianErpWriter, writeCSV, readCSV
