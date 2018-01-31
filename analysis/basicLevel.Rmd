@@ -662,6 +662,7 @@ posteriors <- posteriors %>%
 Construct ROC curves showing performance of each quarter's model:
 
 ```{r}
+library(pROC)
 rocOutput = data.frame()
 for(qt in seq(1: 4)) {
   qtrData = posteriors %>% 
@@ -669,9 +670,10 @@ for(qt in seq(1: 4)) {
     filter(quarter == qt) %>%
     
     mutate(finalPrediction = 1 - pnorm(0, mean = mu, sd = sigma))
-  logisticRegression = glmer(meaning ~ finalPrediction + (1 | id), family = 'binomial', data = qtrData)
-  analysis <- roc(qtrData$meaning, predict(logisticRegression))
-  rocOutput <- rbind(rocOutput, (data.frame(x = 1 - analysis$specificities, y = analysis$sensitivities, q = qt)))
+  #logisticRegression = glm(meaning ~ finalPrediction, family = 'binomial', data = qtrData)
+  analysis <- roc(meaning ~ finalPrediction, data = qtrData)#roc(qtrData$meaning, predict(logisticRegression))
+  a <- auc(analysis)
+  rocOutput <- rbind(rocOutput, (data.frame(x = 1 - analysis$specificities, y = analysis$sensitivities, q = qt, auc = c(a))))
 }
 ```
 
@@ -683,12 +685,26 @@ ggplot(rocOutput %>% rename(quarter = q), aes(x = x, y=y, group =quarter, color 
     xlab('false positive') +
     theme(aspect.ratio = 1) +
     geom_abline(aes(slope = 1, intercept = 0))+
-    theme(legend.position="top")
+    guides(color = FALSE)
 
 ggsave("../writing/cogsci18/figures/modelPerformance.pdf", height = 5, width = 4)
 ```
 
 We see that later rounds predict post-test responses quite well.
+
+```{r}
+ggplot(rocOutput %>% rename(quarter = q) %>% group_by(quarter) %>% summarize(auc = mean(auc)),
+       aes(x =quarter, y = auc)) +
+    geom_bar(stat = 'identity') + 
+    theme_few() +
+    coord_cartesian(ylim=c(0.5, 1)) +
+    theme(aspect.ratio = 1.25) +
+    theme(legend.position="top") +
+    ylab("area under curve (auc)")
+
+ggsave("../writing/cogsci18/figures/auc.pdf", height = 3, width = 2)
+```
+
 
 ### Examine entropy across time
 
@@ -749,7 +765,10 @@ ggplot(RSA.entropies, aes(x = entropy, fill = condition)) +
   geom_density(alpha = 0.5, adjust = 2/3) +
   facet_grid( ~ quarter) +
   theme_few() +
-  theme(aspect.ratio = 1/2) 
+  theme(aspect.ratio = 3/4, legend.position = 'top') +
+  guides(fill = F)
+
+ggsave("../writing/cogsci18/figures/entropies.pdf", height = 3, width = 5)
 ```
 
 Measure change in entropy, word by word... 
@@ -763,8 +782,10 @@ RSA.entropies %>%
   summarize(m = mean(entropy.diff)) %>%
   ggplot(aes(x = condition, y = m, fill = factor(quarter))) +
     geom_bar(position = 'dodge', stat='identity') +
-    scale_fill_manual(values = c("red", "blue", "green")) +
-    theme_few()
+    scale_fill_manual(values = c("gray34", "gray55", "gray77")) +
+    theme_few() +
+    ylab("mean difference in entropy from previous round")
+ggsave("../writing/cogsci18/figures/entropies.pdf", height = 3, width = 5)
 ```
 
 see how it corresponds to the size of the extensions?
