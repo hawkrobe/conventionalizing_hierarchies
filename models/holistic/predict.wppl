@@ -1,0 +1,176 @@
+// run using, e.g.:
+// WEBPPL_PARAM_PATH='./bdaOutput/'; echo $WEBPPL_PARAM_PATH; webppl predict.wppl --param-store file --param-id game1 --require ./refModule/ -- --gameid game1
+
+// Load in experimental data to condition on then reformat
+var rawData = refModule.readCSV('../bdaInput/' + argv.gameid + '.csv');
+var data = refModule.reformatData(rawData);
+var quartileSize = data.length / 4;
+console.log("Loading expt data complete..." + data.length + " data points");
+
+var globalConfig = {
+  aggregate: false,
+  outputFileName : argv.gameid + 'lexicalInference'
+};
+
+var utterances = map(function(i) {return 'word' + i;}, _.range(1, 17));
+var states = ['blueSquare1', 'blueSquare2', 'redSquare1', 'redSquare2',
+	      'spottedCircle1', 'spottedCircle2', 'stripedCircle1', 'stripedCircle2'];
+
+var scalarSoftplus = function(x) {
+  return ad.scalar.log(ad.scalar.add(ad.scalar.exp(x), 1));
+};
+
+var tensorSoftplus = function(x) {
+  return T.log(T.add(T.exp(x), 1));
+};
+
+var lexiconGuide = function(paramName, dims) {
+  return function() {
+    DiagCovGaussian({
+      mu: param({name: paramName + 'mu', dims: dims}),
+      sigma: tensorSoftplus(param({name: paramName + 'sigma', dims: dims}))
+    });
+  };
+};
+
+// Hierarchical model with one lexicon each quarter
+// This takes those hierarchical lexica as input and samples a lexicon for round
+var sampleVariances = function(q) {
+  var dims = [utterances.length,states.length];
+  var speakerVar = sample(Gaussian({mu: 0, sigma: 1}), {guide: function() {
+    return Gaussian({mu: param({name: 'speakerVar' + q + 'mu'}),
+		     sigma: scalarSoftplus(param({name: 'speakerVar' + q + 'sigma'}))});
+  }});
+  var listenerVar = sample(Gaussian({mu: 0, sigma: 1}), {guide: function() {
+    return Gaussian({mu: param({name: 'listenerVar' + q + 'mu'}),
+		     sigma: scalarSoftplus(param({name: 'listenerVar' + q + 'sigma'}))});
+  }});
+  return {
+    finalSpeaker:  T.mul(ones(dims), scalarSoftplus(speakerVar)),
+    finalListener: T.mul(ones(dims), scalarSoftplus(listenerVar))
+  };
+};
+
+var sampleHyperlexica = function(q) {
+  var dims = [utterances.length,states.length];
+  var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: ones(dims) });
+  return {
+    finalSpeaker:  sample(lexDist, {guide: lexiconGuide('speakerHyp' + q, dims)}),
+    finalListener: sample(lexDist, {guide: lexiconGuide('listenerHyp' + q, dims)})
+  };
+};
+
+var reparam = function(s, m, s) {
+  return T.mul(T.add(s, m), s);
+};
+
+// Hierarchical model with one lexicon each quarter
+// This takes those hierarchical lexica as input and samples a lexicon for round
+var sampleLexiconParams = function(hyperparams, datum) {
+  var i = datum.trialNum;
+  var dims = [utterances.length,states.length];
+  var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: ones(dims) });  
+  return {
+    finalSpeaker:  reparam(sample(lexDist, {guide: lexiconGuide('speaker'  + i, dims)}),
+			   hyperparams.mu.finalSpeaker, hyperparams.sigma.finalSpeaker),
+    finalListener: reparam(sample(lexDist, {guide: lexiconGuide('listener' + i, dims)}),
+			   hyperparams.mu.finalListener, hyperparams.sigma.finalListener)
+  };
+};
+
+// For now, we are just doing a pure statistical model -- not trying to tie
+// their new lexicon mechanistically to what happened on the previous round,
+// just trying to learn what it is on the basis of what they said.
+var observeRound = function(params, datum) {
+  // Align role swapping with final post-test measures
+  var llex = datum.trialNum % 2 == 1 ? params.finalSpeaker : params.finalListener;
+  var slex = datum.trialNum % 2 == 1 ? params.finalListener : params.finalSpeaker;
+  
+  // transition happens on raw params; must transform to [0,1] before passing as lexicon
+  var speakerScore = refModule.getSpeakerScore(datum.wordID, datum.intendedName, {
+    context: datum.context,
+    lexicon: T.sigmoid(slex),
+    utterances: utterances,
+    alpha: globalStore.alpha
+  });
+  factor(speakerScore);
+
+  var listenerScore = refModule.getListenerScore(datum.clickedName, datum.wordID,{
+    context: datum.context,
+    lexicon: T.sigmoid(llex),
+    utterances: utterances,
+    alpha: globalStore.alpha
+  });
+  //var listenerScore2 = L1(datum.wordID, datum.context, T.sigmoid(llex)).score(datum.clickedName);
+  factor(listenerScore);
+};
+
+// literal listener (using real-valued lexicon)
+var L0 = function(utt, context, lexicon) {
+  return Infer({method:"enumerate"}, function(){
+    var state = uniformDraw(context);
+    factor(refModule.getLexiconElement(lexicon, utt, state));
+    return state;
+  });
+};
+
+// pragmatic speaker
+var alpha = 1;
+var fixedS1 = function(state, context, lexicon) {
+  return Infer({method:"enumerate"}, function(){
+    var utt = uniformDraw(utterances);
+    factor(globalStore.alpha * L0(utt, context, lexicon).score(state));
+    return utt;
+  });
+};
+
+// conventional listener
+var L1 = function(utt, lexicon) {
+  return Infer({method:"enumerate"}, function(){
+    var state = sample(states);
+    observe(S1(state, lexicon), utt);
+    return state;
+  });
+};
+
+var model = function() {
+  // Sample hyperparams
+  
+  globalStore.alpha = scalarSoftplus(sample(Gaussian({mu:0,sigma:1}), {
+    guide: function() {
+      return Gaussian({mu: param({name: 'alpha_mu'}),
+  		       sigma: scalarSoftplus(param({name: 'alpha_sigma'}))});
+    }
+  }));
+  
+  var mus = map(function(q) {return sampleHyperlexica(q);}, _.range(1,5));
+  var sigmas = map(function(q) {return sampleVariances(q);}, _.range(1,5));
+
+  map(function(quarter) {
+    map(function(utt) {
+      map(function(participant) {
+	var hyperparams = {
+	  mu: mus[quarter][participant],
+	  sigma: sigmas[quarter][participant]
+	};
+	var lexicon = sample(DiagCovGaussian({
+	  mu: hyperparams.mu,
+	  sigma: hyperparams.sigma
+	}));
+	var responses = L1(utt, lexicon);
+	foreach(responses.support(),function(s){
+	  var key = [quarter, utt, participant, s, alpha].join(",");
+	  var newPair = _.zipObject([key], [responses.score(s)]);
+	  globalStore.predictives = extend(globalStore.predictives, newPair);
+	});
+      }, ['finalListener', 'finalSpeaker']);
+    }, utterances);
+  }, _.range(1,5));
+
+  return {predictive: globalStore.predictives};
+};
+
+
+Infer({model: model, method: 'forward', samples: 1000, onlyMAP: true, guide: true});
+
+//refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
