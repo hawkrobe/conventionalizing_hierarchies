@@ -4,7 +4,8 @@
 // Load in experimental data to condition on then reformat
 var rawData = refModule.readCSV('../bdaInput/' + argv.gameid + '.csv');
 var data = refModule.reformatData(rawData);
-var quartileSize = data.length / 4;
+var numSplits = 6;
+var splitSize = data.length / numSplits;
 console.log("Loading expt data complete..." + data.length + " data points");
 
 var globalConfig = {
@@ -24,6 +25,10 @@ var tensorSoftplus = function(x) {
   return T.log(T.add(T.exp(x), 1));
 };
 
+var reparam = function(s, mu, sig) {
+  return T.add(T.mul(s, sig), mu);
+};
+
 var lexiconGuide = function(paramName, dims) {
   return function() {
     DiagCovGaussian({
@@ -33,49 +38,44 @@ var lexiconGuide = function(paramName, dims) {
   };
 };
 
-// Hierarchical model with one lexicon each quarter
-// This takes those hierarchical lexica as input and samples a lexicon for round
-var sampleVariances = function(q) {
-  var dims = [utterances.length,states.length];
-  var speakerVar = sample(Gaussian({mu: 0, sigma: 1}), {guide: function() {
-    return Gaussian({mu: param({name: 'speakerVar' + q + 'mu'}),
-		     sigma: scalarSoftplus(param({name: 'speakerVar' + q + 'sigma'}))});
-  }});
-  var listenerVar = sample(Gaussian({mu: 0, sigma: 1}), {guide: function() {
-    return Gaussian({mu: param({name: 'listenerVar' + q + 'mu'}),
-		     sigma: scalarSoftplus(param({name: 'listenerVar' + q + 'sigma'}))});
-  }});
-  return {
-    finalSpeaker:  T.mul(ones(dims), scalarSoftplus(speakerVar)),
-    finalListener: T.mul(ones(dims), scalarSoftplus(listenerVar))
+var varianceGuide = function(p) {
+  return function() {
+    Gaussian({
+      mu: param({name: 'VarMu'}),
+      sigma: scalarSoftplus(param({name: 'VarSigma'}))
+    });
   };
+};
+
+// Hierarchical model with one lexicon each split
+// This takes those hierarchical lexica as input and samples a lexicon for round
+var sampleVariances = function() {
+  var dims = [utterances.length,states.length];
+  var varianceDist = Gaussian({mu: 0, sigma: .1});
+  var sigma = sample(varianceDist, {guide: varianceGuide()});
+  return T.mul(ones(dims), scalarSoftplus(sigma));
 };
 
 var sampleHyperlexica = function(q) {
   var dims = [utterances.length,states.length];
-  var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: ones(dims) });
+  var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: T.mul(ones(dims),2) });
   return {
     finalSpeaker:  sample(lexDist, {guide: lexiconGuide('speakerHyp' + q, dims)}),
     finalListener: sample(lexDist, {guide: lexiconGuide('listenerHyp' + q, dims)})
   };
 };
 
-var reparam = function(s, m, s) {
-  return T.mul(T.add(s, m), s);
-};
-
-// Hierarchical model with one lexicon each quarter
+// Hierarchical model with one lexicon each split
 // This takes those hierarchical lexica as input and samples a lexicon for round
 var sampleLexiconParams = function(hyperparams, datum) {
   var i = datum.trialNum;
   var dims = [utterances.length,states.length];
-  var lexDist = DiagCovGaussian({ mu: zeros(dims), 
-				  sigma: ones(dims) });  
+  var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: ones(dims) });  
   return {
     finalSpeaker:  reparam(sample(lexDist, {guide: lexiconGuide('speaker'  + i, dims)}),
-			   hyperparams.mu.finalSpeaker, hyperparams.sigma.finalSpeaker),
+			   hyperparams.mu.finalSpeaker, hyperparams.sigma),
     finalListener: reparam(sample(lexDist, {guide: lexiconGuide('listener' + i, dims)}),
-			   hyperparams.mu.finalListener, hyperparams.sigma.finalListener)
+			   hyperparams.mu.finalListener, hyperparams.sigma)
   };
 };
 
@@ -102,32 +102,25 @@ var observeRound = function(params, datum) {
     utterances: utterances,
     alpha: globalStore.alpha
   });
-  //var listenerScore2 = L1(datum.wordID, datum.context, T.sigmoid(llex)).score(datum.clickedName);
   factor(listenerScore);
 };
 
 var model = function() {
   // Sample hyperparams
-  globalStore.alpha = scalarSoftplus(sample(Gaussian({mu:0,sigma:1}), {guide: function() {
-    return Gaussian({mu: param({name: 'alpha_mu'}),
-  		     sigma: scalarSoftplus(param({name: 'alpha_sigma'}))});
-  }}));
-//  globalStore.alpha = 5;
-  var mus = map(function(q) {return sampleHyperlexica(q);}, _.range(1,5));
-  var sigmas = map(function(q) {return sampleVariances(q);}, _.range(1,5));
+  globalStore.alpha = 1;
+  var sigma = sampleVariances();
+  var mus = map(function(q) {return sampleHyperlexica(q);}, _.range(1,numSplits + 1));
 
-  mapData({data: data}, function(trialDatum) {
-    var currQ = Math.floor((trialDatum.trialNum - 1) / quartileSize);
-    var hyperparams = {mu: mus[currQ], sigma: sigmas[currQ]};
+  mapData({data: data, batchSize: 48}, function(trialDatum) {
+    var currQ = Math.floor((trialDatum.trialNum - 1) / splitSize);
+    var hyperparams = {mu: mus[currQ], sigma: sigma};
     var lexiconParams = sampleLexiconParams(hyperparams, trialDatum);
     observeRound(lexiconParams, trialDatum);
   });
 
-  // return refModule.reformatParams(params, data,
-  // 				  globalStore.drift, globalStore.alpha);
 };
   
 Optimize({model: model, steps: 10000, verbose: true,
-	  optMethod: {adam: {stepSize: 0.001}}});
+	  optMethod: {adam: {stepSize: 0.0005}}});
 
 //refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
