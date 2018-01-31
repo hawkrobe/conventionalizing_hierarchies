@@ -216,8 +216,10 @@ We begin with a generative model of how agents use their underlying lexicon to p
 % MF: adjusted this for better vertical spacing wrt adjacent paragraphs
 where $o_i$ is a chosen object, $w$ an uttered word, and $\alpha$ is a hyperparameter determining the soft-max optimality of the speaker. 
 
-We use these pragmatic speaker and listener likelihood functions to define a Bayesian model on latent lexica, represented as a matrix of real values $\ell_{w,o}^t \in \mathbb{R}$, and mapped to the unit interval with a logistic function: $\text{logistic}(x) = 1/(1 + e^{x})$. %Because observations on each round are sparse relative to the number of entries in the lexicon, 
-We share statistical strength across periods of time by using a quartile-wise hierarchical prior. In particular, we assume that the lexicon $\mathcal{L}^t_p$ used by participant $p$ on round $t$ is drawn from a multi-variate Gaussian $\mathcal{N}(\mathcal{L}^{0}_p, \sigma_p^{0})$ centered at that quartile's hyper-lexicon with some fixed dispersion:
+We use these pragmatic speaker and listener likelihood functions to link latent lexica, represented as a matrix of real values $\ell_{w,o}^t \in \mathbb{R}$, to behavior.
+This allows us to then use Bayesian inference to back out the effective lexicon from trial-by-trial behavior.
+Because each trial has only a single choice, we share statistical strength within periods of time by using a quartile-wise hierarchical prior. 
+In particular, we assume that each lexicon entry on round $t$ is drawn from a Gaussian $\mathcal{N}(m^{q}_{w,o}, \sigma^{q})$ centered at that quartile's hyper-lexicon with some fixed dispersion, and mapped to the unit interval with a logistic function\footnote{The logistic function is given by $\text{logistic}(x) = 1/(1 + e^{x})$.}:
 $$
 \begin{array}{rcl}
 m_{w,o}^q &\sim& \mathcal{N}(0, 1)\\
@@ -225,6 +227,13 @@ m_{w,o}^t &\sim& \mathcal{N}(m_{w,o}^q,  \sigma^{q})\\
 \ell_{w,o}^t &=& \text{logistic}(m_{w,o}^t)
 \end{array}
 $$
+
+We approximate the posterior of this model using mean-field variational inference \cite{RanganathGerrishBlei13_BlackBoxVariationalInference}, implemented in the probabilistic programming language WebPPL \cite{GoodmanStuhlmuller14_DIPPL,DAIPP}. 
+The approximating family for each random variable is Gaussian \ndg{really? even for bounded ones like $\alpha$?}.
+This approximates the joint posterior over all lexical entries (and shared hyperparameters) used by each participant for each round in each game. 
+\ndg{there are two hyperparameters, $\alpha$ and $\sigma^q$, right? need to say what prior we use for them. these are shared across quartiles, trials, and participants, or separately?}
+
+
 % We place a relatively uninformative but regularizing prior $\ell_{w,o}^0 \sim \mathcal{N}(0, 1)$ on the entries of the quartile-level lexica. 
 %\ndg{this paragraph can be simplified. it will help to give statistician's notation block defining model. if each lexical entry is treated independently, then just do at that level.... something like:}
 
@@ -234,8 +243,8 @@ $$
 %\todo[inline]{TODO: Be explicit about how this allows us to strengthen our inferences? Needs to be cleaned up.}
 %This allows us to learn about meanings of words and objects we haven't seen. e.g.\ suppose we hear a speaker say `mimi' to refer to one of the blue squares in the context of the other blue square. If `mimi` applied to both blue squares equally well in their lexicon, then the data would be extremely unlikely: the speaker would have avoided such an underinformative utterance. The data is much more likely under a lexicon where `mimi` only refers to the target blue square much more strongly.  Similarly, if another word in their lexicon was more informative in distinguishing these items, we assume they would have used it. Note that when the same utterance is used in a coarse trial, where only one of the blue squares is in context, it is ambiguous whether or not it can also apply to the other blue square.
 
-RSA provides a linking function from $\mathcal{L}^t$ to speaker and listener behavior, which is differentiable with respect to the lexica.
-We can therefore use mean-field variational inference \cite{RanganathGerrishBlei13_BlackBoxVariationalInference}, implemented in the probabilistic programming language WebPPL \cite{GoodmanStuhlmuller14_DIPPL}. We optimize a family of Gaussians to minimize the evidence lower bound (ELBO) which approximates the joint posterior over all lexical entries (and shared hyperparameters) used by each participant for each round in each game. 
+%RSA provides a linking function from $\mathcal{L}^t$ to speaker and listener behavior, which is differentiable with respect to the lexica.
+%We use mean-field variational inference \cite{RanganathGerrishBlei13_BlackBoxVariationalInference}, implemented in the probabilistic programming language WebPPL \cite{GoodmanStuhlmuller14_DIPPL}. We optimize a family of Gaussians to minimize the evidence lower bound (ELBO) which approximates the joint posterior over all lexical entries (and shared hyperparameters) used by each participant for each round in each game. 
 
 %\begin{figure}[t]
 %\begin{center}
