@@ -2,7 +2,7 @@
 // WEBPPL_PARAM_PATH='./bdaOutput/'; echo $WEBPPL_PARAM_PATH; webppl BDA.wppl --param-store file --param-id game1 --require ./refModule/ -- --gameid game1
 
 // Load in experimental data to condition on then reformat
-var rawData = refModule.readCSV('./bdaInput/' + argv.gameid + '.csv');
+var rawData = refModule.readCSV('../bdaInput/' + argv.gameid + '.csv');
 var data = refModule.reformatData(rawData);
 var quartileSize = data.length / 4;
 console.log("Loading expt data complete..." + data.length + " data points");
