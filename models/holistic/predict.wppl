@@ -4,12 +4,13 @@
 // Load in experimental data to condition on then reformat
 var rawData = refModule.readCSV('../bdaInput/' + argv.gameid + '.csv');
 var data = refModule.reformatData(rawData);
-var quartileSize = data.length / 4;
+var numSplits = 6;
+var quartileSize = data.length / numSplits;
 console.log("Loading expt data complete..." + data.length + " data points");
 
 var globalConfig = {
   aggregate: false,
-  outputFileName : 'lexicalInference'
+  outputFileName : 'lexicalInferenceSextile'
 };
 
 var utterances = map(function(i) {return 'word' + i;}, _.range(1, 17));
@@ -35,15 +36,11 @@ var lexiconGuide = function(paramName, dims) {
 
 var sampleHyperlexica = function(q) {
   var dims = [utterances.length,states.length];
-  var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: ones(dims) });
+  var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: T.mul(ones(dims),2) });
   return {
     finalSpeaker:  sample(lexDist, {guide: lexiconGuide('speakerHyp' + q, dims)}),
     finalListener: sample(lexDist, {guide: lexiconGuide('listenerHyp' + q, dims)})
   };
-};
-
-var reparam = function(s, m, s) {
-  return T.mul(T.add(s, m), s);
 };
 
 // literal listener (using real-valued lexicon)
@@ -75,8 +72,8 @@ var L1 = function(utt, context, lexicon) {
 var model = function() {
   // Sample hyperparams
   
-  globalStore.alpha = 50;
-  var mus = map(function(q) {return sampleHyperlexica(q);}, _.range(1,5));
+  globalStore.alpha = 20;
+  var mus = map(function(q) {return sampleHyperlexica(q);}, _.range(1,numSplits + 1));
 
   map(function(quarter) {
     map(function(utt) {
@@ -85,6 +82,7 @@ var model = function() {
 	  mu: mus[quarter][participant]
 	};
 	var responses = L1(utt, states, T.sigmoid(hyperparams.mu));
+	display(responses);
 	var key = [quarter, utt, participant,
 		   entropy(responses)].join(",");
 	var newPair = _.zipObject([key], [argv.gameid]);
@@ -92,10 +90,10 @@ var model = function() {
 	globalStore.predictives = extend(globalStore.predictives, newPair);
       }, ['finalListener', 'finalSpeaker']);
     }, utterances);
-  }, _.range(4));
+  }, _.range(numSplits));
 
   return {predictive: globalStore.predictives};
 };
 
 var outputERP = Infer({model: model, method: 'forward', samples: 1, onlyMAP: true, guide: true});
-refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
+// refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
