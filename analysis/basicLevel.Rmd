@@ -621,7 +621,7 @@ Peoples' usage is surprisingly tight...
 
 Add a sentence about associations, e.g. 'nogo' ; 
 
-Import top-level hierarchical lexical posteriors for each quarter
+Import top-level hierarchical lexical posteriors for each split
 
 ```{r}
 library(rjson)
@@ -637,13 +637,17 @@ objects = as.character(c('blueSquare1', 'blueSquare2', 'redSquare1', 'redSquare2
 posteriors <- data.frame()
 for(i in c(gameIDs)) {
   base <- expand.grid(object=objects, wordID=words,stringsAsFactors=T)
-  result <- fromJSON(file = paste0("../models/holistic/bdaOutput/", i, ".json"))
-  speakerDF <- data.frame(model_4_mu = result$speakerHyp4mu$data, model_4_sigma = softplus(result$speakerHyp4sigma$data),
+  result <- fromJSON(file = paste0("../models/holistic/bdaOutput/sextiles/", i, ".json"))
+  speakerDF <- data.frame(model_6_mu = result$speakerHyp6mu$data, model_6_sigma = softplus(result$speakerHyp6sigma$data),
+                          model_5_mu = result$speakerHyp5mu$data, model_5_sigma = softplus(result$speakerHyp5sigma$data),
+                          model_4_mu = result$speakerHyp4mu$data, model_4_sigma = softplus(result$speakerHyp4sigma$data),
                           model_3_mu = result$speakerHyp3mu$data, model_3_sigma = softplus(result$speakerHyp3sigma$data),
                           model_2_mu = result$speakerHyp2mu$data, model_2_sigma = softplus(result$speakerHyp2sigma$data),
                           model_1_mu = result$speakerHyp1mu$data, model_1_sigma = softplus(result$speakerHyp1sigma$data)) %>%
     mutate(finalRole = 'speaker')
-  listenerDF <- data.frame(model_4_mu = result$listenerHyp4mu$data, model_4_sigma = softplus(result$listenerHyp4sigma$data),
+  listenerDF <- data.frame(model_6_mu = result$listenerHyp6mu$data, model_6_sigma = softplus(result$listenerHyp6sigma$data),
+                           model_5_mu = result$listenerHyp5mu$data, model_5_sigma = softplus(result$listenerHyp5sigma$data),
+                           model_4_mu = result$listenerHyp4mu$data, model_4_sigma = softplus(result$listenerHyp4sigma$data),
                            model_3_mu = result$listenerHyp3mu$data, model_3_sigma = softplus(result$listenerHyp3sigma$data),
                            model_2_mu = result$listenerHyp2mu$data, model_2_sigma = softplus(result$listenerHyp2sigma$data),
                            model_1_mu = result$listenerHyp1mu$data, model_1_sigma = softplus(result$listenerHyp1sigma$data)) %>%
@@ -659,12 +663,12 @@ posteriors <- posteriors %>%
 
 ```
 
-Construct ROC curves showing performance of each quarter's model:
+Construct ROC curves showing performance from each split model:
 
 ```{r}
 library(pROC)
 rocOutput = data.frame()
-for(qt in seq(1: 4)) {
+for(qt in seq(1: 6)) {
   qtrData = posteriors %>% 
     inner_join(postTest_clean) %>%
     filter(quarter == qt) %>%
@@ -755,20 +759,27 @@ This is fairly hacky; below, we show the litener responses from RSA
 ```
 
 ```{r}
-RSA.entropies <- read_csv('../models/holistic/bdaOutput/lexicalInferencePredictives.csv') %>%
+RSA.entropies <- read_csv('../models/holistic/bdaOutput/lexicalInferenceSextilePredictives.csv') %>%
   mutate(finalRole = ifelse(finalRole == 'finalSpeaker', 'speaker', 'listener')) %>%
-  left_join(masterGameIDLookup) #%>%
+  left_join(masterGameIDLookup) %>%
+  ungroup() %>%
+  mutate(condition = ifelse(condition == 'intermediateOnly', 'coarse', ifelse(condition == 'subOnly', 'fine', 'mixed'))) %>%
+  mutate(condition = factor(condition, levels = c('mixed', 'coarse', 'fine'))) %>%
+  mutate(entropy = entropy / log(2)) %>%
+  mutate(quartile = quartile + 1)
   # group_by(id, finalRole, quarter, wordID, con) %>%
   # summarize(condition = first(condition), entropy = mean(entropy))
 
-ggplot(RSA.entropies, aes(x = entropy, fill = condition)) +
-  geom_density(alpha = 0.5, adjust = 2/3) +
-  facet_grid( ~ quarter) +
+ggplot(RSA.entropies %>% mutate(quartile = paste0('epoch ', quartile)), aes(x = entropy, fill = condition)) +
+  geom_density(alpha = 0.5, adjust = 1/6) +
+  facet_wrap( ~ quartile, nrow = 2, ncol = 3) +
   theme_few() +
-  theme(aspect.ratio = 3/4, legend.position = 'top') +
-  guides(fill = F)
+  scale_color_colorblind() +
+  theme(aspect.ratio = 1, legend.position = 'top') 
+  #guides(fill = F) 
+  #xlim(2.07, 2.08)
 
-ggsave("../writing/cogsci18/figures/entropies.pdf", height = 3, width = 5)
+ggsave("../writing/cogsci18/figures/entropies.pdf", height = 5, width = 6)
 ```
 
 Measure change in entropy, word by word... 
@@ -776,19 +787,38 @@ Measure change in entropy, word by word...
 ```{r}
 RSA.entropies %>% 
   group_by(wordID,finalRole,id,condition) %>%
+  #mutate(quartile = quartile + 1) %>%
+  mutate(entropy = entropy / log(2)) %>%
   mutate(entropy.diff = entropy - lag(entropy)) %>%
-  filter(quarter > 0) %>%
-  group_by(quarter, condition) %>%
-  summarize(m = mean(entropy.diff)) %>%
-  ggplot(aes(x = condition, y = m, fill = factor(quarter))) +
-    geom_bar(position = 'dodge', stat='identity') +
-    scale_fill_manual(values = c("gray34", "gray55", "gray77")) +
+  filter(quartile > 1) %>%
+  mutate(quartile = factor(quartile)) %>%
+  group_by(quartile, condition) %>%
+  summarize(m = mean(entropy.diff), se = sd(entropy.diff)/sqrt(length(entropy.diff))) %>%
+  ggplot(aes(x = quartile, y = m, color = condition, group = condition)) +
+    geom_line(size = 1.5) +#(position = 'dodge', stat='identity') +
+    geom_hline(aes(yintercept = 0)) +
+    geom_errorbar(aes(ymax = m + se, ymin = m - se), width = 0) +
     theme_few() +
+    scale_color_colorblind() +
     ylab("mean difference in entropy from previous round")
-ggsave("../writing/cogsci18/figures/entropies.pdf", height = 3, width = 5)
+ggsave("../writing/cogsci18/figures/entropies_differences.pdf", height = 3, width = 4)
 ```
 
 see how it corresponds to the size of the extensions?
+
+```{r}
+varianceDF <- data.frame()
+for(i in c(gameIDs)) {
+  result <- fromJSON(file = paste0("../models/holistic/bdaOutput/sextiles/", i, ".json"))
+  #print(result)
+  gameDF = data.frame(speaker_qt1_mu = result$VarMu$data, speaker_qt1_sigma = result$VarSigma$data)
+  varianceDF = rbind(varianceDF, gameDF %>% mutate(gameid = i))
+}
+```
+
+```{r}
+varianceDF %>% mutate(sigma = log(1 + exp(speaker_qt1_mu))) %>% ggplot(aes(x = sigma)) + geom_histogram()  + theme_few()
+```
 
 ### Measure accuracy?
 
@@ -816,37 +846,7 @@ posteriors %>%
   theme_few()
 ```
 
-### Examine variance across quarters
-
-```{r}
-varianceDF <- data.frame()
-for(i in c(gameIDs)) {
-  result <- fromJSON(file = paste0("../models/", i, ".json"))
-  gameDF = data.frame(speaker_qt1_mu = result$speakerVar1mu$data, speaker_qt1_sigma = result$speakerVar1sigma$data, 
-                      speaker_qt2_mu = result$speakerVar2mu$data, speaker_qt2_sigma = result$speakerVar2sigma$data, 
-                      speaker_qt3_mu = result$speakerVar3mu$data, speaker_qt3_sigma = result$speakerVar3sigma$data, 
-                      speaker_qt4_mu = result$speakerVar4mu$data, speaker_qt4_sigma = result$speakerVar4sigma$data, 
-                      listener_qt1_mu = result$listenerVar1mu$data, listener_qt1_sigma = result$listenerVar1sigma$data, 
-                      listener_qt2_mu = result$listenerVar2mu$data, listener_qt2_sigma = result$listenerVar2sigma$data, 
-                      listener_qt3_mu = result$listenerVar3mu$data, listener_qt3_sigma = result$listenerVar3sigma$data, 
-                      listener_qt4_mu = result$listenerVar4mu$data, listener_qt4_sigma = result$listenerVar4sigma$data) 
-  varianceDF = rbind(varianceDF, gameDF %>% mutate(gameid = i))
-}
-```
-
-```{r}
-varianceDF %>% 
-  gather(key, value, -gameid) %>%
-  separate(key, into = c('finalRole', 'quarter', 'param')) %>%
-  spread(param, value) %>%
-  mutate(sigma = log(1+exp(sigma))) %>%
-  group_by(quarter) %>%
-  summarize(m = mean(mu), s = mean(sigma))
-```
-
-Kinda confused about this... It looks like it's learning the hierarchical thing pretty well but basically loosening the constraints on local rounds late in the game. It looks like lexica learned for local rounds only have the minimal thing necessary to predict that round, but without the global properties. Why would this be better for the likelihood, though? Maybe you just don't want to put strong predictions on stuff you don't observe? Wants each local round to only have the minimal thing required?
-
-### Examine early development
+### Examine feature model
 
 We have this idea that all terms start out specific and then get broadened to neighbors when context allows. Of course, the opposite could in principle be true: terms could start broad and narrow when context requires. We attempt to look at this in early rounds across different conditions... 
 For each participant, we first look at the number of 'abstract' vs. 'specific' terms in our inferred lexica in the first round.
