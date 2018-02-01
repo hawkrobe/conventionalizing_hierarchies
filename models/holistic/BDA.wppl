@@ -38,27 +38,27 @@ var lexiconGuide = function(paramName, dims) {
   };
 };
 
-var varianceGuide = function(p) {
-  return function() {
-    Gaussian({
-      mu: param({name: 'VarMu'}),
-      sigma: scalarSoftplus(param({name: 'VarSigma'}))
-    });
-  };
-};
+// var varianceGuide = function(p) {
+//   return function() {
+//     Gaussian({
+//       mu: param({name: 'VarMu'}),
+//       sigma: scalarSoftplus(param({name: 'VarSigma'}))
+//     });
+//   };
+// };
 
 // Hierarchical model with one lexicon each split
 // This takes those hierarchical lexica as input and samples a lexicon for round
-var sampleVariances = function() {
-  var dims = [utterances.length,states.length];
-  var varianceDist = Gaussian({mu: 0, sigma: .1});
-  var sigma = sample(varianceDist, {guide: varianceGuide()});
-  return T.mul(ones(dims), scalarSoftplus(sigma));
-};
+// var sampleVariances = function() {
+//   var dims = [utterances.length,states.length];
+//   var varianceDist = Gaussian({mu: 0, sigma: .1});
+//   var sigma = sample(varianceDist, {guide: varianceGuide()});
+//   return T.mul(ones(dims), scalarSoftplus(sigma));
+// };
 
 var sampleHyperlexica = function(q) {
   var dims = [utterances.length,states.length];
-  var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: T.mul(ones(dims),2) });
+  var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: T.mul(ones(dims),100) });
   return {
     finalSpeaker:  sample(lexDist, {guide: lexiconGuide('speakerHyp' + q, dims)}),
     finalListener: sample(lexDist, {guide: lexiconGuide('listenerHyp' + q, dims)})
@@ -67,17 +67,17 @@ var sampleHyperlexica = function(q) {
 
 // Hierarchical model with one lexicon each split
 // This takes those hierarchical lexica as input and samples a lexicon for round
-var sampleLexiconParams = function(hyperparams, datum) {
-  var i = datum.trialNum;
-  var dims = [utterances.length,states.length];
-  var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: ones(dims) });  
-  return {
-    finalSpeaker:  reparam(sample(lexDist, {guide: lexiconGuide('speaker'  + i, dims)}),
-			   hyperparams.mu.finalSpeaker, hyperparams.sigma),
-    finalListener: reparam(sample(lexDist, {guide: lexiconGuide('listener' + i, dims)}),
-			   hyperparams.mu.finalListener, hyperparams.sigma)
-  };
-};
+// var sampleLexiconParams = function(hyperparams, datum) {
+//   var i = datum.trialNum;
+//   var dims = [utterances.length,states.length];
+//   var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: ones(dims) });  
+//   return {
+//     finalSpeaker:  reparam(sample(lexDist, {guide: lexiconGuide('speaker'  + i, dims)}),
+// 			   hyperparams.mu.finalSpeaker, hyperparams.sigma),
+//     finalListener: reparam(sample(lexDist, {guide: lexiconGuide('listener' + i, dims)}),
+// 			   hyperparams.mu.finalListener, hyperparams.sigma)
+//   };
+// };
 
 // For now, we are just doing a pure statistical model -- not trying to tie
 // their new lexicon mechanistically to what happened on the previous round,
@@ -108,19 +108,17 @@ var observeRound = function(params, datum) {
 var model = function() {
   // Sample hyperparams
   globalStore.alpha = 1;
-  var sigma = sampleVariances();
   var mus = map(function(q) {return sampleHyperlexica(q);}, _.range(1,numSplits + 1));
 
-  mapData({data: data, batchSize: 48}, function(trialDatum) {
+  mapData({data: data, batchSize: 96}, function(trialDatum) {
     var currQ = Math.floor((trialDatum.trialNum - 1) / splitSize);
-    var hyperparams = {mu: mus[currQ], sigma: sigma};
-    var lexiconParams = sampleLexiconParams(hyperparams, trialDatum);
+    var lexiconParams = mus[currQ];
     observeRound(lexiconParams, trialDatum);
   });
 
 };
   
 Optimize({model: model, steps: 10000, verbose: true,
-	  optMethod: {adam: {stepSize: 0.0005}}});
+	  optMethod: {adam: {stepSize: 0.01}}});
 
 //refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
