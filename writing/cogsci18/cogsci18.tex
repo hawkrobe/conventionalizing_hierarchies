@@ -202,7 +202,7 @@ In this section, we present a statistical model of this progression. We assume t
 \includegraphics[scale=0.6]{modelPerformance_edited.pdf}
 \includegraphics[scale=.9]{entropies.pdf}
 \includegraphics[scale=.5]{entropies_differences.pdf}
-{\caption{{(A) A logistic classifier based on inferred lexical entries accurately predicts post-test responses. (B) Entropy of  posterior word extensions as they evolve over time for each condition \todo[inline]{Fix stupid-looking inset; put legend on (B), scale everything so text is readable, transform entropy axis to bits instead of nats...}  \label{fig:postTestPrediction}}}}
+{\caption{{(A) A logistic classifier based on inferred lexical entries accurately predicts post-test responses. (B) Entropy of  posterior word extensions as they evolve over time for each condition  \ndg{decrease bandwidth of smoothing for entropy plot. horizontal dashed line at 0 for entropy diff plot. error bars in diff plot. labels etc. }  \todo[inline]{Fix stupid-looking inset; put legend on (B), scale everything so text is readable, transform entropy axis to bits instead of nats...}  \label{fig:postTestPrediction}}}}
 \end{center}
 \end{figure*}
 
@@ -220,11 +220,12 @@ where $o_i$ is a chosen object, $w$ an uttered word, and $\alpha$ is a hyperpara
 We use these pragmatic speaker and listener likelihood functions to link latent lexica, represented as a matrix of real values $\ell_{w,o}^t \in \mathbb{R}$, to behavior.
 This allows us to then use Bayesian inference to back out the effective lexicon from trial-by-trial behavior.
 Because each trial has only a single choice, we share statistical strength within periods of time by using a quartile-wise hierarchical prior. 
-In particular, we assume that each lexicon entry on round $t$ is drawn from a Gaussian $\mathcal{N}(m^{q}_{w,o}, \sigma^{q})$ centered at that quartile's hyper-lexicon with some fixed dispersion, and mapped to the unit interval with a logistic function\footnote{The logistic function is given by $\text{logistic}(x) = 1/(1 + e^{x})$.}:
+In particular, we assume that each lexicon entry on round $t$ is drawn from a Gaussian $\mathcal{N}(m^{q}_{w,o}, \sigma)$ centered at that quartile's hyper-lexicon with some fixed dispersion, and mapped to the unit interval with a logistic function\footnote{The logistic function is given by $\text{logistic}(x) = 1/(1 + e^{x})$.}:
 $$
 \begin{array}{rcl}
 m_{w,o}^q &\sim& \mathcal{N}(0, 1)\\
-m_{w,o}^t &\sim& \mathcal{N}(m_{w,o}^q,  \sigma^{q})\\
+\sigma &\sim& \text{abs}(\mathcal{N}(0, 0.5)) \ndg{fixme} \\ 
+m_{w,o}^t &\sim& \mathcal{N}(m_{w,o}^q,  \sigma)\\
 \ell_{w,o}^t &=& \text{logistic}(m_{w,o}^t)
 \end{array}
 $$
@@ -232,7 +233,7 @@ $$
 We approximate the posterior of this model using mean-field variational inference \cite{RanganathGerrishBlei13_BlackBoxVariationalInference}, implemented in the probabilistic programming language WebPPL \cite{GoodmanStuhlmuller14_DIPPL,DAIPP}. 
 The approximating family for each random variable is Gaussian \ndg{really? even for bounded ones like $\alpha$?}.
 This approximates the joint posterior over all lexical entries (and shared hyperparameters) used by each participant for each round in each game. 
-\ndg{there are two hyperparameters, $\alpha$ and $\sigma^q$, right? need to say what prior we use for them. these are shared across quartiles, trials, and participants, or separately?}
+\ndg{there are two hyperparameters, $\alpha$ and $\sigma$, right? need to say what prior we use for them. these are shared across quartiles, trials, and participants, or separately?}
 
 
 % We place a relatively uninformative but regularizing prior $\ell_{w,o}^0 \sim \mathcal{N}(0, 1)$ on the entries of the quartile-level lexica. 
@@ -278,7 +279,6 @@ We use the MAP estimate of the lexicon and set $\alpha$ to \ndg{XX} (in order to
 The distribution of word entropies estimated in this way, aggregated for each quartile and condition, is shown in Fig. \ref{fig:postTestPrediction}B. There are two properties to note here. First, abstract terms form early in the \emph{coarse} condition, and remain stable throughout the game. Second, specific terms appear to be relatively slow-forming in the other two conditions, and do not stabilize until the third or fourth quartile. 
 
 These two observations are backed by a more fine-grained analysis of how individual words shift their meaning over time. For each word, we computed the difference in its entropy across quartiles. We found that words shifted much more from the first quartile to the second than in later quartiles, indicating that meanings were initially quite uncertain and stabilized. Furthermore, words in the \emph{coarse} condition increased their entropy (as the set of completely unused words grew \ndg{do we know this is why?}) while words in the other conditions decrease their entropy (as unused words were increasingly recruited to fulfill the demand for specific names \ndg{again do we know that it's this?}). These statistical patterns, then, may reflect more of a \emph{narrowing} account, where unknown words could initially refer to any of the objects and acquire more informative meanings as agents learn through interaction.
-\ndg{i think we should try to squeeze in a figure for the entropy differences...}
 
 %For this analysis, we elaborated our model to use an underlying feature basis to derive the lexicon instead of independent entries for each object-word combination. 
 %\ndg{can't we first do this analysis using the simple lexicon model? }
