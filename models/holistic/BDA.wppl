@@ -58,7 +58,7 @@ var lexiconGuide = function(paramName, dims) {
 
 var sampleHyperlexica = function(q) {
   var dims = [utterances.length,states.length];
-  var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: T.mul(ones(dims),100) });
+  var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: T.mul(ones(dims),5) });
   return {
     finalSpeaker:  sample(lexDist, {guide: lexiconGuide('speakerHyp' + q, dims)}),
     finalListener: sample(lexDist, {guide: lexiconGuide('listenerHyp' + q, dims)})
@@ -90,7 +90,7 @@ var observeRound = function(params, datum) {
   // transition happens on raw params; must transform to [0,1] before passing as lexicon
   var speakerScore = refModule.getSpeakerScore(datum.wordID, datum.intendedName, {
     context: datum.context,
-    lexicon: T.sigmoid(slex),
+    lexicon: slex,
     utterances: utterances,
     alpha: globalStore.alpha
   });
@@ -98,7 +98,7 @@ var observeRound = function(params, datum) {
 
   var listenerScore = refModule.getListenerScore(datum.clickedName, datum.wordID,{
     context: datum.context,
-    lexicon: T.sigmoid(llex),
+    lexicon: llex,
     utterances: utterances,
     alpha: globalStore.alpha
   });
@@ -118,7 +118,7 @@ var model = function() {
 
 };
   
-Optimize({model: model, steps: 10000, verbose: true,
-	  optMethod: {adam: {stepSize: 0.01}}});
+Optimize({model: model, steps: 5000, verbose: true,
+	  optMethod: {adam: {stepSize: 0.001}}});
 
 //refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);

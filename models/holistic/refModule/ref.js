@@ -22,10 +22,11 @@ var getLexiconElement = function(lexicon, utt, target) {
 var getL0score = function(target, utt, params) {
   var scores = [];
     var sum = 0;
-    var truth = ad.scalar.log(getLexiconElement(params.lexicon, utt, target));
+    var truth = getLexiconElement(params.lexicon, utt, target);
+//    var truth = ad.scalar.log(getLexiconElement(params.lexicon, utt, target));
   for(var i=0; i<params.context.length; i++){
     sum = ad.scalar.add(
-	sum, getLexiconElement(params.lexicon, utt, params.context[i]));
+	sum, ad.scalar.exp(getLexiconElement(params.lexicon, utt, params.context[i])));
   }
   return normalize(truth, sum);
 };
