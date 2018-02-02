@@ -80,7 +80,7 @@ conventions; pragmatics; communication; interaction
 \section{Introduction}
 %% Set up problem
 Natural languages provide speakers with remarkable flexibility in the labels they may use to refer to things \cite{Brown58_HowShallAThingBeCalled}. %,Cruse77_PragmaticsLexicalSpecificity
-On top of an abundance of expressions made available by syntactic combination and semantic compositionality \cite{Partee95_LexicalSemanticsCompositionality}, we have a number of overlapping and nested terms in our lexicon. \emph{Fido}, \emph{Dalmatian}, \emph{dog}, and \emph{animal} can all reasonably be used to talk about the same entity at different levels of abstraction. How these overlapping meanings are learned, and why speakers choose different levels of specificity in different contexts, is increasingly well-understood %\cite<e.g.>{XuTenenbaum07_WordLearningBayesian,GrafEtAl16_BasicLevel} 
+On top of an abundance of expressions made available by syntactic combination and semantic compositionality \cite{Partee95_LexicalSemanticsCompositionality}, we have a number of overlapping and nested terms in our lexicon. \emph{Fido}, \emph{Dalmatian}, \emph{dog}, and \emph{animal} can all reasonably be used to talk about the same entity at different levels of abstraction. How these overlapping meanings are learned, and why speakers choose different levels of specificity in different contexts, is increasingly well-understood \cite<e.g.>{XuTenenbaum07_WordLearningBayesian,GrafEtAl16_BasicLevel} 
 but there remains a more fundamental question about the structure of our lexicon: why and how do different levels of abstraction become lexicalized in the first place? %And why do we have words for some abstractions but not for others?
 
 %% Overview of big-picture optimal expressivity theory suggesting an answer
@@ -192,7 +192,7 @@ To test this prediction, we counted the number of words in each participant's re
 
 If participants in the \emph{coarse} condition can get away with fewer words in their lexicon, what are the meanings of the words they do have? We counted the numbers of specific terms (e.g.\ words that refer to only one object) and abstract terms (e.g.\ words that refer to multiple objects) in the post-test. We found that the likelihood of lexicalizing abstractions differed systematically across conditions (see Fig.\ \ref{fig:lexiconContent}A). Participants in the \emph{fine} condition reported lexica containing only specific terms, while participants in the \emph{coarse} condition reported significantly more abstract terms ($m = 2.5, p < 0.001$). 
 
-These data also reveal an interesting asymmetry in lexicon content across conditions: while abstractions are entirely absent from the \emph{fine} condition, specific terms often coexist with abstract terms in the other conditions. In the \emph{coarse} condition, for instance, participants could in principle perform optimally with only four abstract terms and no specific terms. While this was the modal system that emerged (reported in the post-test by nearly 1/3 of participants), the two kinds of terms often coexisted (see Fig.\ \ref{fig:lexiconContent}B). Indeed, the average proportion of abstract (vs.\ specific) terms \emph{within} each participant's lexicon in the \emph{coarse} condition ($m = 0.56$) was significantly higher than in the other conditions ($p < 0.001$).
+These data also reveal an interesting asymmetry in lexicon content across conditions: while abstractions are entirely absent from the \emph{fine} condition, specific terms often coexist with abstract terms in the other conditions. In the \emph{coarse} condition, for instance, participants could in principle perform optimally with only four abstract terms and no specific terms. While this was the modal system that emerged (reported in the post-test by nearly 1/3 of participants), the two kinds of terms often coexisted (see Fig.\ \ref{fig:lexiconContent}B). Indeed, the average proportion of abstract (vs.\ specific) terms \emph{within} each participant's lexicon in the \emph{coarse} condition ($m = 0.56$) was significantly higher than in the other conditions ($p < 0.001$, exploratory).
 %\ndg{`average entropy of the distribution of abstract vs.\ specific terms within each participant's lexicon' is a lot to swallow at once...}
 
 \section{Model-based Analysis}
@@ -201,25 +201,12 @@ Our post-test provides some insight into the end-result of lexicalization under 
 
 In this section, we present a statistical model of this progression. We assume that on any given round, speakers and listeners are rationally producing and interpreting utterances given some internal lexicon, and we use Bayesian methods to infer their lexicon from their behavior. First, this analysis validates our post-test measures of lexical meaning against actual behavioral usage throughout the game --- if participant reports are internally consistent, the model's posterior on the last round of the game should predict their post-test responses. Second, we can examine the time-course of lexical emergence by inspecting inferred lexica from behavior in earlier rounds of the game. We expect this latter to be more broadly useful in studies where explicit measurements of the lexicon are not practical. %Finally, because our statistical model learns from the same data that agents in principle learn from, it provides some insight into the path-dependent effects of early communicative pressures on the available meanings. %basic-level vs.\ subordinate-level terms, (4) measure path-dependence, e.g.\ how 
 
-\begin{figure*}[t]
-\begin{center}
-%<<<<<<< HEAD
-%\includegraphics[scale=0.6]{modelPerformance_edited.pdf}
-%\includegraphics[scale=.9]{entropies.pdf}
-%\includegraphics[scale=.5]{entropies_differences.pdf}
-%{\caption{{(A) A logistic classifier based on inferred lexical entries accurately predicts post-test responses. (B) Entropy of  posterior word extensions as they evolve over time for each condition  \ndg{decrease bandwidth of smoothing for entropy plot. horizontal dashed line at 0 for entropy diff plot. error bars in diff plot. labels etc. }  \todo[inline]{Fix stupid-looking inset; put legend on (B), scale everything so text is readable, transform entropy axis to bits instead of nats...}  \label{fig:postTestPrediction}}}}
-%=======
-\includegraphics[scale=0.75]{modelFig.pdf}
-{\caption{{Model-based results. (A) A logistic classifier based on inferred lexical entries accurately predicts post-test responses. (B) Entropy of  posterior word extensions shifts over time for each condition. (C) Mean change in entropy at the word level from round to round (error bars are $\pm 1$ SE)}  \label{fig:postTestPrediction}}}
-\end{center}
-\vspace{-3ex}
-\end{figure*}
 
 \subsection{Generative model}
 
-We begin with a generative model of how agents use their underlying lexicon to produce and interpret language. This model provides a linking function assigning a likelihood to the speaker utterances and listener choices we observe on each round of the game, given any latent lexicon. We adopt the probabilistic Rational Speech Act (RSA) framework, which has been successful in recent years at capturing a broad array of pragmatic phenomena in language use \cite{GoodmanFrank16_RSATiCS,FrankeJager16_ProbabilisticPragmatics}. This framework captures the Gricean assumption of cooperativity: a pragmatic speaker $S_1$ attempts to be informative in context while a pragmatic listener $L_1$ inverts their model of the speaker to infer the intended target. The chain of recursive social reasoning grounds out in a \emph{literal listener} $L_0$, which directly uses its lexicon, $\mathcal{L}^t(w,o)$, to interpret a given utterance. This model can be formally specified as follows:
+We begin with a generative model of how agents use their underlying lexicon to produce and interpret language. This model provides a linking function assigning a likelihood to the speaker utterances and listener choices we observe on each round of the game, given any latent lexicon. We adopt the probabilistic Rational Speech Act (RSA) framework, which has been successful in recent years at capturing a broad array of pragmatic phenomena in language use \cite{GoodmanFrank16_RSATiCS,FrankeJager16_ProbabilisticPragmatics}. This framework captures the Gricean assumption of cooperativity: a pragmatic speaker $S_1$ attempts to be informative in context while a pragmatic listener $L_1$ inverts their model of the speaker to infer the intended target. The chain of recursive social reasoning grounds out in a \emph{literal listener} $L_0$, which directly soft-maximizes its lexicon, $\mathcal{L}^t(w,o)$, to interpret a given utterance. This model can be formally specified as follows:
 \begin{alignat*}{3}
-& L_0(o_i | w, \mathcal{L}^t) &\ \ \propto \ \ & \mathcal{L}^t(w,o_i) \\
+& L_0(o_i | w, \mathcal{L}^t) &\ \ \propto \ \ & \exp\{\mathcal{L}^t(w,o_i)\} \\
 & S_1(w | o_i, \mathcal{L}^t) &\ \ \propto \ \ & \exp\{\ln L_0(o_i | w, \mathcal{L}^t)\} \\
 & L_1(o_i | w, \mathcal{L}^t) &\ \ \propto \ \ & S_1(w | o_i, \mathcal{L}^t) P(o_i) 
 \end{alignat*}
@@ -246,17 +233,27 @@ We use these pragmatic speaker and listener likelihood functions to link latent 
 %\ndg{there are two hyperparameters, $\alpha$ and $\sigma$, right? need to say what prior we use for them. these are shared across quartiles, trials, and participants, or separately?}
 %=======
 This allows us to then use Bayesian inference to back out each participant's effective lexicon from their trial-by-trial behavior.
-Because each trial has only a single choice for each player, we share statistical strength within periods of time by using a hierarchical prior within $k$ epochs of the data (we use $k=6$ such that each target appears exactly twice in each epoch). 
-In particular, we assume that each lexicon entry on round $t$ is drawn from a Gaussian $\mathcal{N}(m^{k}_{w,o}, \sigma)$ centered at that epoch's hyper-lexicon with some fixed dispersion, and mapped to the unit interval with a logistic function\footnote{The logistic function is given by $\text{logistic}(x) = 1/(1 + e^{x})$.}:
-\begin{alignat*}{3}
-& \sigma & \sim & \textrm{abs}(\mathcal{N}(0, 0.5)) \\
-& m_{w,o}^k &\sim& \mathcal{N}(0, 2)\\
-& m_{w,o}^t &\sim& \mathcal{N}(m_{w,o}^k,  \sigma)\\
-& \ell_{w,o}^t &=& \text{logistic}(m_{w,o}^t)
-\end{alignat*}
-We approximate the posterior of this model separately for each game using mean-field variational inference \cite{RanganathGerrishBlei13_BlackBoxVariationalInference}, implemented in the probabilistic programming language WebPPL \cite{GoodmanStuhlmuller14_DIPPL,DAIPP}. 
-The approximating family for each random variable is Gaussian. This approximates the joint posterior over all lexical entries (and shared hyperparameter $\sigma$) used for each round in each trial. 
+Because each trial has only a single choice for each player, we pool statistics within $k$ epochs of the data (we use $k=6$ such that each target appears exactly twice in each epoch). 
+For each epoch, we sample lexical entries from a independent Gaussian priors $$\ell_{o,w}^k\sim\mathcal{N}(0, 3)$$ This prior is intended to regularize lexicon entries to be relatively close to 0, inducing a bias toward sparsity. %centered at that epoch's hyper-lexicon with some fixed dispersion, and mapped to the unit interval with a logistic function:%\footnote{The logistic function is given by $\text{logistic}(x) = 1/(1 + e^{x})$.}:
+%\begin{alignat*}{3}
+%& \sigma & \sim & \textrm{abs}(\mathcal{N}(0, 0.5)) \\
+%& \ell_{w,o}^k &\sim& \mathcal{N}(0, 3)\\
+%& m_{w,o}^t &\sim& \mathcal{N}(m_{w,o}^k,  \sigma)\\
+%& \ell_{w,o}^t &=& \text{logistic}(m_{w,o}^t)
+%\end{alignat*}
 
+We approximate the posterior of this model separately for each game using mean-field variational inference \cite{RanganathGerrishBlei13_BlackBoxVariationalInference}, implemented in the probabilistic programming language WebPPL \cite{GoodmanStuhlmuller14_DIPPL,DAIPP}. 
+The approximating family for each random variable is Gaussian. This approximates the joint posterior over all lexical entries used in each epoch. 
+
+
+\begin{figure*}[t]
+\begin{center}
+\includegraphics[scale=0.8]{modelFig.pdf}
+\vspace{-3ex}
+{\caption{{Model-based results. (A) A logistic classifier based on inferred lexical entries accurately predicts post-test responses. (B) Entropy of posterior word extensions show coalescence across epochs for each condition. (C) Mean change in entropy at the word level from round to round (error bars are $\pm 1$ SE)}  \label{fig:postTestPrediction}}}
+\end{center}
+\vspace{-3ex}
+\end{figure*}
 
 % We place a relatively uninformative but regularizing prior $\ell_{w,o}^0 \sim \mathcal{N}(0, 1)$ on the entries of the quartile-level lexica. 
 %\ndg{this paragraph can be simplified. it will help to give statistician's notation block defining model. if each lexical entry is treated independently, then just do at that level.... something like:}
@@ -281,33 +278,33 @@ The approximating family for each random variable is Gaussian. This approximates
 \subsection{Validating post-test responses}
 
 We begin by showing that the lexical entries we infer for each participant accurately predicts their post-test responses. 
-We constructed a logistic classifier from our posterior on each epoch: for each object-word pair $(o,w)$ in the post-test response matrix, we computed the marginal posterior probability $P(\ell_{o,w} > 0.5| \theta_{o,w})$, where $\theta_{o,w}$ are the corresponding variational parameters (i.e. the mean and variance of the approximating Gaussian). This gives the posterior probability that word $w$ applies to object $o$. We evaluated the performance of this classifier by constructing an ROC curve that shows the tradeoff between hits and false alarms as the discrimination criterion is varied (see Fig.\ \ref{fig:postTestPrediction}A). We found that the classifier based on the final epoch predicts post-test responses with excellent accuracy ($AUC: 0.98$). This indicates that the post-test lexicon is indeed linked to behavior as predicted by RSA, validating both the post-test measure and the results of our Bayesian analysis.
+We constructed a logistic classifier from our posterior on each epoch: for each object-word pair $(o,w)$ in the post-test response matrix, we computed the marginal posterior probability $P(\ell_{o,w} > 0.5| \theta_{o,w})$, where $\theta_{o,w}$ are the corresponding variational parameters (i.e. the mean and variance of the approximating Gaussian). This gives the posterior probability that word $w$ applies to object $o$. We evaluated the performance of this classifier by constructing an ROC curve that shows the tradeoff between hits and false alarms as the discrimination criterion is varied. We found that the classifier based on the final epoch predicts post-test responses with excellent accuracy (AUC: $0.98$; see Fig.\ \ref{fig:postTestPrediction}A). This indicates that the post-test lexicon is indeed linked to behavior as predicted by RSA, validating both the post-test measure and the results of our Bayesian analysis.
 
-Furthermore, we found that the corresponding posterior predictives from earlier epochs predicted final post-test responses less well, even though they were learned from the same number and type of behavioral observations (see Fig.\ \ref{fig:postTestPrediction}). Still, even the classifier based on the earliest epoch performs significantly above chance, indicating that some information about the final lexicon is available from the earliest rounds. These patterns are suggestive of a path-dependent process where the lexicon gradually coalesces from initially arbitrary associations over the course of interaction. We next turn to the earliest stages of this process.% to examine this process in more detail.
+Furthermore, we found that the corresponding posterior predictives from earlier epochs predicted final post-test responses less well, even though they were learned from the same number and type of behavioral observations (Fig.\ \ref{fig:postTestPrediction}A). Still, even the classifier based on the earliest epoch performs significantly above chance, indicating that some information about the final lexicon is available from the earliest rounds. These patterns are suggestive of a path-dependent process where the lexicon gradually coalesces from initially arbitrary associations over the course of interaction. We next turn to the earliest stages of this process.% to examine this process in more detail.
 
 \subsection{Examining early time course}
 
 %\todo[inline]{note for MF: I got this feature-based model working and then Noah thought it might be better to just use the simple model for everything? I'm going to see how far I can run with the simple model, so this section is somewhat in flux\dots}
 
-Classic theories in historical linguistics distinguish between semantic \emph{broadening}, when a word takes on a more inclusive meaning, and \emph{narrowing}, when meanings become more restrictive over time \cite{TraugottDasher02_RegularitySemanticChange}. One advantage of the statistical approach we develop here is the ability to make descriptive inferences about the meanings being used in settings where we \emph{don't} ask participants for explicit judgements---in particular, in early round of our games. 
+Classic theories in historical linguistics distinguish between semantic \emph{broadening}, when a word takes on a more inclusive meaning, and \emph{narrowing}, when meanings become more restrictive over time \cite{TraugottDasher02_RegularitySemanticChange}. One advantage of the statistical approach we develop here is the ability to make descriptive inferences about the meanings being used in settings where we \emph{don't} ask participants for explicit judgements---in particular, in early rounds of our games. 
 
 %In this spirit, we use our model to return to early rounds for signatures of these two processes. %Having validated our final-round lexicon estimates against post-test measures, we proceeded to analyze the dynamics of the lexicon over time. 
 
-Our primary measure of interest is the \emph{entropy} of the extension of words. The entropy of a particular word is near zero when its meaning is peaked on a single object, and is maximized when it applies equally to all objects. 
+Our primary measure of interest is the \emph{entropy} of the extension of words over the eight objects. The entropy of a particular word is near zero when its meaning is peaked on a single object, and is maximized when it applies equally to all objects. 
 %In principle, we would find uniform distributions for words that apply equally well to all eight objects, but in our case, uniform meanings are more likely to reflect the uncertainty in our model's posterior (e.g. for words that were never used in a game). 
 We expect abstract terms to lie in between these extremes. 
-We obtain the distribution over each word by running it through our $L_1$ model, \ndg{now that we have $\alpha=1$ in training, it may be more reasonable to use L0 aka normalize lexicon, followed by softmax if we absolutely have to.} essentially asking how likely each of the eight objects would be to be the referent of the word.\footnote{Using $L_1$, rather than $L_0$ or $\mathcal{L}$, gives us a notion of word extension that is more tied to behavior and less influenced by non-identifiability of parameters. For instance, $\mathcal{L}$ has an overall scaling per row that doesn't influence behavior.} 
-We use the MAP estimate of the lexicon and manually set $\alpha = 20$ \ndg{$\alpha$ not defined earlier} (in order to make entropy effects more evident \ndg{hacky!}). 
+We obtain the extension distribution for each word by running it through our $L_0$ model, essentially asking how likely it is to refer to each of the eight objects.
+%\footnote{Using $L_1$, rather than $L_0$ or $\mathcal{L}$, gives us a notion of word extension that is more tied to behavior and less influenced by non-identifiability of parameters. For instance, $\mathcal{L}$ has an overall scaling per row that doesn't influence behavior.} 
+We use the MAP estimate of the lexicon (in order to make entropy effects more evident). 
 The distribution of word entropies estimated in this way, aggregated for each quartile and condition, is shown in Fig. \ref{fig:postTestPrediction}B. %There are two properties to note here. 
 Abstract terms begin to form early (epoch 2) in the \emph{coarse} condition, and remain stable throughout the game. In contrast, specific terms appear to be relatively slow-forming in the other two conditions, and do not stabilize until the fourth or fifth epochs. 
 
-
-To examine this pattern in more detail, we computed the difference in each word's entropy across epochs. For all conditions, we found that words shifted less over later epochs, indicating that meanings were initially more uncertain and gradually stabilized. Furthermore, there is a main effect of condition: words in the \emph{mixed} and \emph{fine} condition began with much more uncertain meanings than the \emph{coarse} and continued to reduce their entropy through the final epochs. %(as the set of completely unused words grew \ndg{do we know this is why?}) 
+To examine this pattern more thoroughly, we computed the difference in each word's entropy from epoch to epoch. For all conditions, we found that words changed less over later epochs (i.e. the difference scores approached zero), indicating that meanings gradually stabilized over time. There are also key differences across conditions: words in the \emph{mixed} and \emph{fine} condition began with more uncertain meanings and reduced in entropy (becoming more specific) through the final epochs, while words in the \emph{coarse} condition actually increased in entropy on average. %(as the set of completely unused words grew \ndg{do we know this is why?}) 
 %while words in the other conditions decrease their entropy. 
 %(as unused words were increasingly recruited to fulfill the demand for specific names
 %\ndg{again do we know that it's this?}
 These dynamic patterns may reflect a \emph{narrowing} account, where unknown words could initially refer to any of the objects and acquire more informative meanings as agents learn through interaction.
-Intriguingly, in the coarse condition there seems to be a process of words first narrowing and then broadening, before stabilizing.\ndg{i added that last sentence. agree?}
+
 %\ndg{i think we should try to squeeze in a figure for the entropy differences...}
 
 %For this analysis, we elaborated our model to use an underlying feature basis to derive the lexicon instead of independent entries for each object-word combination. 
