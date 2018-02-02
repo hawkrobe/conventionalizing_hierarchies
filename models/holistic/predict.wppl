@@ -10,7 +10,7 @@ console.log("Loading expt data complete..." + data.length + " data points");
 
 var globalConfig = {
   aggregate: false,
-  outputFileName : 'lexicalInferenceSextile'
+  outputFileName : 'lexicalInferenceFixed'
 };
 
 var utterances = map(function(i) {return 'word' + i;}, _.range(1, 17));
@@ -36,7 +36,7 @@ var lexiconGuide = function(paramName, dims) {
 
 var sampleHyperlexica = function(q) {
   var dims = [utterances.length,states.length];
-  var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: T.mul(ones(dims),2) });
+  var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: T.mul(ones(dims),5) });
   return {
     finalSpeaker:  sample(lexDist, {guide: lexiconGuide('speakerHyp' + q, dims)}),
     finalListener: sample(lexDist, {guide: lexiconGuide('listenerHyp' + q, dims)})
@@ -47,32 +47,35 @@ var sampleHyperlexica = function(q) {
 var L0 = function(utt, context, lexicon) {
   return Infer({method:"enumerate"}, function(){
     var state = uniformDraw(context);
-    factor(refModule.getLexiconElement(lexicon, utt, state));
+    var score = refModule.getLexiconElement(lexicon, utt, state);
+    console.log(refModule.getLexiconElement(lexicon, utt, state));
+    console.log(score);
+    factor(score);
     return state;
   });
 };
 
-var S1 = function(state, context, lexicon) {
-  return Infer({method:"enumerate"}, function(){
-    var utt = uniformDraw(utterances);
-    factor(globalStore.alpha * L0(utt, context, lexicon).score(state));
-    return utt;
-  });
-};
+// var S1 = function(state, context, lexicon) {
+//   return Infer({method:"enumerate"}, function(){
+//     var utt = uniformDraw(utterances);
+//     factor(globalStore.alpha * L0(utt, context, lexicon).score(state));
+//     return utt;
+//   });
+// };
 
-// conventional listener
-var L1 = function(utt, context, lexicon) {
-  return Infer({method:"enumerate"}, function(){
-    var state = uniformDraw(states);
-    observe(S1(state, context, lexicon), utt);
-    return state;
-  });
-};
+// // conventional listener
+// var L1 = function(utt, context, lexicon) {
+//   return Infer({method:"enumerate"}, function(){
+//     var state = uniformDraw(states);
+//     observe(S1(state, context, lexicon), utt);
+//     return state;
+//   });
+// };
 
 var model = function() {
   // Sample hyperparams
   
-  globalStore.alpha = 20;
+  globalStore.alpha = 1;
   var mus = map(function(q) {return sampleHyperlexica(q);}, _.range(1,numSplits + 1));
 
   map(function(quarter) {
@@ -81,7 +84,8 @@ var model = function() {
 	var hyperparams = {
 	  mu: mus[quarter][participant]
 	};
-	var responses = L1(utt, states, T.sigmoid(hyperparams.mu));
+	console.log(T.sigmoid(hyperparams.mu));
+	var responses = L0(utt, states, hyperparams.mu);
 	display(responses);
 	var key = [quarter, utt, participant,
 		   entropy(responses)].join(",");
@@ -96,4 +100,4 @@ var model = function() {
 };
 
 var outputERP = Infer({model: model, method: 'forward', samples: 1, onlyMAP: true, guide: true});
-// refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
+refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
