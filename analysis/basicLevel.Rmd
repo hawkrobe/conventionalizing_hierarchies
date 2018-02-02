@@ -637,7 +637,7 @@ objects = as.character(c('blueSquare1', 'blueSquare2', 'redSquare1', 'redSquare2
 posteriors <- data.frame()
 for(i in c(gameIDs)) {
   base <- expand.grid(object=objects, wordID=words,stringsAsFactors=T)
-  result <- fromJSON(file = paste0("../models/holistic/bdaOutput/sextiles/", i, ".json"))
+  result <- fromJSON(file = paste0("../models/holistic/bdaOutput/", i, ".json"))
   speakerDF <- data.frame(model_6_mu = result$speakerHyp6mu$data, model_6_sigma = softplus(result$speakerHyp6sigma$data),
                           model_5_mu = result$speakerHyp5mu$data, model_5_sigma = softplus(result$speakerHyp5sigma$data),
                           model_4_mu = result$speakerHyp4mu$data, model_4_sigma = softplus(result$speakerHyp4sigma$data),
@@ -759,27 +759,31 @@ This is fairly hacky; below, we show the litener responses from RSA
 ```
 
 ```{r}
-RSA.entropies <- read_csv('../models/holistic/bdaOutput/lexicalInferenceSextilePredictives.csv') %>%
+RSA.entropies <- read_csv('../models/holistic/bdaOutput/predictiveEntropies.csv') %>%
   mutate(finalRole = ifelse(finalRole == 'finalSpeaker', 'speaker', 'listener')) %>%
   left_join(masterGameIDLookup) %>%
   ungroup() %>%
   mutate(condition = ifelse(condition == 'intermediateOnly', 'coarse', ifelse(condition == 'subOnly', 'fine', 'mixed'))) %>%
   mutate(condition = factor(condition, levels = c('mixed', 'coarse', 'fine'))) %>%
-  mutate(entropy = entropy / log(2)) %>%
-  mutate(quartile = quartile + 1)
-  # group_by(id, finalRole, quarter, wordID, con) %>%
-  # summarize(condition = first(condition), entropy = mean(entropy))
+  mutate(entropy = entropy / log(2)) %>% # Convert to base 2
+  mutate(quartile = quartile + 1) # use 1-indexing
 
-ggplot(RSA.entropies %>% mutate(quartile = paste0('epoch ', quartile)), aes(x = entropy, fill = condition)) +
-  geom_density(alpha = 0.5, adjust = 1/6) +
-  facet_wrap( ~ quartile, nrow = 2, ncol = 3) +
+ggplot(RSA.entropies, aes(x = entropy, color = quartile, group = quartile)) +
+  geom_line(stat="density", adjust=1/6,size=0.5, alpha = 0.6) +
+  #geom_density(adjust = 1/6) +
+  #scale_alpha_continuous('quartile') +
+  #scale_colour_gradient2(midpoint = 3.5) +
+  scale_colour_continuous('quartile', high = 'gray1', low = 'gray50') +
+  #facet_wrap( ~ quartile, ncol = 3, nrow = 2) +
+  facet_grid(condition ~ .) +
   theme_few() +
-  scale_color_colorblind() +
-  theme(aspect.ratio = 1, legend.position = 'top') 
-  #guides(fill = F) 
-  #xlim(2.07, 2.08)
+  #ylim(0,25) +
+  #scale_fill_colorblind() +
+  theme(aspect.ratio = 1/4, legend.position = 'top')  +
+  #guides(color = F) 
+  xlim(0, 3)
 
-ggsave("../writing/cogsci18/figures/entropies.pdf", height = 5, width = 6)
+ggsave("../writing/cogsci18/figures/entropies.pdf", height = 3, width = 5)
 ```
 
 Measure change in entropy, word by word... 
@@ -788,12 +792,11 @@ Measure change in entropy, word by word...
 RSA.entropies %>% 
   group_by(wordID,finalRole,id,condition) %>%
   #mutate(quartile = quartile + 1) %>%
-  mutate(entropy = entropy / log(2)) %>%
   mutate(entropy.diff = entropy - lag(entropy)) %>%
   filter(quartile > 1) %>%
   mutate(quartile = factor(quartile)) %>%
   group_by(quartile, condition) %>%
-  summarize(m = mean(entropy.diff), se = sd(entropy.diff)/sqrt(length(entropy.diff))) %>%
+  summarize(m = mean(entropy.diff, na.rm = T), se = sd(entropy.diff, na.rm = T)/sqrt(length(entropy.diff))) %>%
   ggplot(aes(x = quartile, y = m, color = condition, group = condition)) +
     geom_line(size = 1.5) +#(position = 'dodge', stat='identity') +
     geom_hline(aes(yintercept = 0)) +
