@@ -122,21 +122,13 @@ d %>%
 ## Accuracy by condition
 
 ```{r}
-# quarterlyMeans = d %>% 
-#   group_by(condition, quarter) %>%
-#   summarize(percentCorrect = mean(acc), se = sd(acc)/sqrt(length(acc))) 
-
 d %>%
-  #mutate(quarter = quarter + 1) %>%
-  #left_join(quarterlyMeans %>%   ungroup()) %>%
   mutate(condition = ifelse(condition == 'intermediateOnly', 'pure intermediate',
                             ifelse(condition == 'mixedLower', 'mixed', 'pure subordinate'))) %>%
   group_by(condition, trialNum) %>%
   summarize(trialLevelPctCorrect = mean(acc)) %>%
   ggplot(aes(x = trialNum, y = trialLevelPctCorrect, color = condition)) +
     geom_point(alpha = 0.2) +
-    #geom_line(aes(x = trialNum, y = quarterlyMean)) +
-    #geom_errorbar(aes(ymin = quarterlyMean - se, ymax = quarterlyMean + se), width = 0.01) +
     theme_few() +
     geom_hline(yintercept = 0.25) +
     geom_smooth(method = 'loess') +
@@ -161,8 +153,6 @@ anova(trialOnly, trialAndCondition)
 What is the intercept?
 
 ```{r}
-#trialOnly = glmer(acc ~ trialNum + (1 + trialNum | gameid), family = 'binomial', data = d %>% ungroup())
-#summary(trialOnly)
 t.test((d %>% ungroup() %>% filter(trialNum == 1))$acc, mu = 0.25)
 ```
 
@@ -393,7 +383,6 @@ ggplot(mismatchVsAcc, aes(x = acc, y = numMismatches, color = condition)) +
     theme_few()
 
 cor(mismatchVsAcc$numMismatches,mismatchVsAcc$acc, method = 'pearson')
-  #summary(lm(numMismatches ~ acc, data = mismatchVsAcc))
 ```
 
 ## Any violations of contrast, or things that are described by more than one word?
@@ -406,16 +395,15 @@ Basically, only this team?
 
 ## Main results
 
+We remove nonConvergers for subsequent analyses
+
 ```{r}
 postTest_clean <- postTest_raw %>%
-  filter(!(gameid %in% nonConvergers)) #%>%
-  # select(-objectToWordMeaning, -wordToObjectMeaning) %>%
-  # spread(finalRole, meaning) %>%
-  # mutate(match = listener & speaker) %>%
+  filter(!(gameid %in% nonConvergers)) 
 print(length(unique(postTest_clean$gameid)))
 ```
 
-### Check whether cleaning out non-covergers basically equates internal consistency
+### Check whether cleaning out non-covergers basically equates internal consistency across conditions
 
 ```{r}
 postTest_clean %>%
@@ -423,28 +411,9 @@ postTest_clean %>%
   summarize(pctConsistent = 128- sum(internalConsistency)) %>%
   group_by(condition) %>%
   summarize(m = mean(pctConsistent))
-
-# summary(lm(pctConsistent ~ condition, data = postTest_clean %>%
-#   group_by(gameid, finalRole, condition) %>%
-#   summarize(pctConsistent = 128- sum(internalConsistency))))
 ```
 
 ### Result 1: Vocab size by condition.
-
-```{r}
-# lexiconSize %>%
-#   group_by(condition) %>%
-#   summarize(se = sd(vocabSize)/sqrt(length(vocabSize)), vocabSize = mean(vocabSize)) %>%
-#   arrange(vocabSize) %>%
-#   mutate(condition = factor(condition, levels = unique(condition))) %>%
-#   ggplot(aes(x = condition, y = vocabSize)) +
-#     geom_bar(stat = 'identity') +
-#     geom_errorbar(aes(ymax = vocabSize + se, ymin = vocabSize - se), width = 0) +
-#     theme_few() +
-#     ylab("median vocabulary size")
-# 
-# ggsave('../writing/cogsci18/figures/lexiconSize.pdf', height = 3.5, width = 5)
-```
 
 ```{r}
 lexiconSize <- postTest_clean %>%
@@ -506,16 +475,6 @@ ggplot(lexiconCounts, aes(x = condition, fill = factor(numMeanings), y = pct)) +
     xlab("# objects words refer to") +
       guides(fill=FALSE)
 
-  #summarize(numAbstract = sum(abstract), numSpecific = sum(specific)) %>%
-  # group_by(condition) %>%
-  # summarize(numAbstract_m = mean(numAbstract), numSpecific_m = mean(numSpecific),
-  #           numAbstract_se = sd(numAbstract)/sqrt(length(numAbstract)), 
-  #           numSpecific_se = sd(numSpecific)/sqrt(length(numSpecific))) %>%
-  # gather(metric, value, numAbstract_m:numSpecific_se) %>%
-  # separate(metric, c('wordType', 'measure')) %>%
-  # spread(measure, value) %>%
-  # mutate(wordType = ifelse(wordType == 'numAbstract', '# abstract', '# specific')) %>%
-
 ggsave('../writing/cogsci18/figures/lexiconContent.pdf', width = 3, height = 3)
 ```
 
@@ -571,9 +530,9 @@ postTest_clean %>%
   filter(pct == max(pct))
 ```
 
-## Entropy of specific vs. abstract distribution within lexicon
+## Proportion of specific vs. abstract distribution within lexicon
 
-How many objects does each label correspond to (i.e. how many meanings at sub-level vs. basic-level vs. super-level)
+How many objects does each label correspond to (i.e. how many meanings at sub-level vs. basic-level)
 
 ```{r}
 pctDF <- postTest_clean %>%
@@ -588,38 +547,11 @@ pctDF <- postTest_clean %>%
   summarize(m = mean(pctSpecific))
 
 summary(lm(pctAbstract ~ condition, data = pctDF))
-
-  #gather(type, number, numSpecific, numAbstract) 
-  #ungroup() %>%
-  # group_by(condition) %>%
-  # complete(gameid, finalRole, fill = list(pct = 0)) %>%
-  # spread(abstract, pct) %>%
-  # mutate(entropy = -`TRUE`*log(`TRUE`) -`FALSE`*log(`FALSE`),
-  #        entropy = ifelse(is.na(entropy), 0, entropy)) %>%
-  # group_by(condition) %>%
-  # summarize(m = mean(entropy), se = sd(entropy)/sqrt(length(entropy))) %>%
-  # ggplot(aes(x = condition, y = m)) +
-  #   geom_bar(stat = 'identity') +
-  #   geom_errorbar(aes(ymax = m + se, ymin = m - se), width = 0) +
-  #   #facet_wrap(~ condition) +
-  #   theme_few()
 ```
 
 # Model-based results
 
 For each condition, show density plot of entropy (number for each word for each participant)
-
-Split into 8ths; show average difference in entropy from one 8th to the next...
-
-Might be interested in deviation from 
-
-Take entropy of normalized rows of lexicon; 
-
-Clarify in the paper that we're getting the effective lexicon, not what's in peoples' heads. 
-
-Peoples' usage is surprisingly tight... 
-
-Add a sentence about associations, e.g. 'nogo' ; 
 
 Import top-level hierarchical lexical posteriors for each split
 
@@ -712,51 +644,7 @@ ggsave("../writing/cogsci18/figures/auc.pdf", height = 3, width = 2)
 
 ### Examine entropy across time
 
-One signature of more or less specific words is the size of their extension. We extract this from lexical posteriors by computed the expected entropy on the normalized set of meanings for each word... 
-
-To do this, we first group by participants and words to get the vector of posterior params for each object. We then take a sample from this posterior, feed through a sigmoid function to map to [0,1], normalize these values to sum to 1, and take the entropy. 
-
-We repeat this sampling process many times to get an estimate (mean & sd) of the true entropy for each word for each pair. 
-
-Once we have these we can (1) plot a histogram by condition and quartile, (2) see how well it corresponds to the extensions measured in post-test (In final quartile, the expected entropy should predict the size of the extension... )
-
-This is fairly hacky; below, we show the litener responses from RSA
-
-```{r}
-# element-wise sigmoid function
-# sigmoid <- function(x) {return(1 / (1 + exp(-x*5)))}
-# normalize <- function(x) {return(exp(20*x) / sum(exp(20*x)))}
-# entropy <- function(p) {return(sum(-p*log2(p)))}
-# computeEntropy <- function(df) {
-#   samples <- replicate(10, {
-#     random <- rnorm(df$mu, mean=df$mu, sd = .01)
-#     transformed <- sigmoid(random)
-#     normalized <- normalize(transformed)
-#     entropied <- entropy(normalized)
-#     return(entropied)
-#   })
-#   return(df %>% mutate(entropyEstimate = mean(samples)))
-# }
-# 
-# length((posteriors %>%
-#   inner_join(postTest_clean) %>%
-#   group_by(id, finalRole, quarter, wordID, object, mu, sigma) %>%
-#   summarize(condition = first(condition)))$id)
-# 
-# # Just to get a feel for it, start with just one game and one quarter
-# estimatedEntropies <- posteriors %>%
-#   left_join(postTest_clean) %>%
-#   group_by(id, finalRole, quarter, wordID, object, mu, sigma) %>%
-#   summarize(condition = first(condition)) %>%
-#   #filter(id == 'game4') %>% filter(quarter == 4) %>% filter(wordID == 'word6') %>%
-#   group_by(id, condition, finalRole, quarter, wordID) %>%
-#   do(computeEntropy(.)) 
-# 
-# ggplot(estimatedEntropies %>% ungroup() %>% filter(!(is.na(condition))), aes(x = entropyEstimate)) +
-#   geom_density() +
-#   facet_grid(condition ~ quarter) + 
-#   theme_few()
-```
+One signature of more or less specific words is the size of their extension. We extract this from lexical posteriors by computing the entropy on the normalized set of meanings for each word (i.e. L0 output produced by `runbatch_predict.sh`)... 
 
 ```{r}
 RSA.entropies <- read_csv('../models/holistic/bdaOutput/predictiveEntropies.csv') %>%
@@ -807,49 +695,7 @@ RSA.entropies %>%
 ggsave("../writing/cogsci18/figures/entropies_differences.pdf", height = 3, width = 4)
 ```
 
-see how it corresponds to the size of the extensions?
-
-```{r}
-varianceDF <- data.frame()
-for(i in c(gameIDs)) {
-  result <- fromJSON(file = paste0("../models/holistic/bdaOutput/sextiles/", i, ".json"))
-  #print(result)
-  gameDF = data.frame(speaker_qt1_mu = result$VarMu$data, speaker_qt1_sigma = result$VarSigma$data)
-  varianceDF = rbind(varianceDF, gameDF %>% mutate(gameid = i))
-}
-```
-
-```{r}
-varianceDF %>% mutate(sigma = log(1 + exp(speaker_qt1_mu))) %>% ggplot(aes(x = sigma)) + geom_histogram()  + theme_few()
-```
-
-### Measure accuracy?
-
-```{r}
-posteriors %>% 
-  inner_join(postTest_clean) %>%
-  filter(!(gameid %in% missingPostTests)) %>%
-  mutate(finalPrediction = 1 - pnorm(0, mean = model_qt1mu, sd = model_qt1sigma)) %>%
-  mutate(binaryPrediction = finalPrediction > 0.585) %>%
-  mutate(accuratePrediction = binaryPrediction == meaning) %>%
-  group_by(condition) %>%
-  summarize(m = mean(accuratePrediction, rm.na = F))
-```
-
-```{r}
-posteriors %>% 
-  inner_join(postTest_clean) %>%
-  filter(!(gameid %in% missingPostTests)) %>%
-  mutate(meaning = ifelse(meaning == TRUE, 1, 0)) %>%
-  mutate(finalPrediction = 1 - pnorm(0, mean = model_qt4mu, sd = log(1 + exp(model_qt4sigma)))) %>%
-  ggplot(aes(x = finalPrediction, y = meaning, color = condition)) +
-    geom_smooth(method="glm", method.args = list(family = "binomial"), se = F)+
-      geom_point(alpha = 0.1, size = 2) +
-      
-  theme_few()
-```
-
-### Examine feature model
+### Examine feature model (not in paper)
 
 We have this idea that all terms start out specific and then get broadened to neighbors when context allows. Of course, the opposite could in principle be true: terms could start broad and narrow when context requires. We attempt to look at this in early rounds across different conditions... 
 For each participant, we first look at the number of 'abstract' vs. 'specific' terms in our inferred lexica in the first round.
@@ -969,6 +815,4 @@ objFeatureMat %>%
 
 2. What is confusion matrix of objects for diff. words? May see clustering within categories if participants haven't yet aligned on 
 
-3. What is sequence of formation (first occurrence: basic-level, subordinate?)
-
-4. Pragmatic effects (e.g. words on subordinate trials being extended to basic-level)
+3. Pragmatic effects (e.g. words on subordinate trials being extended to basic-level)
