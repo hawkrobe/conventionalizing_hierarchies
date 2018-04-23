@@ -4,98 +4,73 @@
 // Load in experimental data to condition on then reformat
 var rawData = refModule.readCSV('../bdaInput/' + argv.gameid + '.csv');
 var data = refModule.reformatData(rawData);
-var quartileSize = data.length / 4;
+var numEpochs = 6;
+var quartileSize = data.length / numEpochs;
 console.log("Loading expt data complete..." + data.length + " data points");
 
 var globalConfig = {
   aggregate: false,
-  outputFileName : 'lexicalInference'
+  outputFileName : 'lexicalInferenceFixed'
 };
 
 var utterances = map(function(i) {return 'word' + i;}, _.range(1, 17));
 var states = ['blueSquare1', 'blueSquare2', 'redSquare1', 'redSquare2',
 	      'spottedCircle1', 'spottedCircle2', 'stripedCircle1', 'stripedCircle2'];
-
-var scalarSoftplus = function(x) {
-  return ad.scalar.log(ad.scalar.add(ad.scalar.exp(x), 1));
-};
+var lexDims = [utterances.length,states.length];
 
 var tensorSoftplus = function(x) {
   return T.log(T.add(T.exp(x), 1));
 };
 
-var lexiconGuide = function(paramName, dims) {
+var lexiconGuide = function(paramName) {
+  // Constrain sigma to basically get MAP from guide
   return function() {
     DiagCovGaussian({
-      mu: param({name: paramName + 'mu', dims: dims}),
-      sigma: T.mul(ones(dims), .001) 
+      mu: param({name: paramName + 'mu', dims: lexDims}),
+      sigma: T.mul(ones(lexDims), .001) 
     });
   };
 };
 
 var sampleHyperlexica = function(q) {
-  var dims = [utterances.length,states.length];
-  var lexDist = DiagCovGaussian({ mu: zeros(dims), sigma: ones(dims) });
+  var lexDist = DiagCovGaussian({ mu: zeros(lexDims), sigma: T.mul(ones(lexDims), 5) });
   return {
-    finalSpeaker:  sample(lexDist, {guide: lexiconGuide('speakerHyp' + q, dims)}),
-    finalListener: sample(lexDist, {guide: lexiconGuide('listenerHyp' + q, dims)})
+    finalSpeaker:  sample(lexDist, {guide: lexiconGuide('speakerHyp' + q)}),
+    finalListener: sample(lexDist, {guide: lexiconGuide('listenerHyp' + q)})
   };
-};
-
-var reparam = function(s, m, s) {
-  return T.mul(T.add(s, m), s);
 };
 
 // literal listener (using real-valued lexicon)
 var L0 = function(utt, context, lexicon) {
   return Infer({method:"enumerate"}, function(){
     var state = uniformDraw(context);
-    factor(refModule.getLexiconElement(lexicon, utt, state));
-    return state;
-  });
-};
-
-var S1 = function(state, context, lexicon) {
-  return Infer({method:"enumerate"}, function(){
-    var utt = uniformDraw(utterances);
-    factor(globalStore.alpha * L0(utt, context, lexicon).score(state));
-    return utt;
-  });
-};
-
-// conventional listener
-var L1 = function(utt, context, lexicon) {
-  return Infer({method:"enumerate"}, function(){
-    var state = uniformDraw(states);
-    observe(S1(state, context, lexicon), utt);
+    var score = refModule.getLexiconElement(lexicon, utt, state);
+    factor(score);
     return state;
   });
 };
 
 var model = function() {
-  // Sample hyperparams
-  
-  globalStore.alpha = 50;
-  var mus = map(function(q) {return sampleHyperlexica(q);}, _.range(1,5));
+  // Sample hyperparams  
+  var mus = map(function(q) {return sampleHyperlexica(q);}, _.range(1,numEpochs + 1));
 
+  // Loop through relevant params and get predictives for each
   map(function(quarter) {
     map(function(utt) {
       map(function(participant) {
-	var hyperparams = {
-	  mu: mus[quarter][participant]
-	};
-	var responses = L1(utt, states, T.sigmoid(hyperparams.mu));
-	var key = [quarter, utt, participant,
-		   entropy(responses)].join(",");
+	var hyperparams = {mu: mus[quarter][participant]};
+	var responses = L0(utt, states, hyperparams.mu);
+	var key = [quarter, utt, participant, entropy(responses)].join(",");
 	var newPair = _.zipObject([key], [argv.gameid]);
-	console.log(newPair);
 	globalStore.predictives = extend(globalStore.predictives, newPair);
       }, ['finalListener', 'finalSpeaker']);
     }, utterances);
-  }, _.range(4));
+  }, _.range(numEpochs));
 
   return {predictive: globalStore.predictives};
 };
 
-var outputERP = Infer({model: model, method: 'forward', samples: 1, onlyMAP: true, guide: true});
+// Just run the model forward with guide params
+var outputERP = Infer({model: model, method: 'forward',
+		       samples: 1, onlyMAP: true, guide: true});
 refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
