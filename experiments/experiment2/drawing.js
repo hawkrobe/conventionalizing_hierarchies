@@ -90,32 +90,40 @@ var drawScreen = function(game, player) {
 };
 
 function drawSketcherFeedback(globalGame, scoreDiff, clickedObjNames) {
+  var numTargets = _.filter(globalGame.objects, x => x.targetStatus == 'target').length;
+  var targetWord = numTargets > 1 ? 'targets' : 'target';
+  var conjugation = numTargets > 1 ? 'were' : 'was';
+
   if (scoreDiff > 0) {
-    // visual feedback
     highlightCell('#19A319', x => _.includes(clickedObjNames, x.name));
     setTimeout(() => {
-      $('#feedback').html('Great job! Your partner correctly identified the target.');
+      $('#feedback').html('Great job! Your partner correctly identified the ' + targetWord + '.');
     }, globalGame.feedbackDelay);
   } else {
     highlightCell('#C83232', x => _.includes(clickedObjNames, x.name));
     setTimeout(() => {
-      $('#feedback').html('Too bad... Your partner thought the target was the object outlined in ' + 'red'.fontcolor('#C83232').bold() + '.');
+      $('#feedback').html('Too bad... Your partner thought the ' + targetWord +
+			  ' ' + conjugation + ' the object outlined in ' +
+			  'red'.fontcolor('#C83232').bold() + '.');
     }, globalGame.feedbackDelay);
   }
 };
 
 function drawViewerFeedback(globalGame, scoreDiff, clickedObjNames) {
-  // viewer feedback
+  var numTargets = _.filter(globalGame.objects, x => x.targetStatus == 'target').length;
+  var targetWord = numTargets > 1 ? 'targets' : 'target';
+  var conjugation = numTargets > 1 ? 'are' : 'is';
+
   highlightCell('#000000', x => _.includes(clickedObjNames, x.name));
   if (scoreDiff > 0) {
     highlightCell('#19A319', x => x.targetStatus == 'target');
     setTimeout(() => {
-      $('#feedback').html('Great job! You correctly identified the target!');
+      $('#feedback').html('Great job! You correctly identified the ' + targetWord + '!');
     }, globalGame.feedbackDelay);
   } else {
     highlightCell('#C83232', x => x.targetStatus == 'target');
     setTimeout(() => {
-      $('#feedback').html('Sorry... The target was the object outlined in '
+      $('#feedback').html('Sorry... The ' + targetWord + ' ' + conjugation + ' outlined in '
 			  + 'red'.fontcolor("#C83232").bold() + '.');
     }, globalGame.feedbackDelay);
   }
@@ -190,44 +198,4 @@ function enableLabels(game) {
 	interact('p', {context: labels}).draggable(false);
       }
     });
-  
 };
-
-// This is a helper function to write a text string onto the HTML5 canvas.
-// It automatically figures out how to break the text into lines that will fit
-// Input:
-//    * game: the game object (containing the ctx canvas object)
-//    * text: the string of text you want to writ
-//    * x: the x coordinate of the point you want to start writing at (in pixels)
-//    * y: the y coordinate of the point you want to start writing at (in pixels)
-//    * maxWidth: the maximum width you want to allow the text to span (in pixels)
-//    * lineHeight: the vertical space you want between lines (in pixels)
-function wrapText(game, text, x, y, maxWidth, lineHeight) {
-  var cars = text.split("\n");
-  game.ctx.fillStyle = 'white';
-  game.ctx.fillRect(0, 0, game.viewport.width, game.viewport.height);
-  game.ctx.fillStyle = 'red';
-
-  for (var ii = 0; ii < cars.length; ii++) {
-
-    var line = "";
-    var words = cars[ii].split(" ");
-
-    for (var n = 0; n < words.length; n++) {
-      var testLine = line + words[n] + " ";
-      var metrics = game.ctx.measureText(testLine);
-      var testWidth = metrics.width;
-
-      if (testWidth > maxWidth) {
-        game.ctx.fillText(line, x, y);
-        line = words[n] + " ";
-        y += lineHeight;
-      }
-      else {
-        line = testLine;
-      }
-    }
-    game.ctx.fillText(line, x, y);
-    y += lineHeight;
-  }
-}
