@@ -97,7 +97,7 @@ var client_onserverupdate_received = function(data){
       $('#instructs')
 	.empty()
 	.append("<p>Click & drag one word down to the grey box</p>" +
-		"<p>to tell the listener which object is the target.</p>");
+		"<p>to tell the listener which object or objects are the targets.</p>");
       // Insert labels & show dropzone
       $('#labels').empty().append(
 	_.map(globalGame.labels, (word) => {
@@ -109,7 +109,7 @@ var client_onserverupdate_received = function(data){
       $('#advance_button').show().attr('disabled', 'disabled');
       $('#instructs').empty().append(
 	"<p>After you see the speaker drag a word into the box,</p>" 
-	  + "<p>click the object they are telling you about.</p>");
+	  + "<p>click the object or objects they are telling you about.</p>");
       $('#labels').empty().append(
 	_.map(globalGame.labels, (word) => {
 	  return '<p class="cell draggable drag-drop" style="color:black">' + word + '</p>';
@@ -245,8 +245,7 @@ var client_onjoingame = function(num_players, role) {
       }
     }, 1000 * 60 * 15);
 //    $("#chatbox").attr("disabled", "disabled");
-    globalGame.get_player(globalGame.my_id).message = ('Waiting for another player to connect... '
-              + 'Please do not refresh the page!');
+    globalGame.get_player(globalGame.my_id).message = ('<p>Waiting for another player...<br /> Please do not refresh the page!<br /> If wait exceeds 15 minutes, we recommend returning the HIT and trying again later.</p>');
   }
 };
 

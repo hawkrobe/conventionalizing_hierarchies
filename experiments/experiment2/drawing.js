@@ -74,17 +74,10 @@ function initGrid(objects) {
 var drawScreen = function(game, player) {
   // Draw message in center (for countdown, e.g.)
   if (player.message) {
-    $('waiting').text(player.message);
-  //   game.ctx.font = "bold 40pt Helvetica";
-  //   game.ctx.fillStyle = 'blue';
-  //   game.ctx.textAlign = 'center';
-  //   wrapText(game, player.message,
-  //            game.world.width/2, game.world.height/4,
-  //            game.world.width*4/5,
-  //            50);
-  // }
+    console.log('drawing message');
+    $('#waiting').html(player.message);
   } else {
-    $('waiting').text('');
+    $('#waiting').html('');
     initGrid(game.objects);
   }
 };
