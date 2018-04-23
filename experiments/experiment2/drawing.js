@@ -1,69 +1,77 @@
 // drawing.js
 // This file contains functions to draw on the HTML5 canvas
 
-// Draws a grid of cells on the canvas (evenly divided
-var drawGrid = function(game){
-    //size of canvas
-    var cw = game.viewport.width;
-    var ch = game.viewport.height;
+function setupHandlers() {
+  $('#context img').click(function(event) {
+    if(_.includes(globalGame.selections, $(this).attr('data-name'))) {
+      _.remove(globalGame.selections, obj => obj == $(this).attr('data-name'));
+      $(this).css({'border-color' : 'black'});
+    } else {
+      globalGame.selections.push($(this).attr('data-name'));
+      $(this).css({'border-color' : 'grey'});
+    }
+  });
+}
 
-    //padding around grid
-    var p = game.cellPadding / 2;
+function highlightCell(color, condition) {
+  var targetObjects = _.filter(globalGame.objects, condition);
+  for (var i = 0; i < targetObjects.length; i++){
+    var name = targetObjects[i]['name'];
+    $(`img[data-name="${name}"]`)
+      .css({'border-color' : color});
+  }
+}
 
-    //grid width and height
-    var bw = cw - (p*2) ;
-    var bh = ch - (p*2) ;
+function initGrid(objects) {
+  // Add objects to grid
+  _.forEach(objects, (obj) => {
+    console.log(obj);
+    var gridX = obj['gridX'];
+    var gridY = obj['gridY'];
+    console.log(gridX);
+    console.log(gridY);
+    $("#context").append(
+      $('<img/>').attr({
+	height: "100%", width: "100%", src: obj.url, 'data-name' : obj.name, style :
+	`grid-column: ${gridX}; grid-row: ${gridY}; border: 10px solid; border-color : black`
+      })
+    );
+  });
 
-    game.ctx.beginPath();
+  // Mark target(s) for speaker
+  if (globalGame.my_role === globalGame.playerRoleNames.role1) {
+    highlightCell('grey', x => x.targetStatus == 'target'); 
+  }
 
-    // vertical lines
-  for (var x = 0; x <= bw; x += Math.floor((cw - 2*p) / game.numHorizontalCells)) {
-        game.ctx.moveTo(0.5 + x + p, p);
-        game.ctx.lineTo(0.5 + x + p, bh + p);}
+  // Unbind old click listeners if they exist
+  $('#context img')
+    .off('click');
 
-    // horizontal lines
-    for (var x = 0; x <= bh; x += Math.floor((ch - 2*p) / game.numVerticalCells)) {
-        game.ctx.moveTo(p, 0.5 + x + p);
-        game.ctx.lineTo(bw + p, 0.5 + x + p);}
+  // Allow listener to click on things
+  if (globalGame.my_role === globalGame.playerRoleNames.role2) {
+    globalGame.selections = [];
+    setupHandlers(); 
+  }
 
-  game.ctx.lineWidth = '5';
-  game.ctx.strokeStyle = "#000000";
-  game.ctx.stroke();
-};
-
-// Loop through the object list and draw each one in its specified location
-var drawObjects = function(game, player) {
-    _.map(globalGame.objects, function(obj) {
-      // game.ctx.globalCompositeOperation='destination-over';  // draw under highlight
-      var customCoords = globalGame.my_role == "speaker" ? 'speakerCoords' : 'listenerCoords';
-      var trueX = obj[customCoords]['trueX'];
-      var trueY = obj[customCoords]['trueY'];
-      var gridX = obj[customCoords]['gridX'];
-      var gridY = obj[customCoords]['gridY'];
-      // console.log(obj['subordinate'],customCoords,gridX,gridY,trueX,trueY);
-      globalGame.ctx.drawImage(obj.img, trueX, trueY,obj.width, obj.height);
-    });
-
-};
+}
 
 var drawScreen = function(game, player) {
-  // draw background
-  game.ctx.fillStyle = "#FFFFFF";
-  game.ctx.fillRect(0,0,game.viewport.width,game.viewport.height);
-
   // Draw message in center (for countdown, e.g.)
   if (player.message) {
-    game.ctx.font = "bold 40pt Helvetica";
-    game.ctx.fillStyle = 'blue';
-    game.ctx.textAlign = 'center';
-    wrapText(game, player.message,
-             game.world.width/2, game.world.height/4,
-             game.world.width*4/5,
-             50);
-  }
-  else {
-//    drawGrid(globalGame);
-    drawObjects(globalGame, player);
+    $('waiting').text(player.message);
+  //   game.ctx.font = "bold 40pt Helvetica";
+  //   game.ctx.fillStyle = 'blue';
+  //   game.ctx.textAlign = 'center';
+  //   wrapText(game, player.message,
+  //            game.world.width/2, game.world.height/4,
+  //            game.world.width*4/5,
+  //            50);
+  // }
+  } else {
+    //    drawGrid(globalGame);
+    $('waiting').text('');
+    initGrid(game.objects);
+    //drawObjects(globalGame, player);
   }
 };
 
@@ -100,27 +108,6 @@ function drawViewerFeedback(globalGame, scoreDiff, clickedObjName) {
   }
 };
 
-var highlightCell = function(game, color, condition) {
-  console.log(game.objects);
-  var targetObjects = _.filter(game.objects, condition);
-  var customCoords = game.my_role == "speaker" ? 'speakerCoords' : 'listenerCoords';
-  console.log(targetObjects);
-  for (var i = 0; i < targetObjects.length; i++){
-    console.log('highlighting...');
-    console.log(coords);
-    var coords = targetObjects[i][customCoords];
-    var upperLeftX = game.getPixelFromCell(coords).upperLeftX;
-    var upperLeftY = game.getPixelFromCell(coords).upperLeftY;
-    game.ctx.globalCompositeOperation='source-over';
-    if (upperLeftX != null && upperLeftY != null) {
-      game.ctx.beginPath();
-      game.ctx.lineWidth="20";
-      game.ctx.strokeStyle=color;
-      game.ctx.rect(upperLeftX +10 , upperLeftY +10 ,game.cellDimensions.width-20,game.cellDimensions.height-20);
-      game.ctx.stroke();
-    }
-  }
-};
 
 function disableLabels(game) {
   interact('p').unset();
