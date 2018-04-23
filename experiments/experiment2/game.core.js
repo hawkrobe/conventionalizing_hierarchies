@@ -73,7 +73,7 @@ var game_core = function(options){
     this.expName = options.expName;
     this.player_count = options.player_count;
     this.objects = require('./objects.json');
-    this.condition = 'set';//_.sample(['mixed', 'singleton', 'set']);
+    this.condition = 'mixed';//_.sample(['mixed', 'singleton', 'set']);
     this.trialList = this.makeTrialList();
     this.language = new ArtificialLanguage();
     this.data = {
@@ -239,27 +239,18 @@ var checkSequence = function(proposalList) {
   }));
 };
 
-// For basic/sub conditions, want to make sure there's at least one distractor at the
-// same super/basic level, respectively (otherwise it's a different condition...)
-var checkDistractors = function(distractors, target, contextType) {
-  if(contextType === 'set') {
-    return !_.isEmpty(_.filter(distractors, ['super', target.super]));
-  } else if(contextType === 'singleton') {
-    return !_.isEmpty(_.filter(distractors, ['basic', target.basic]));
-  } else {
-    return true;
-  }
-};
-
+// Make sure all distractors come in pairs
 game_core.prototype.sampleDistractors = function(target, contextType) {
-  var fCond = (contextType === 'set' ? (v) => {return v.basic != target.basic;} :
-	       contextType === 'singleton' ?   (v) => {return v.subID != target.subID;} :
-	       console.log('ERROR: contextType ' + contextType + ' not recognized'));
-  var numDistractors = contextType == 'set' ? 2 : 3;
-  var distractors = _.sampleSize(_.filter(this.objects, fCond), numDistractors);
-  return (checkDistractors(distractors, target, contextType) ?
-	  distractors :
-	  this.sampleDistractors(target, contextType));
+  var targetMatch = contextType == 'set' ? [] : _.filter(this.objects, v => {
+    return v.basic == target.basic && v.subID != target.subID;
+  });
+  var otherDistractor = _.sample(_.filter(this.objects, v => {
+    return v.basic != target.basic;
+  }));
+  var distractorMatch = _.filter(this.objects, v => {
+    return v.basic == otherDistractor.basic && v.subID != otherDistractor.subID;
+  });
+  return targetMatch.concat(otherDistractor).concat(distractorMatch);
 };
 
 game_core.prototype.sampleTargetSet = function(target, contextType) {

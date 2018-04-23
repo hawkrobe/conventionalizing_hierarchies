@@ -1,14 +1,33 @@
 // drawing.js
 // This file contains functions to draw on the HTML5 canvas
 
+
+function handleButton() {
+  // Disable or enable button to fit logic
+  if(globalGame.selections.length > 0) {
+    $('#advance_button').removeAttr('disabled');
+  } else {
+    $('#advance_button').attr('disabled', 'disabled');
+  }
+}
+
+function handleHighlighting(selector, name) {
+  var alreadyClicked = _.includes(globalGame.selections, name);
+  if(alreadyClicked) {
+    _.remove(globalGame.selections, obj => obj == name);
+    selector.css({'border-color' : 'black'});
+  } else {
+    globalGame.selections.push(selector.attr('data-name'));
+    selector.css({'border-color' : 'grey'});
+  }
+}
+
 function setupHandlers() {
   $('#context img').click(function(event) {
-    if(_.includes(globalGame.selections, $(this).attr('data-name'))) {
-      _.remove(globalGame.selections, obj => obj == $(this).attr('data-name'));
-      $(this).css({'border-color' : 'black'});
-    } else {
-      globalGame.selections.push($(this).attr('data-name'));
-      $(this).css({'border-color' : 'grey'});
+    var name = $(this).attr('data-name');
+    if(globalGame.messageSent) {
+      handleHighlighting($(this), name);
+      handleButton();
     }
   });
 }
@@ -28,8 +47,6 @@ function initGrid(objects) {
     console.log(obj);
     var gridX = obj['gridX'];
     var gridY = obj['gridY'];
-    console.log(gridX);
-    console.log(gridY);
     $("#context").append(
       $('<img/>').attr({
 	height: "100%", width: "100%", src: obj.url, 'data-name' : obj.name, style :
@@ -52,7 +69,6 @@ function initGrid(objects) {
     globalGame.selections = [];
     setupHandlers(); 
   }
-
 }
 
 var drawScreen = function(game, player) {
@@ -68,39 +84,36 @@ var drawScreen = function(game, player) {
   //            50);
   // }
   } else {
-    //    drawGrid(globalGame);
     $('waiting').text('');
     initGrid(game.objects);
-    //drawObjects(globalGame, player);
   }
 };
 
-function drawSketcherFeedback(globalGame, scoreDiff, clickedObjName) {
-  // textual feedback
+function drawSketcherFeedback(globalGame, scoreDiff, clickedObjNames) {
   if (scoreDiff > 0) {
     // visual feedback
-    highlightCell(globalGame, '#19A319', x => x.name == clickedObjName);
+    highlightCell('#19A319', x => _.includes(clickedObjNames, x.name));
     setTimeout(() => {
       $('#feedback').html('Great job! Your partner correctly identified the target.');
     }, globalGame.feedbackDelay);
   } else {
-    highlightCell(globalGame, '#C83232', x => x.name == clickedObjName);
+    highlightCell('#C83232', x => _.includes(clickedObjNames, x.name));
     setTimeout(() => {
       $('#feedback').html('Too bad... Your partner thought the target was the object outlined in ' + 'red'.fontcolor('#C83232').bold() + '.');
     }, globalGame.feedbackDelay);
   }
 };
 
-function drawViewerFeedback(globalGame, scoreDiff, clickedObjName) {
+function drawViewerFeedback(globalGame, scoreDiff, clickedObjNames) {
   // viewer feedback
-  highlightCell(globalGame, '#000000', x => x.name == clickedObjName);
+  highlightCell('#000000', x => _.includes(clickedObjNames, x.name));
   if (scoreDiff > 0) {
-    highlightCell(globalGame, '#19A319', x => x.targetStatus == 'target');
+    highlightCell('#19A319', x => x.targetStatus == 'target');
     setTimeout(() => {
       $('#feedback').html('Great job! You correctly identified the target!');
     }, globalGame.feedbackDelay);
   } else {
-    highlightCell(globalGame, '#C83232', x => x.targetStatus == 'target');
+    highlightCell('#C83232', x => x.targetStatus == 'target');
     setTimeout(() => {
       $('#feedback').html('Sorry... The target was the object outlined in '
 			  + 'red'.fontcolor("#C83232").bold() + '.');
