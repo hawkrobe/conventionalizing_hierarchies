@@ -112,10 +112,13 @@ d %>%
   ggplot(aes(x = trialNum, y = percentCorrect)) +
     geom_point() +
     theme_few() + 
+    geom_hline(yintercept = 0.25, linetype = 2) +
     guides(color = FALSE) +
     geom_smooth(method = 'loess') +
     ylab("accuracy") +
-    ylim(0,1)
+    ylim(0,1) 
+
+ggsave('~/Downloads/singleLine.pdf', height = 4, width = 6)
 ```
 
 
@@ -170,14 +173,19 @@ t.test((d %>% ungroup() %>% filter(trialNum == 1))$acc, mu = 0.25)
 
 ```{r}
 d %>% 
-  group_by(trialNum) %>%
+  mutate(condition = ifelse(condition == 'intermediateOnly', 'pure intermediate',
+                          ifelse(condition == 'mixedLower', 'mixed', 'pure subordinate'))) %>%
+  group_by(trialNum, condition) %>%
   summarize(RT = mean(timeFromRoundStart)) %>%
-  ggplot(aes(x = trialNum, y = RT/1000)) +
-    geom_point() +
+  ggplot(aes(x = trialNum, y = RT/1000, color = condition)) +
+    geom_point(alpha = 0.2) +
     theme_few() + 
     guides(color = FALSE) +
-    geom_smooth(method = 'loess') +
+    scale_color_colorblind() +
+    geom_smooth(method = 'loess', span = 0.4) +
+    ylim(0, NA) +
     ylab("reaction time (seconds)")
+ggsave('../writing/cogsci18/figures/RTByCondiiton.pdf', width = 5, height = 4)
 ```
 
 ```{r}
@@ -786,6 +794,7 @@ ggplot(RSA.entropies, aes(x = entropy, color = quartile, group = quartile)) +
 ggsave("../writing/cogsci18/figures/entropies.pdf", height = 3, width = 5)
 ```
 
+
 Measure change in entropy, word by word... 
 
 ```{r}
@@ -972,3 +981,39 @@ objFeatureMat %>%
 3. What is sequence of formation (first occurrence: basic-level, subordinate?)
 
 4. Pragmatic effects (e.g. words on subordinate trials being extended to basic-level)
+
+# Bonus figures
+
+Make animated version of entropy histogram for slides
+
+```{r}
+library(gganimate)
+RSA.entropies <- read_csv('../models/holistic/bdaOutput/predictiveEntropies.csv') %>%
+  mutate(finalRole = ifelse(finalRole == 'finalSpeaker', 'speaker', 'listener')) %>%
+  left_join(masterGameIDLookup) %>%
+  ungroup() %>%
+  mutate(condition = ifelse(condition == 'intermediateOnly', 'coarse', ifelse(condition == 'subOnly', 'fine', 'mixed'))) %>%
+  mutate(condition = factor(condition, levels = c('mixed', 'coarse', 'fine'))) %>%
+  mutate(entropy = entropy / log(2)) %>% # Convert to base 2
+  mutate(quartile = quartile + 1) # use 1-indexing
+
+p <- ggplot(RSA.entropies, aes(x = entropy, color = quartile, frame = paste0('epoch: ', quartile))) +
+  geom_line(stat="density", adjust=1/6,size=0.5) +
+  #geom_density(adjust = 1/6) +
+  #scale_alpha_continuous('quartile') +
+  #scale_colour_gradient2(midpoint = 3.5) +
+  scale_colour_continuous('quartile', high = 'green', low = 'blue') +
+  #facet_wrap( ~ quartile, ncol = 3, nrow = 2) +
+  facet_grid(condition ~ .) +
+  theme_few() +
+  #ylim(0,25) +
+  #scale_fill_colorblind() +
+  theme(aspect.ratio = 1/4, legend.position = 'top', legend.title=element_blank(),
+        text = element_text(size=30), legend.key.width=unit(3,"cm"))  +
+  xlim(0, 3)
+
+gganimate(p, interval = 1.5, "evolving_slow.gif")
+gganimate(p, interval = .6, "evolving.gif")
+
+ggsave("../writing/cogsci18/figures/entropies.pdf", height = 3, width = 5)
+```
