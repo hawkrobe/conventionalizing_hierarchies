@@ -215,11 +215,25 @@ var customSetup = function(game) {
     setupPostTest();
   });
   
-  game.socket.on('dragging', function(event) {
-    dragMoveListener(event);
-  });
-
   game.socket.on('drop', function(event) {
+    var dropRect = $('#chatarea')[0].getBoundingClientRect();
+    var dropCenter = {
+      x: dropRect.left + dropRect.width  / 2,
+      y: dropRect.top  + dropRect.height / 2
+    };
+    var target = $(`p:contains("${event.name}")`);
+    var targetRect = target[0].getBoundingClientRect();
+    var dx = (dropRect.left + dropRect.width/2) - (targetRect.left + targetRect.width/2);
+    var dy = (dropRect.top + dropRect.height/2) - (targetRect.top + targetRect.height/2);
+
+    target.css({
+      "webkitTransform":'translate(' + dx + 'px, ' + dy + 'px)',
+      "MozTransform":'translate(' + dx + 'px, ' + dy + 'px)',
+      "msTransform":'translate(' + dx + 'px, ' + dy + 'px)',
+      "OTransform":'translate(' + dx + 'px, ' + dy + 'px)',
+      "transform":'translate(' + dx + 'px, ' + dy + 'px)'
+    });
+      
     $('#chatarea').css('background-color', '#32CD32');
     globalGame.messageSent = true;
   });
@@ -244,7 +258,6 @@ var client_onjoingame = function(num_players, role) {
         console.log(this.data);
       }
     }, 1000 * 60 * 15);
-//    $("#chatbox").attr("disabled", "disabled");
     globalGame.get_player(globalGame.my_id).message = ('<p>Waiting for another player...<br /> Please do not refresh the page!<br /> If wait exceeds 15 minutes, we recommend returning the HIT and trying again later.</p>');
   }
 };
@@ -262,14 +275,10 @@ function dragMoveListener (event) {
     event.target = $(`p:contains("${event.name}")`)[0];
     event.dx = parseFloat(event.dx) / event.width * width;
     event.dy = parseFloat(event.dy) / event.height * height;
-  } else {
-    globalGame.socket.send(['dragging', event.target.innerHTML,
-			    parseInt(event.dx), parseInt(event.dy),
-			    width, height].join('.'));
   }
-  
+
+  // keep the dragged position in the data-x/data-y attributes
   var target = event.target,
-      // keep the dragged position in the data-x/data-y attributes
       x = (parseFloat(target.getAttribute('data-x')) || 0) + parseFloat(event.dx),
       y = (parseFloat(target.getAttribute('data-y')) || 0) + parseFloat(event.dy);
   
@@ -283,24 +292,3 @@ function dragMoveListener (event) {
   target.setAttribute('data-x', x);
   target.setAttribute('data-y', y);
 }
-
-// function mouseClickListener(evt) {
-//   var bRect = globalGame.viewport.getBoundingClientRect();
-//   var mouseX = Math.floor((evt.clientX - bRect.left)*(globalGame.viewport.width/bRect.width));
-//   var mouseY = Math.floor((evt.clientY - bRect.top)*(globalGame.viewport.height/bRect.height));
-//   if (globalGame.messageSent) { // if message was not sent, don't do anything
-//     _.forEach(globalGame.objects, function(obj) {
-//       if (hitTest(obj, mouseX, mouseY)) {
-// 	globalGame.messageSent = false;
-// 	// Tell the server about it
-//         globalGame.socket.send(["clickedObj", obj.name].join('.'));
-//       }
-//     });
-//   };
-// };
-
-// function hitTest(shape,mx,my) {
-//   var dx = mx - shape.trueX;
-//   var dy = my - shape.trueY;
-//   return (0 < dx) && (dx < shape.width) && (0 < dy) && (dy < shape.height);
-// }

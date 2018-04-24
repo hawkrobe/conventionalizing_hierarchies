@@ -55,15 +55,6 @@ var onMessage = function(client,message) {
     });
     break;
 
-  case 'dragging' :
-    _.map(others, function(p) {
-      p.player.instance.emit( 'dragging', {
-	name: message_parts[1], dx: message_parts[2], dy: message_parts[3],
-	width: message_parts[4], height: message_parts[5]
-      });
-    });
-    break;
-
   case 'drop' :
     _.map(others, (p) => {
       p.player.instance.emit('drop', {name: message_parts[1]});
