@@ -139,11 +139,12 @@ var client_onMessage = function(data) {
       
     case 'feedback' :
       // update local score
-      var clickedObjNames = new Set(commanddata.split(','));
-      var targetNames = new Set(_.map(_.filter(globalGame.objects, (x) => {
+      var clickedObjNames = commanddata.split(',');
+      var targetNames = _.map(_.filter(globalGame.objects, (x) => {
 	return x.targetStatus == 'target';
-      }), 'name'));
-      var scoreDiff = _.isEqual(clickedObjNames, targetNames) ? globalGame.bonusAmt : 0;
+      }), 'name');
+      var scoreDiff = (_.isEqual(new Set(clickedObjNames), new Set(targetNames)) ?
+		       globalGame.bonusAmt : 0);
       globalGame.data.subject_information.score += scoreDiff;
       $('#score').empty()
         .append("Bonus: $" + (globalGame.data.subject_information.score/100).toFixed(2));

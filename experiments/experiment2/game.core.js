@@ -1,3 +1,4 @@
+
 /*  Copyright (c) 2012 Sven "FuzzYspo0N" Bergström,
                   2013 Robert XD Hawkins
 
@@ -176,12 +177,17 @@ game_core.prototype.makeTrialList = function () {
   var that = this;
   var trialList = [];
   this.contextTypeList = [];
+  // Keep sampling until we get a suitable sequence
   var sequence = this.sampleTargetSequence();
+  while(!checkSequence(sequence)) {
+    console.log('reject');
+    sequence = this.sampleTargetSequence();
+  }
+  // Construct trial list (in sets of complete rounds)
   for (var i = 0; i < this.numRounds; i++) {
     var trialInfo = sequence[i];
     this.contextTypeList.push(trialInfo['trialType']);
-    var world = this.sampleTrial(trialInfo['target'], trialInfo['trialType']); // Sample a world state
-    // construct trial list (in sets of complete rounds)
+    var world = this.sampleTrial(trialInfo['target'], trialInfo['trialType']); 
     trialList.push(_.map(world, function(obj) {
       var newObj = _.clone(obj);
       var speakerGridCell = that.getPixelFromCell(obj.speakerCoords);
@@ -197,7 +203,7 @@ game_core.prototype.makeTrialList = function () {
 };
 
 var designMatrix = {
-  'mixed'     : ['singleton', 'set'],
+  'mixed'     : ['singleton', 'singleton', 'set'],
   'singleton' : ['singleton'],
   'set'       : ['set']
 };
@@ -208,18 +214,13 @@ game_core.prototype.sampleTargetSequence = function() {
   var targetRepetitions = this.numRounds / this.objects.length;
   var trialTypeSequenceLength = trials.length;
   var that = this;
-  var proposal = _.flattenDeep(_.map(_.range(targetRepetitions / trialTypeSequenceLength), i => {
+  return _.flattenDeep(_.map(_.range(targetRepetitions / trialTypeSequenceLength), i => {
     return _.shuffle(_.flatten(_.map(that.objects, function(target) {
       return _.map(trials, function(trialType) {
 	return {target, trialType};
       });
     })));
   }));
-  if( checkSequence(proposal) ) {
-    return proposal;
-  } else {
-    return this.sampleTargetSequence();
-  }
 };
 
 // Want to make sure there are no adjacent targets (e.g. gap is at least 1 apart?)
