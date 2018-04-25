@@ -49,7 +49,7 @@ function initGrid(objects) {
     var gridY = obj['gridY'];
     $("#context").append(
       $('<img/>').attr({
-	height: "100%", width: "100%", src: obj.url, 'data-name' : obj.name, style :
+	height: '100%', width: '100%', src: obj.url, 'data-name' : obj.name, style :
 	`grid-column: ${gridX}; grid-row: ${gridY}; border: 10px solid; border-color : black`
       })
     );
