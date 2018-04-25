@@ -93,11 +93,11 @@ function drawSketcherFeedback(globalGame, scoreDiff, clickedObjNames) {
       $('#feedback').html('Great job! Your partner correctly identified the ' + targetWord + '.');
     }, globalGame.feedbackDelay);
   } else {
-    highlightCell('#C83232', x => _.includes(clickedObjNames, x.name));
+    highlightCell('#FFA500', x => _.includes(clickedObjNames, x.name));
     setTimeout(() => {
       $('#feedback').html('Too bad... Your partner thought the ' + targetWord +
 			  ' ' + conjugation + ' the object outlined in ' +
-			  'red'.fontcolor('#C83232').bold() + '.');
+			  'orange'.fontcolor('#FFA500') + '.');
     }, globalGame.feedbackDelay);
   }
 };
@@ -114,10 +114,10 @@ function drawViewerFeedback(globalGame, scoreDiff, clickedObjNames) {
       $('#feedback').html('Great job! You correctly identified the ' + targetWord + '!');
     }, globalGame.feedbackDelay);
   } else {
-    highlightCell('#C83232', x => x.targetStatus == 'target');
+    highlightCell('#FFA500', x => x.targetStatus == 'target');
     setTimeout(() => {
       $('#feedback').html('Sorry... The ' + targetWord + ' ' + conjugation + ' outlined in '
-			  + 'red'.fontcolor("#C83232").bold() + '.');
+			  + 'orange'.fontcolor("#FFA500").bold() + '.');
     }, globalGame.feedbackDelay);
   }
 };
