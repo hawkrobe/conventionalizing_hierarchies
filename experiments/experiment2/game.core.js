@@ -358,5 +358,8 @@ ArtificialLanguage.prototype.verifyVocab = function(vocab) {
   var uniqueMorphemes = _.every(_.zip.apply(_, morphemes), morpheme => {
     return _.uniq(morpheme).length === vocab.length;
   });
-  return uniqueMorphemes;
+  // Prevent some sketchy words from being generated
+  var sketchyWords = ['niga', 'kike', 'kale', 'nope', 'male', 'page', 'name'];
+  var noTabooWords = _.intersection(vocab,sketchyWords).length == 0;
+  return uniqueMorphemes && noTabooWords;
 };
