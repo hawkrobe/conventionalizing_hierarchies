@@ -138,6 +138,10 @@ var client_onMessage = function(data) {
     switch(subcommand) {
       
     case 'feedback' :
+      // Stop letting people click stuff
+      globalGame.messageSent = false;
+      $('#advance_button').show().attr('disabled', 'disabled');
+      
       // update local score
       var clickedObjNames = commanddata.split(',');
       var targetNames = _.map(_.filter(globalGame.objects, (x) => {

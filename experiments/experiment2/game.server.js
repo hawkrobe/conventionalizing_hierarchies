@@ -76,7 +76,12 @@ var onMessage = function(client,message) {
 */
 var dataOutput = function() {
   function getIntendedTargetName(objects) {
-    return _.filter(objects, o => o.targetStatus === 'target')[0]['name'];
+    var targetNames =  _.map(_.filter(objects, o => o.targetStatus === 'target'), 'name');
+    if(targetNames.length == 1) {
+      return targetNames[0];
+    } else {
+      return targetNames[0].slice(0,-1) + 's';
+    }
   }
 
   function getObjectLocs(objects) {
@@ -132,8 +137,15 @@ var dataOutput = function() {
   };
 
   var clickedObjOutput = function(client, message_data) {
+    // update local score
+    var clickedObjNames = message_data[1].split(',');
+    var targetNames = _.map(_.filter(client.game.objects, x => x.targetStatus == 'target'), 'name');
+    var correct = _.isEqual(new Set(clickedObjNames), new Set(targetNames));
+
     var objects = client.game.trialInfo.currStim;
     var intendedName = getIntendedTargetName(objects);
+    console.log(intendedName);
+    console.log(message_data[1]);
     var objLocations = _.zipObject(getObjectLocHeaderArray(), getObjectLocs(objects));
     return _.extend(
       commonOutput(client, message_data),
@@ -141,7 +153,7 @@ var dataOutput = function() {
 	intendedName,
 	clickedName: message_data[1],
 	trialNum : client.game.state.roundNum + 1,	
-	correct: intendedName === message_data[1],
+	correct: correct, //intendedName === message_data[1],
 	condition: client.game.condition,
 	contextType: client.game.trialInfo.currContextType
       }
