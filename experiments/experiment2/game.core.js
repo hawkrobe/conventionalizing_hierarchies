@@ -35,9 +35,9 @@ var game_core = function(options){
   this.email = 'rxdh@stanford.edu';
   this.projectName = 'basicLevel';
   this.experimentName = 'artificialLanguage';
-  this.iterationName = 'experiment1';
+  this.iterationName = 'experiment2_pilot';
   this.anonymizeCSV = true;
-  this.bonusAmt = 3; // in cents
+  this.bonusAmt = 5; // in cents
   
   // save data to the following locations (allowed: 'csv', 'mongo')
   this.dataStore = ['csv', 'mongo'];
@@ -63,7 +63,7 @@ var game_core = function(options){
   this.roundNum = -1;
 
   // How many rounds do we want people to complete?
-  this.numRounds = 96;
+  this.numRounds = 12;
   this.feedbackDelay = 300;
 
   // This will be populated with the tangram set
@@ -177,12 +177,13 @@ game_core.prototype.makeTrialList = function () {
   var that = this;
   var trialList = [];
   this.contextTypeList = [];
+
   // Keep sampling until we get a suitable sequence
   var sequence = this.sampleTargetSequence();
   while(!checkSequence(sequence)) {
-    console.log('reject');
     sequence = this.sampleTargetSequence();
   }
+
   // Construct trial list (in sets of complete rounds)
   for (var i = 0; i < this.numRounds; i++) {
     var trialInfo = sequence[i];
