@@ -63,7 +63,7 @@ var game_core = function(options){
   this.roundNum = -1;
 
   // How many rounds do we want people to complete?
-  this.numRounds = 12;
+  this.numRounds = 96;
   this.feedbackDelay = 300;
 
   // This will be populated with the tangram set
