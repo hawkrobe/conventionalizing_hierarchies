@@ -339,7 +339,11 @@ var ArtificialLanguage = function() {
   this.wordLength = 4;
   this.possibleVowels = ['a','e','i','o','u'];
   this.possibleConsonants = ['g','h','k','l','m','n','p','w'];
+  // Keep sampling vocabs until we get one that works
   this.vocab = this.sampleVocab();
+  while(!this.verifyVocab(this.vocab)) {
+    this.vocab = this.sampleVocab();
+  }
 };
 
 ArtificialLanguage.prototype.sampleVocab = function() {
