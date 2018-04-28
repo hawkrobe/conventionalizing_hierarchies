@@ -136,7 +136,14 @@ var client_onMessage = function(data) {
   switch(command) {
   case 's': //server message
     switch(subcommand) {
-      
+
+    case 'end' :
+      // Redirect to exit survey
+      ondisconnect();
+      console.log("received end message...");
+      $('#context').hide();
+      break;
+
     case 'feedback' :
       // Stop letting people click stuff
       globalGame.messageSent = false;
