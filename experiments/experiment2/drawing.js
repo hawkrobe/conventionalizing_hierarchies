@@ -85,7 +85,7 @@ var drawScreen = function(game, player) {
 function drawSketcherFeedback(globalGame, scoreDiff, clickedObjNames) {
   var numTargets = _.filter(globalGame.objects, x => x.targetStatus == 'target').length;
   var targetWord = numTargets > 1 ? 'targets' : 'target';
-  var conjugation = numTargets > 1 ? 'were' : 'was';
+  var clickedWord = clickedObjNames.length > 1 ? 'objects' : 'object';
 
   if (scoreDiff > 0) {
     highlightCell('#19A319', x => _.includes(clickedObjNames, x.name));
@@ -95,8 +95,7 @@ function drawSketcherFeedback(globalGame, scoreDiff, clickedObjNames) {
   } else {
     highlightCell('#FFA500', x => _.includes(clickedObjNames, x.name));
     setTimeout(() => {
-      $('#feedback').html('Too bad... Your partner thought the ' + targetWord +
-			  ' ' + conjugation + ' the object outlined in ' +
+      $('#feedback').html('Too bad... Your partner clicked the ' + clickedWord + ' outlined in ' +
 			  'orange'.fontcolor('#FFA500') + '.');
     }, globalGame.feedbackDelay);
   }

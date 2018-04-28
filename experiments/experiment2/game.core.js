@@ -339,7 +339,11 @@ var ArtificialLanguage = function() {
   this.wordLength = 4;
   this.possibleVowels = ['a','e','i','o','u'];
   this.possibleConsonants = ['g','h','k','l','m','n','p','w'];
+  // Keep sampling vocabs until we get one that works
   this.vocab = this.sampleVocab();
+  while(!this.verifyVocab(this.vocab)) {
+    this.vocab = this.sampleVocab();
+  }
 };
 
 ArtificialLanguage.prototype.sampleVocab = function() {
@@ -358,5 +362,8 @@ ArtificialLanguage.prototype.verifyVocab = function(vocab) {
   var uniqueMorphemes = _.every(_.zip.apply(_, morphemes), morpheme => {
     return _.uniq(morpheme).length === vocab.length;
   });
-  return uniqueMorphemes;
+  // Prevent some sketchy words from being generated
+  var sketchyWords = ['niga', 'kike', 'kale', 'nope', 'male', 'page', 'name'];
+  var noTabooWords = _.intersection(vocab,sketchyWords).length == 0;
+  return uniqueMorphemes && noTabooWords;
 };

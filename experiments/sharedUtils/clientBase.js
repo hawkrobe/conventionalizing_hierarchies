@@ -17,7 +17,11 @@ var getURLParams = function() {
 var ondisconnect = function(data) {
   // Redirect to exit survey
   console.log("server booted");
-  this.viewport.style.display="none";
+  if(this.viewport) {
+    this.viewport.style.display="none";
+  } else if (document.getElementById('viewport')) {
+    document.getElementById('viewport').style.display = 'none';
+  }
   var email = globalGame.email ? globalGame.email : '';
   var failMsg = [
     '<h3>Oops! It looks like your partner lost their connection!</h3>',
@@ -150,22 +154,25 @@ window.onload = function(){
   sharedSetup(globalGame);
   customSetup(globalGame);
   globalGame.submitted = false;
-    
-  //Fetch the viewport
-  globalGame.viewport = document.getElementById('viewport');
 
-  //Adjust its size
-  globalGame.viewport.width = globalGame.world.width;
-  globalGame.viewport.height = globalGame.world.height;
+  if(document.getElementById('viewport')) {
+    //Fetch the viewport
+    globalGame.viewport = document.getElementById('viewport');
 
-  //Fetch the rendering contexts
-  globalGame.ctx = globalGame.viewport.getContext('2d');
+    //Adjust its size
+    globalGame.viewport.width = globalGame.world.width;
+    globalGame.viewport.height = globalGame.world.height;
 
-  //Set the draw style for the font
-  globalGame.ctx.font = '11px "Helvetica"';
+    //Fetch the rendering contexts
+    globalGame.ctx = globalGame.viewport.getContext('2d');
 
-  document.getElementById('chatbox').focus();
+    //Set the draw style for the font
+    globalGame.ctx.font = '11px "Helvetica"';
+  }
 
+  if(document.getElementById('chatbox')) {
+    document.getElementById('chatbox').focus();
+  }
 };
 
 // This gets called when someone selects something in the menu during the exit survey...
@@ -207,8 +214,13 @@ function dropdownTip(data){
   }
 }
 
-window.onbeforeunload = function(e) {
-  e = e || window.event;
+//   var confirmationMessage = "\o/";
+
+//   e.returnValue = confirmationMessage;     // Gecko, Trident, Chrome 34+
+//   return confirmationMessage;              // Gecko, WebKit, Chrome <34
+// });
+
+window.addEventListener("beforeunload", function (e) {
   var msg = ("If you leave before completing the task, "
 	     + "you will not be able to submit the HIT.");
   if (!globalGame.submitted) {
@@ -219,7 +231,7 @@ window.onbeforeunload = function(e) {
     // For Safari
     return msg;
   }
-};
+});
 
 // // Automatically registers whether user has switched tabs...
 (function() {
