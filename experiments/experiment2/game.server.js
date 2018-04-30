@@ -137,15 +137,12 @@ var dataOutput = function() {
   };
 
   var clickedObjOutput = function(client, message_data) {
-    // update local score
     var clickedObjNames = message_data[1].split(',');
-    var targetNames = _.map(_.filter(client.game.objects, x => x.targetStatus == 'target'), 'name');
-    var correct = _.isEqual(new Set(clickedObjNames), new Set(targetNames));
-
     var objects = client.game.trialInfo.currStim;
+    var targetNames = _.map(_.filter(objects, x => x.targetStatus == 'target'), 'name');
+
+    var correct = _.isEqual(new Set(clickedObjNames), new Set(targetNames));
     var intendedName = getIntendedTargetName(objects);
-    console.log(intendedName);
-    console.log(message_data[1]);
     var objLocations = _.zipObject(getObjectLocHeaderArray(), getObjectLocs(objects));
     return _.extend(
       commonOutput(client, message_data),
