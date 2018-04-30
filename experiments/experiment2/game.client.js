@@ -55,14 +55,6 @@ var client_onserverupdate_received = function(data){
 	  .value();
       
       var imgObj = new Image(); //initialize object as an image (from HTML5)
-      // imgObj.onload = function(){ // Draw image as soon as it loads (this is a callback)
-      //   globalGame.ctx.drawImage(imgObj, parseInt(customObj.trueX),
-      // 				 parseInt(customObj.trueY),
-      // 				 customObj.width, customObj.height);
-      //   if (globalGame.my_role === globalGame.playerRoleNames.role1) {
-      //     
-      //   }
-      // };
       imgObj.src = customObj.url; // tell client where to find it
       return _.extend(customObj, {img: imgObj});
     });
@@ -75,7 +67,7 @@ var client_onserverupdate_received = function(data){
   globalGame.roundStartTime = new Date();
   globalGame.labels = data.trialInfo.labels;
   globalGame.allObjects = data.allObjects;
-  
+  globalGame.stimulusHalf = data.stimulusHalf;
   if(!_.has(globalGame, 'data')) {
     globalGame.data = data.dataObj;
   }

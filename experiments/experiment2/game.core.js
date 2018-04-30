@@ -37,7 +37,7 @@ var game_core = function(options){
   this.experimentName = 'artificialLanguage';
   this.iterationName = 'experiment2_pilot';
   this.anonymizeCSV = true;
-  this.bonusAmt = 5; // in cents
+  this.bonusAmt = 3; // in cents
   
   // save data to the following locations (allowed: 'csv', 'mongo')
   this.dataStore = ['csv', 'mongo'];
@@ -63,7 +63,7 @@ var game_core = function(options){
   this.roundNum = -1;
 
   // How many rounds do we want people to complete?
-  this.numRounds = 96;
+  this.numRounds = 72;
   this.feedbackDelay = 300;
 
   // This will be populated with the tangram set
@@ -73,7 +73,9 @@ var game_core = function(options){
     this.id = options.id;
     this.expName = options.expName;
     this.player_count = options.player_count;
-    this.objects = require('./objects.json');
+    var rawObjects = require('./objects.json');
+    this.stimulusHalf = _.sample(['square', 'circle']);
+    this.objects = _.filter(rawObjects, ['super', this.stimulusHalf]);
     this.condition = 'mixed';//_.sample(['mixed', 'singleton', 'set']);
     this.trialList = this.makeTrialList();
     this.language = new ArtificialLanguage();
@@ -218,7 +220,8 @@ game_core.prototype.sampleTargetSequence = function() {
   return _.flattenDeep(_.map(_.range(targetRepetitions / trialTypeSequenceLength), i => {
     return _.shuffle(_.flatten(_.map(that.objects, function(target) {
       return _.map(trials, function(trialType) {
-	return {target, trialType};
+	var id = trialType == 'set' ? target.name.slice(0, -1) + 's' : target.name;
+	return {target, id, trialType, repetition:i};
       });
     })));
   }));
@@ -236,8 +239,9 @@ function mapPairwise(arr, func){
 // Make sure targets don't appear back-to-back
 // TODO: also make sure trial types aren't too clumpy?
 var checkSequence = function(proposalList) {
+//  console.log(proposalList);
   return _.every(mapPairwise(proposalList, function(curr, next) {
-    return curr.target.subID !== next.target.subID;
+    return curr.id !== next.id;
   }));
 };
 
@@ -323,7 +327,8 @@ game_core.prototype.server_send_update = function(){
     roundNum : this.roundNum,
     trialInfo: this.trialInfo,
     language: this.language,
-    allObjects: this.objects
+    allObjects: this.objects,
+    stimulusHalf : this.stimulusHalf
   };
   _.extend(state, {players: player_packet});
   _.extend(state, {instructions: this.instructions});
