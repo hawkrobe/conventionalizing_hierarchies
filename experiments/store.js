@@ -11,7 +11,7 @@ const colors = require('colors/safe');
 
 const app = express();
 const MongoClient = mongodb.MongoClient;
-const port = 4000;
+const port = 5000;
 const mongoCreds = require('./auth.json');
 const mongoURL = `mongodb://${mongoCreds.user}:${mongoCreds.password}@localhost:27017/`;
 const handlers = {};
@@ -52,44 +52,6 @@ function mongoConnectWithRetry(delayInMilliseconds, callback) {
     }
   });
 }
-
-// Keep track of which games have used each stim
-function recordStimUse(stimdb, gameid, idList) {
-  _.forEach(idList, id => {
-    stimdb.update({_id: id}, {
-      $push : {games : gameid},
-      $inc  : {numGames : 1}
-    }, {multi: true}, function(err, items) {
-      // do something when done?
-    });
-  });
-}
-
-// // this function isn't currently being used, but might be once there are >1 databases
-// function getDatabaseList(connection, callback) {
-//    connection.admin().listDatabases(function(err, result) {
-//       if (err) {
-//         console.error('Error listing databases from this MongoDB connection');
-//       } else {
-//         log('success: got list of databases from this mongo connection')
-//         callback(result.databases);
-//       }
-//    })
-// }
-
-// // also not being used, but might be later to scale to new db/cols
-// function getCollectionList(db, callback) {
-//     db.listCollections().toArray(function(err, collections) {
-//         // collections is an array of collection info objects that look like:
-//         // { name: 'test', options: {} }
-//         if (err) {
-//           console.error(`Error retrieving collections: ${err}`)
-//         } else {
-//           log('success: retrieved collection information from this database');
-//           callback(collections);
-//         }
-//     });
-// }
 
 function serve() {
 
@@ -141,8 +103,12 @@ function serve() {
         response.json(hits>0);
       }
 
-      checkEach(collectionList, checkCollectionForHits, query, projection, evaluateTally);
-
+      // Always let the requester test ;) 
+      if(query.workerId == 'A1BOIDKD33QSDK') {
+	response.json(false);
+      } else {
+	checkEach(collectionList, checkCollectionForHits, query, projection, evaluateTally);
+      }
     });
 
     app.post('/db/insert', (request, response) => {
@@ -178,46 +144,6 @@ function serve() {
         } else {
           return success(response, `successfully inserted data. result: ${JSON.stringify(result)}`);
         }
-      });
-    });
-
-    app.post('/db/getstims', (request, response) => {
-      if (!request.body) {
-        return failure(response, '/db/getstims needs post request body');
-      }
-      log(`got request to get stims from ${request.body.dbname}/${request.body.colname}`);
-      
-      const databaseName = request.body.dbname;
-      const collectionName = request.body.colname;
-      if (!collectionName) {
-        return failure(response, '/db/getstims needs collection');
-      }
-      if (!databaseName) {
-        return failure(response, '/db/getstims needs database');
-      }
-
-      const database = connection.db(databaseName);
-      const collection = database.collection(collectionName);
-
-      collection.aggregate([
-	{ $group : {_id : "$numGames", count: { $sum: 1 }}}
-      ], (err, results) => {console.log('counts...'); console.log(results)});
-      
-      // get a random sample of stims that haven't appeared more than k times
-      collection.aggregate([
-	{ $addFields : { numGames: { $size: '$games'} } }, 
-	// { $group : { _id : "$family", numGames: {$avg : "$numGames"},
-	// 	     family: { $push: "$$ROOT" } } },
-	{ $sort : { numGames : 1} },	
-	{ $limit : request.body.numRounds }
-      ], (err, results) => {
-	if(err) {
-	  console.log(err);
-	} else {
-	  
-	  recordStimUse(collection, request.body.gameid, _.map(results, '_id'));
-	  response.send(results);
-	}
       });
     });
 
