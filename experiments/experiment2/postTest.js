@@ -1,14 +1,37 @@
+var generalizations = {
+  'square' : [{
+    "name" : "blueSquare3", "url" : "images/blueSquare3.jpg"
+  }, {
+    "name" : "blueSquare4", "url" : "images/blueSquare4.jpg"
+  }, {
+    "name" : "redSquare3", "url" : "images/redSquare3.jpg"
+  }, {
+    "name" : "redSquare4", "url" : "images/redSquare4.jpg"
+  }],
+  'circle' : [{
+    "name" : "stripedCircle3", "url" : "images/stripedCircle3.png"
+  }, {
+    "name" : "stripedCircle4", "url" : "images/stripedCircle4.png"
+  }, {
+    "name" : "spottedCircle3", "url" : "images/spottedCircle3.png"
+  }, {
+    "name" : "spottedCircle4", "url" : "images/spottedCircle4.png"
+  }]
+};
+
 // We want to test both directions of the lexicon.
 // Given a word, what objects does it apply to; given an object, what words apply to it?
 function setupPostTest () {
   setupOverlay();
   globalGame.testTargets = _.shuffle(['word', 'object']);
   globalGame.currTargetType = globalGame.testTargets.shift();
+  globalGame.testObjects = globalGame.allObjects; //.concat(generalizations[globalGame.stimulusHalf]);
+  console.log(globalGame.testObjects);
   globalGame.selections = [];
   
   var button = document.getElementById('post_test_button');
-  var objectNames = _.map(globalGame.allObjects, 'name');
-    
+  var objectNames = _.map(globalGame.testObjects, 'name');
+
   var showNextTarget = () => {
     var targets = globalGame.currTargetType == 'word' ? globalGame.labels : objectNames;
     var targetTag = globalGame.currTargetType == 'word' ? '#word_grid p' : '#object_grid img';
@@ -33,7 +56,7 @@ function setupPostTest () {
     var targetUnselectedColor = globalGame.currTargetType == 'word' ? 'grey' : 'white';
     
     var limit = (globalGame.currTargetType == 'word' ? globalGame.labels.length - 1 :
-		 globalGame.allObjects.length - 1);
+		 globalGame.testObjects.length - 1);
 
     // Temporarily disable button to prevent trigger happy people
     var oldValue = button.value;
@@ -88,10 +111,10 @@ function setupPostTest () {
     );
   });
   
-  _.forEach(globalGame.allObjects, (obj) => {
+  _.forEach(globalGame.testObjects, (obj) => {
     $("#object_grid").append(
       $('<img/>')
-      	.attr({height: "50%", width: "25%", src: obj.url,
+      	.attr({height: "50%", width: "50%", src: obj.url,
 	       'data-name' : obj.name})
 	.css({border: '10px solid', 'border-color' : 'white'})
   	.addClass("imgcell")
