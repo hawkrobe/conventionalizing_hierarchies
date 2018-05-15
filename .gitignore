@@ -2,6 +2,8 @@
 *~
 *RData
 *Rhistory
+sshauth.txt
+*.nb.html
 cogsci_cache
 data/colorReference/clickedObj/node_modules/
 data/sketchpad/message/*.csv
