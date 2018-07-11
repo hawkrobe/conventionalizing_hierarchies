@@ -42,8 +42,16 @@ function setupPostTest () {
     // Highlight new target
     globalGame.targetNum += 1;
     globalGame.currTarget = targets[globalGame.targetNum];
-    var newTarget = $(`${targetTag}[data-name~="${globalGame.currTarget}"`)
+
+    // If targets are words, we show them in context by highlighting them (memory cue)
+    // If targets are objects, we show them in isolation (to prevent contrast effects)
+    if(globalGame.currTargetType == 'word') {
+      $(`${targetTag}[data-name~="${globalGame.currTarget}"`)
 	.css(_.zipObject([targetProperty], [targetSelectedColor]));
+    } else {
+      $(`${targetTag}[data-name~="${globalGame.currTarget}"`)
+	.show();
+    }
   };
 
   button.onclick = () => {
@@ -76,8 +84,13 @@ function setupPostTest () {
 
     // Unselect old target
     if(globalGame.currTarget) {
-      var oldTarget = $(`${targetTag}[data-name~="${globalGame.currTarget}"`)
+      if(globalGame.currTargetType == 'word') {
+	$(`${targetTag}[data-name~="${globalGame.currTarget}"`)
 	  .css(_.zipObject([targetProperty], [targetUnselectedColor]));
+      } else {
+	$(`${targetTag}[data-name~="${globalGame.currTarget}"`)
+	  .hide();
+      } 
     }
 
     // Clear previous selections
@@ -133,6 +146,16 @@ var setupPostTestHTML = function() {
   var intendedTop = `#${globalGame.currTargetType}_grid`;
   $(intendedTop).insertAfter( $('#post_test_instruction') );
 
+  // Hide & resize targets if objects (for presentation in isolation)
+  _.forEach(globalGame.testObjects, (obj) => {
+    if(globalGame.currTargetType == 'object') {
+      $(`#object_grid img[data-name~="${obj.name}"`).hide();
+      $(`#object_grid img[data-name~="${obj.name}"`).attr({height: '100%', width: '100%'});
+    } else {
+      $(`#object_grid img[data-name~="${obj.name}"`).show();
+      $(`#object_grid img[data-name~="${obj.name}"`).attr({height: '50%', width: '50%'});      
+    }
+  });
   // Unbind old click listeners if they exist 
   $(globalGame.currTargetType == 'word' ? '#word_grid p' : '#object_grid img')
     .off('click');
