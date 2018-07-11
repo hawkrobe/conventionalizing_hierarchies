@@ -89,7 +89,7 @@ var client_onserverupdate_received = function(data){
       $('#instructs')
 	.empty()
 	.append("<p>Click & drag one word down to the grey box</p>" +
-		"<p>to tell the listener which object or objects are the targets.</p>");
+		"<p>so the listener can fill the order!</p>");
       // Insert labels & show dropzone
       $('#labels').empty().append(
 	_.map(globalGame.labels, (word) => {
@@ -101,7 +101,7 @@ var client_onserverupdate_received = function(data){
       $('#advance_button').show().attr('disabled', 'disabled');
       $('#instructs').empty().append(
 	"<p>After you see the speaker drag a word into the box,</p>" 
-	  + "<p>click the object or objects they are telling you about.</p>");
+	  + "<p>click <b>one</b> or <b>two</b> objects to fill the order.</p>");
       $('#labels').empty().append(
 	_.map(globalGame.labels, (word) => {
 	  return '<p class="cell draggable drag-drop" style="color:black">' + word + '</p>';
