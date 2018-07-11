@@ -1,0 +1,9 @@
+iterationName	gameid	time	wuwu	honu	kuha	wewo	gune	nuge	pewe	nehu	wike	hago	kohi	mile	keku	pawi	kipe	mepu	target	finalRole	eventType
+experiment2_pilot	4734-f025690d-3b0f-41fd-8656-6c11c57afcd4	1525118520206	false	false	false	false	false	false	true	true	false	false	false	false	false	true	false	true	blueSquare1	listener	postTest_object
+experiment2_pilot	4734-f025690d-3b0f-41fd-8656-6c11c57afcd4	1525118547400	false	false	false	false	false	false	false	true	false	false	false	false	false	true	false	true	blueSquare2	listener	postTest_object
+experiment2_pilot	4734-f025690d-3b0f-41fd-8656-6c11c57afcd4	1525118550297	false	false	false	false	false	false	false	true	false	false	false	false	false	false	false	false	blueSquare1	speaker	postTest_object
+experiment2_pilot	4734-f025690d-3b0f-41fd-8656-6c11c57afcd4	1525118551517	false	false	false	false	false	false	false	false	false	false	false	false	true	false	false	false	redSquare1	listener	postTest_object
+experiment2_pilot	4734-f025690d-3b0f-41fd-8656-6c11c57afcd4	1525118557400	false	false	false	false	false	false	false	false	false	false	false	false	false	true	false	false	blueSquare2	speaker	postTest_object
+experiment2_pilot	4734-f025690d-3b0f-41fd-8656-6c11c57afcd4	1525118561838	false	false	false	false	false	false	false	false	false	false	false	false	false	false	true	false	redSquare1	speaker	postTest_object
+experiment2_pilot	4734-f025690d-3b0f-41fd-8656-6c11c57afcd4	1525118563021	false	false	false	false	false	false	false	false	false	false	false	false	true	false	false	false	redSquare2	listener	postTest_object
+experiment2_pilot	4734-f025690d-3b0f-41fd-8656-6c11c57afcd4	1525118565346	false	false	false	false	false	false	false	false	false	false	false	false	true	false	false	false	redSquare2	speaker	postTest_object

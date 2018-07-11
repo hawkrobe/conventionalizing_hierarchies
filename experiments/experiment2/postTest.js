@@ -42,8 +42,16 @@ function setupPostTest () {
     // Highlight new target
     globalGame.targetNum += 1;
     globalGame.currTarget = targets[globalGame.targetNum];
-    var newTarget = $(`${targetTag}[data-name~="${globalGame.currTarget}"`)
+
+    // If targets are words, we show them in context by highlighting them (memory cue)
+    // If targets are objects, we show them in isolation (to prevent contrast effects)
+    if(globalGame.currTargetType == 'word') {
+      $(`${targetTag}[data-name~="${globalGame.currTarget}"`)
 	.css(_.zipObject([targetProperty], [targetSelectedColor]));
+    } else {
+      $(`${targetTag}[data-name~="${globalGame.currTarget}"`)
+	.show();
+    }
   };
 
   button.onclick = () => {
@@ -76,8 +84,13 @@ function setupPostTest () {
 
     // Unselect old target
     if(globalGame.currTarget) {
-      var oldTarget = $(`${targetTag}[data-name~="${globalGame.currTarget}"`)
+      if(globalGame.currTargetType == 'word') {
+	$(`${targetTag}[data-name~="${globalGame.currTarget}"`)
 	  .css(_.zipObject([targetProperty], [targetUnselectedColor]));
+      } else {
+	$(`${targetTag}[data-name~="${globalGame.currTarget}"`)
+	  .hide();
+      } 
     }
 
     // Clear previous selections
@@ -111,10 +124,10 @@ function setupPostTest () {
     );
   });
   
-  _.forEach(globalGame.testObjects, (obj) => {
+  _.forEach(_.shuffle(globalGame.testObjects), (obj) => {
     $("#object_grid").append(
       $('<img/>')
-      	.attr({height: "50%", width: "50%", src: obj.url,
+      	.attr({height: "100%", width: "25%", src: obj.url,
 	       'data-name' : obj.name})
 	.css({border: '10px solid', 'border-color' : 'white'})
   	.addClass("imgcell")
@@ -133,6 +146,16 @@ var setupPostTestHTML = function() {
   var intendedTop = `#${globalGame.currTargetType}_grid`;
   $(intendedTop).insertAfter( $('#post_test_instruction') );
 
+  // Hide & resize targets if objects (for presentation in isolation)
+  _.forEach(globalGame.testObjects, (obj) => {
+    if(globalGame.currTargetType == 'object') {
+      $(`#object_grid img[data-name~="${obj.name}"`).hide();
+      $(`#object_grid img[data-name~="${obj.name}"`).attr({height: '100%', width: '25%'});
+    } else {
+      $(`#object_grid img[data-name~="${obj.name}"`).show();
+      $(`#object_grid img[data-name~="${obj.name}"`).attr({height: '100%', width: '25%'});      
+    }
+  });
   // Unbind old click listeners if they exist 
   $(globalGame.currTargetType == 'word' ? '#word_grid p' : '#object_grid img')
     .off('click');
@@ -153,9 +176,9 @@ var setupPostTestHTML = function() {
     });
 
   // Update instructions
-  var wordTaskInstruction = "<p style='font-size:150%'>For each highlighted <b>word</b>, please click all of the <b>objects</b> it can refer to, then click 'next'.</p><p>If you're not sure, or it doesn't mean anything, click 'next' without making a selection.</p>";
+  var wordTaskInstruction = "<p style='font-size:150%'>For each highlighted <b>word</b>, please click <b>all</b> of the objects it can refer to, then click 'next'.</p><p>If you're not sure, or it doesn't mean anything, click 'next' without making a selection.</p>";
   
-  var objTaskInstruction = "<p style='font-size:150%'>For each highlighted <b>object</b>, please click all of the <b>words</b> that can refer to it, then click 'next'.</p><p>If you're not sure, or if none of the words refer to it, click 'next' without making a selection.</p>";
+  var objTaskInstruction = "<p style='font-size:150%'>For each highlighted <b>object</b>, please click <b>all</b> of the words that can refer to it, then click 'next'.</p><p>If you're not sure, or if none of the words refer to it, click 'next' without making a selection.</p>";
   
   $('#post_test_instruction').html(globalGame.currTargetType == 'word' ?
   				   wordTaskInstruction : objTaskInstruction);

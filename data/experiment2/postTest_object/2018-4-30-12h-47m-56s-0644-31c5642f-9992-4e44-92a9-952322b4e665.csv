@@ -1,9 +1,0 @@
-iterationName	gameid	time	lome	powi	kigo	moga	lewe	gele	wana	malu	nuli	hupa	mepi	kola	gake	goni	lama	halo	target	finalRole	eventType
-experiment2_pilot	0644-31c5642f-9992-4e44-92a9-952322b4e665	1525117676220	false	false	false	false	false	false	false	true	false	false	false	false	false	false	false	false	spottedCircle1	listener	postTest_object
-experiment2_pilot	0644-31c5642f-9992-4e44-92a9-952322b4e665	1525117678723	false	false	false	false	false	false	false	false	false	false	false	true	false	false	false	false	spottedCircle2	listener	postTest_object
-experiment2_pilot	0644-31c5642f-9992-4e44-92a9-952322b4e665	1525117713646	false	false	false	false	false	false	false	false	false	false	false	false	false	false	true	false	spottedCircle1	speaker	postTest_object
-experiment2_pilot	0644-31c5642f-9992-4e44-92a9-952322b4e665	1525117715986	false	false	false	false	false	false	false	false	false	false	true	false	false	false	false	false	spottedCircle2	speaker	postTest_object
-experiment2_pilot	0644-31c5642f-9992-4e44-92a9-952322b4e665	1525117717938	false	false	false	false	false	false	false	false	false	false	false	false	false	false	false	true	stripedCircle1	listener	postTest_object
-experiment2_pilot	0644-31c5642f-9992-4e44-92a9-952322b4e665	1525117719006	false	false	false	false	false	false	false	false	false	false	false	false	false	true	false	false	stripedCircle1	speaker	postTest_object
-experiment2_pilot	0644-31c5642f-9992-4e44-92a9-952322b4e665	1525117720594	false	false	false	false	false	false	false	false	true	false	false	false	false	false	false	false	stripedCircle2	listener	postTest_object
-experiment2_pilot	0644-31c5642f-9992-4e44-92a9-952322b4e665	1525117723916	false	false	false	false	false	false	false	false	true	true	false	false	false	false	false	false	stripedCircle2	speaker	postTest_object

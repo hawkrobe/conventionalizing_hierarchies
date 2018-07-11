@@ -16,7 +16,7 @@ function handleHighlighting(selector, name) {
   if(alreadyClicked) {
     _.remove(globalGame.selections, obj => obj == name);
     selector.css({'border-color' : 'black'});
-  } else {
+  } else if (globalGame.selections.length < 2) {
     globalGame.selections.push(selector.attr('data-name'));
     selector.css({'border-color' : 'grey'});
   }
