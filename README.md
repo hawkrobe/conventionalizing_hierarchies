@@ -1,5 +1,5 @@
 # conventionalizing_hierarchies
-code, data, and analysis for ['learning to communicate about conceptual hierarchies'](https://github.com/hawkrobe/conventionalizing_hierarchies/blob/master/writing/cogsci18/hawkins_2_1.pdf) paper
+code, data, and analysis for ['learning to communicate about conceptual hierarchies'](http://cocolab.stanford.edu/papers/HawkinsEtAl2018-Cogsci.pdf) paper
 
 # Experiment 
 To launch the experiment, go to experiments directory, install dependencies with `npm install`, then run `node app.js --expname experiment1`. The experiment will be then be running in the browser at `localhost:8888/experiment1/index.html`.
