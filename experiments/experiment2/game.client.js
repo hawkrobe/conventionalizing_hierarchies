@@ -101,7 +101,7 @@ var client_onserverupdate_received = function(data){
       $('#advance_button').show().attr('disabled', 'disabled');
       $('#instructs').empty().append(
 	"<p>After you see the speaker drag a word into the box,</p>" 
-	  + "<p>click the object or objects they are telling you about.</p>");
+	  + "<p>click the single object or pair of objects they are telling you about.</p>");
       $('#labels').empty().append(
 	_.map(globalGame.labels, (word) => {
 	  return '<p class="cell draggable drag-drop" style="color:black">' + word + '</p>';
