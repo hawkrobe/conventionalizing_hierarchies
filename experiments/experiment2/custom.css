@@ -264,12 +264,12 @@ ALOT...don't understand how to adjust that.*/
 #object_grid {
     float: bottom;
     margin: auto;
-    border:solid 1px #333;
+    /* border:solid 1px #333; */
     height: 20vw;
     margin-top: 2%;
-    width: 20vw;
+    width: 80vw;
     z-index: -100;
-    background: #383838;
+    /* background: #383838; */
 }
 
 /* #context { */
