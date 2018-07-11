@@ -89,7 +89,7 @@
 
     <div id="exit_survey" style="display:none">
       <br><br><br><br><br>
-      <p> How would you describe the strategy you used in this experiment? </p>
+      <p> In plain terms, how would you describe the language you formed in this experiment? </p>
       <textarea id='strategy' rows="4" cols="50"></textarea>
       <p> Did you believe you were playing against another human player? </p>
       <select onChange="dropdownTip('human::' + this.value)">
@@ -127,13 +127,22 @@
 
       <br><br>
 
-      <p> Do you have any comments on the experiment? </p>
+      <p> Do you have any other comments on the experiment? </p>
       <textarea id='comments' rows="4" cols="50"></textarea>
       <br>
-      <p> Clicking this button should automatically submit the HIT and close this tab. <p>
-      <p> If you experience a problem submitting using this button, please enter the code <strong>E2iZwi8d</strong> into the box that appeared on the mturk tab, and please leave a comment with your bonus!</p>
-      <p> If you also run into problems with this submission, please contact rxdh@stanford.edu for compensation. </p>
-      <div><button id="surveySubmit" onclick="dropdownTip('submit')" type="button">Submit HIT</button></div>
+      <p> Clicking this button should automatically submit the HIT and close this tab. </p>
+      <div><button id="surveySubmit" onclick="dropdownTip('submit');$('#button_error').show()" type="button">Submit HIT</button></div>
+      <center><div style="display:none;width:70%;" id="button_error">
+	  <p>
+	    If you have clicked the button and nothing happened, you
+	    can use the code box that appeared on the mturk tab as
+	    a <b>backup method</b> to make sure you still get paid: just
+	    enter the code <strong>E2iZwi8d</strong> -- no need to contact us!
+	  </p>
+	  <p>
+	    If still experience a problem submitting with that method,
+	    please contact rxdh@stanford.edu for compensation.
+	  </p>
     </div>
   </body>
 </html>
