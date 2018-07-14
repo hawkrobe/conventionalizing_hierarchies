@@ -105,7 +105,9 @@ var dataOutput = function() {
       gameid: client.game.id,
       time: Date.now(),
       workerId: client.workerid,
-      assignmentId: client.assignmentid
+      assignmentId: client.assignmentid,
+      stimulusHalf: client.game.stimulusHalf,
+      condition: client.game.condition
     };
   };
 
@@ -151,7 +153,7 @@ var dataOutput = function() {
 	clickedName: message_data[1],
 	trialNum : client.game.state.roundNum + 1,	
 	correct: correct, //intendedName === message_data[1],
-	condition: client.game.condition,
+	repetition: client.game.trialInfo.currRepetition,
 	contextType: client.game.trialInfo.currContextType
       }
     );
@@ -164,7 +166,8 @@ var dataOutput = function() {
 	intendedName,
 	trialNum : client.game.state.roundNum + 1,	
 	text: message_data[1].replace(/~~~/g, '.'),
-	timeFromRoundStart: message_data[2]
+	timeFromRoundStart: message_data[2],
+	repetition: client.game.trialInfo.currRepetition
       }
     );
   };
