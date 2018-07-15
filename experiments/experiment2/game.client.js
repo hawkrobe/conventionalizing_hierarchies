@@ -83,6 +83,13 @@ var client_onserverupdate_received = function(data){
     // Update w/ role (can only move stuff if agent)
     $('#roleLabel').empty().append("You are the " + globalGame.my_role + '.');
 
+    // Insert labels & show dropzone
+    $('#labels').empty().append(
+      _.map(globalGame.labels, (word) => {
+	return '<p class="cell draggable drag-drop">' + word + '</p>';
+      }))
+      .append('<div id="chatarea" class="dropzone"></div>');
+
     if(globalGame.my_role === globalGame.playerRoleNames.role1) {
       enableLabels(globalGame);
       $('#advance_button').hide();
@@ -90,23 +97,12 @@ var client_onserverupdate_received = function(data){
 	.empty()
 	.append("<p>Click & drag one word down to the grey box</p>" +
 		"<p>so the listener can fill the order!</p>");
-      // Insert labels & show dropzone
-      $('#labels').empty().append(
-	_.map(globalGame.labels, (word) => {
-	  return '<p class="cell draggable drag-drop">' + word + '</p>';
-	}))
-	.append('<div id="chatarea" class="dropzone"></div>');
     } else if(globalGame.my_role === globalGame.playerRoleNames.role2) {
       disableLabels(globalGame);
       $('#advance_button').show().attr('disabled', 'disabled');
       $('#instructs').empty().append(
 	"<p>After you see the speaker drag a word into the box,</p>" 
 	  + "<p>click <b>one</b> or <b>two</b> objects to fill the order.</p>");
-      $('#labels').empty().append(
-	_.map(globalGame.labels, (word) => {
-	  return '<p class="cell draggable drag-drop" style="color:black">' + word + '</p>';
-	}))
-	.append('<div id="chatarea" class="dropzone"></div>');
     }
   }
     
@@ -131,8 +127,8 @@ var client_onMessage = function(data) {
 
     case 'end' :
       // Redirect to exit survey
-      ondisconnect();
       console.log("received end message...");
+      ondisconnect();
       $('#context').hide();
       break;
 
