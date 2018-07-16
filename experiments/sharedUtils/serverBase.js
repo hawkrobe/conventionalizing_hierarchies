@@ -18,6 +18,7 @@ class ReferenceGameServer {
   // if game relies on asynchronous stim logic, need to wait until everything
   // is fetched before starting game (otherwise race conditions)
   startGame(game) {
+    game.active = true;
     game.newRound();
   }
   /*
@@ -113,12 +114,21 @@ class ReferenceGameServer {
   endGame (gameid, userid) {
     var thegame = this.games[gameid];
     if(thegame) {
-      _.map(thegame.get_others(userid),function(p) {
-	p.player.instance.send('s.end');
-      });
-      delete this.games[gameid];
-      this.game_count--;
-      this.log('game removed. there are now ' + this.game_count + ' games' );
+      // Remove the person who dropped out
+      var i = _.indexOf(thegame.players, _.find(thegame.players, {id: userid}));
+      thegame.players[i].player = null;
+
+      // If game is ongoing and someone drops out, tell other players and end game
+      // If game is over, remove game when last player drops out
+      console.log("active: " + thegame.active);
+      if(thegame.active || thegame.get_active_players().length < 1) {
+	_.map(thegame.get_others(userid),function(p) {
+	  p.player.instance.send('s.end');
+	});
+	delete this.games[gameid];
+	this.game_count--;
+	this.log('game removed. there are now ' + this.game_count + ' games' );
+      } 
     } else {
       this.log('that game was not found!');
     }   
