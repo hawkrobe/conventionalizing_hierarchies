@@ -63,15 +63,16 @@ var game_core = function(options){
   this.roundNum = -1;
 
   // How many rounds do we want people to complete?
-  this.numRounds = 108;
+  this.numRounds = 72;
   this.feedbackDelay = 300;
 
   // This will be populated with the tangram set
   this.trialInfo = {roles: _.values(this.playerRoleNames)};
 
   if(this.server) {
-    this.id = options.id;
+    this.id = options.id; 
     this.expName = options.expName;
+    this.active = false;
     this.player_count = options.player_count;
     var rawObjects = require('./objects.json');
     this.stimulusHalf = _.sample(['square', 'circle']);
@@ -144,6 +145,7 @@ game_core.prototype.newRound = function(delay) {
   setTimeout(function() {
     // If you've reached the planned number of rounds, end the game
     if(localThis.roundNum == localThis.numRounds - 1) {
+      localThis.active = false;
       _.forEach(players, p => p.player.instance.emit( 'finishedGame' ));
     } else {
       // Tell players
@@ -155,6 +157,7 @@ game_core.prototype.newRound = function(delay) {
       localThis.trialInfo = {
 	currStim: localThis.trialList[localThis.roundNum],
 	currContextType: localThis.contextTypeList[localThis.roundNum],
+	currRepetition: localThis.repetitionList[localThis.roundNum],
 	labels: localThis.language.vocab,
 	roles: _.zipObject(_.map(localThis.players, p =>p.id),
 			   _.reverse(_.values(localThis.trialInfo.roles)))
@@ -179,17 +182,20 @@ game_core.prototype.makeTrialList = function () {
   var that = this;
   var trialList = [];
   this.contextTypeList = [];
-
+  this.repetitionList = [];
+  
   // Keep sampling until we get a suitable sequence
   var sequence = this.sampleTargetSequence();
   while(!checkSequence(sequence)) {
     sequence = this.sampleTargetSequence();
   }
-
+  sequence = markRepetitions(sequence);
+  console.log(sequence);
   // Construct trial list (in sets of complete rounds)
   for (var i = 0; i < this.numRounds; i++) {
     var trialInfo = sequence[i];
     this.contextTypeList.push(trialInfo['trialType']);
+    this.repetitionList.push(trialInfo['repetition']);
     var world = this.sampleTrial(trialInfo['target'], trialInfo['trialType']); 
     trialList.push(_.map(world, function(obj) {
       var newObj = _.clone(obj);
@@ -218,13 +224,26 @@ game_core.prototype.sampleTargetSequence = function() {
   var trialTypeSequenceLength = trials.length;
   var that = this;
   return _.flattenDeep(_.map(_.range(targetRepetitions / trialTypeSequenceLength), i => {
-    return _.shuffle(_.flatten(_.map(that.objects, function(target) {
-      return _.map(trials, function(trialType) {
+    return _.shuffle(_.flatten(_.map(trials, function(trialType) {
+      return _.map(that.objects, function(target) {
 	var id = trialType == 'set' ? target.name.slice(0, -1) + 's' : target.name;
-	return {target, id, trialType, repetition:i};
+	return {target, id, trialType};
       });
     })));
   }));
+};
+
+function markRepetitions(trialList) {
+  var setSeenCounts = {
+    'redSquares' : 0, 'blueSquares': 0, 'stripedCircles' : 0, 'spottedCircles': 0,
+    'redSquare1' : 0, 'redSquare2' : 0, 'blueSquare1' : 0, 'blueSquare2' : 0,
+    'spottedCircle1' : 0, 'spottedCircle2' : 0, 'stripedCircle1' : 0, 'stripedCircle2' : 0
+  };
+  return _.map(trialList, function(trial) {
+    var localRepetition = setSeenCounts[trial.id];
+    setSeenCounts[trial.id] += 1;
+    return _.extend({}, trial, {repetition: localRepetition});
+  });
 };
 
 // Want to make sure there are no adjacent targets (e.g. gap is at least 1 apart?)
@@ -368,7 +387,7 @@ ArtificialLanguage.prototype.verifyVocab = function(vocab) {
     return _.uniq(morpheme).length === vocab.length;
   });
   // Prevent some sketchy words from being generated
-  var sketchyWords = ['niga', 'kike', 'kale', 'nope', 'male', 'page', 'name'];
+  var sketchyWords = ['niga', 'kike', 'kale', 'wine', 'nope', 'male', 'page', 'name'];
   var noTabooWords = _.intersection(vocab,sketchyWords).length == 0;
   return uniqueMorphemes && noTabooWords;
 };
