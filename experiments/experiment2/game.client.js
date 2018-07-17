@@ -65,9 +65,15 @@ var client_onserverupdate_received = function(data){
   globalGame.player_count = data.pc;
   globalGame.roundNum = data.roundNum;
   globalGame.roundStartTime = new Date();
-  globalGame.labels = data.trialInfo.labels;
   globalGame.allObjects = data.allObjects;
   globalGame.stimulusHalf = data.stimulusHalf;
+
+  // Only update these on first round
+  if(!_.has(globalGame, 'labels') & !_.isUndefined(data.trialInfo.labels)) {
+    console.log(data.trialInfo.labels);
+    globalGame.labels = _.shuffle(data.trialInfo.labels);
+  }
+  
   if(!_.has(globalGame, 'data')) {
     globalGame.data = data.dataObj;
   }
