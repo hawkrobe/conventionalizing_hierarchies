@@ -176,9 +176,9 @@ var setupPostTestHTML = function() {
     });
 
   // Update instructions
-  var wordTaskInstruction = "<p style='font-size:150%'>For each highlighted <b>word</b>, please click <b>all</b> of the objects it can refer to, then click 'next'.</p><p>If you're not sure, or it doesn't mean anything, click 'next' without making a selection.</p>";
+  var wordTaskInstruction = "<p style='font-size:150%'>If you received this word in a future order, which object(s) would you pack? </p> <p>Please click <b>all</b> that apply, then click 'next'. If you're not sure if it applies to any objects, click 'next' without making a selection.</p>";
   
-  var objTaskInstruction = "<p style='font-size:150%'>For each highlighted <b>object</b>, please click <b>all</b> of the words that can refer to it, then click 'next'.</p><p>If you're not sure, or if none of the words refer to it, click 'next' without making a selection.</p>";
+  var objTaskInstruction = "<p style='font-size:150%'>If this object appeared by itself or with another object in a future order, which word(s) would you use? </p><p> Please click <b>all</b> that apply, then click 'next'. If you're not sure if any words apply, click 'next' without making a selection.</p>";
   
   $('#post_test_instruction').html(globalGame.currTargetType == 'word' ?
   				   wordTaskInstruction : objTaskInstruction);
