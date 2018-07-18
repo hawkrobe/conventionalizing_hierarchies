@@ -1,0 +1,10 @@
+iterationName	gameid	time	stimulusHalf	condition	intendedName	trialNum	text	timeFromRoundStart	repetition	eventType
+experiment2_pilot	4459-42b7ce13-0ed8-4612-91f8-219143bdb9d3	1531847940972	square	mixed	blueSquare2	1	gemi	51007	0	drop
+experiment2_pilot	4459-42b7ce13-0ed8-4612-91f8-219143bdb9d3	1531847975501	square	mixed	blueSquare1	2	numu	15383	0	drop
+experiment2_pilot	4459-42b7ce13-0ed8-4612-91f8-219143bdb9d3	1531847997110	square	mixed	redSquare1	3	kame	5234	0	drop
+experiment2_pilot	4459-42b7ce13-0ed8-4612-91f8-219143bdb9d3	1531848009184	square	mixed	blueSquare2	4	gemi	3783	1	drop
+experiment2_pilot	4459-42b7ce13-0ed8-4612-91f8-219143bdb9d3	1531848022176	square	mixed	blueSquares	5	lewo	3212	0	drop
+experiment2_pilot	4459-42b7ce13-0ed8-4612-91f8-219143bdb9d3	1531848034029	square	mixed	redSquare2	6	higa	4227	0	drop
+experiment2_pilot	4459-42b7ce13-0ed8-4612-91f8-219143bdb9d3	1531848044656	square	mixed	blueSquare1	7	kame	3155	1	drop
+experiment2_pilot	4459-42b7ce13-0ed8-4612-91f8-219143bdb9d3	1531848057948	square	mixed	redSquare2	8	higa	5482	1	drop
+experiment2_pilot	4459-42b7ce13-0ed8-4612-91f8-219143bdb9d3	1531848072058	square	mixed	redSquares	9	higa	5590	0	drop

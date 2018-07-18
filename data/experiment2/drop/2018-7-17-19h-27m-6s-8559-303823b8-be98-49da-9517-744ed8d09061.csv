@@ -1,0 +1,3 @@
+iterationName	gameid	time	stimulusHalf	condition	intendedName	trialNum	text	timeFromRoundStart	repetition	eventType
+experiment2_pilot	8559-303823b8-be98-49da-9517-744ed8d09061	1531880826061	circle	mixed	spottedCircle1	1	wapo	1338	0	drop
+experiment2_pilot	8559-303823b8-be98-49da-9517-744ed8d09061	1531880888240	circle	mixed	stripedCircle2	2	kowe	56673	0	drop

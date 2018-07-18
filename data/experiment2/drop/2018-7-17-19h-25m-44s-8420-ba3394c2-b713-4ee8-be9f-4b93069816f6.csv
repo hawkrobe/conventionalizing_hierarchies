@@ -1,0 +1,3 @@
+iterationName	gameid	time	stimulusHalf	condition	intendedName	trialNum	text	timeFromRoundStart	repetition	eventType
+experiment2_pilot	8420-ba3394c2-b713-4ee8-be9f-4b93069816f6	1531880744469	square	mixed	redSquares	1	keke	1515	0	drop
+experiment2_pilot	8420-ba3394c2-b713-4ee8-be9f-4b93069816f6	1531880753748	square	mixed	blueSquares	2	hune	3430	0	drop

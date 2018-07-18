@@ -1,0 +1,4 @@
+iterationName	gameid	time	stimulusHalf	condition	intendedName	trialNum	text	timeFromRoundStart	repetition	eventType
+experiment2_pilot	8894-fe4179f3-3b35-42ee-af84-1499d09299ba	1531879480597	square	mixed	redSquare1	1	hehi	1640	0	drop
+experiment2_pilot	8894-fe4179f3-3b35-42ee-af84-1499d09299ba	1531879492949	square	mixed	blueSquares	2	kuwi	6148	0	drop
+experiment2_pilot	8894-fe4179f3-3b35-42ee-af84-1499d09299ba	1531879509070	square	mixed	blueSquare2	3	hehi	7340	0	drop

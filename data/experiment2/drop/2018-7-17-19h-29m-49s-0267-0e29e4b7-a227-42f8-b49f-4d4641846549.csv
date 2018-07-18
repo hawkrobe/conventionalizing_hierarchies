@@ -1,0 +1,6 @@
+iterationName	gameid	time	stimulusHalf	condition	intendedName	trialNum	text	timeFromRoundStart	repetition	eventType
+experiment2_pilot	0267-0e29e4b7-a227-42f8-b49f-4d4641846549	1531880989275	circle	mixed	spottedCircle1	1	legi	1608	0	drop
+experiment2_pilot	0267-0e29e4b7-a227-42f8-b49f-4d4641846549	1531880996472	circle	mixed	stripedCircle1	2	nane	719	0	drop
+experiment2_pilot	0267-0e29e4b7-a227-42f8-b49f-4d4641846549	1531881009478	circle	mixed	spottedCircle1	3	muma	6028	1	drop
+experiment2_pilot	0267-0e29e4b7-a227-42f8-b49f-4d4641846549	1531881019119	circle	mixed	stripedCircles	4	legi	3261	0	drop
+experiment2_pilot	0267-0e29e4b7-a227-42f8-b49f-4d4641846549	1531881042720	circle	mixed	spottedCircles	5	legi	16476	0	drop
