@@ -34,6 +34,9 @@ function setupHandlers() {
 
 function highlightCell(color, condition) {
   var targetObjects = _.filter(globalGame.objects, condition);
+  console.log('highlighting in ' + color);
+  console.log(globalGame.objects);
+  console.log(targetObjects);
   for (var i = 0; i < targetObjects.length; i++){
     var name = targetObjects[i]['name'];
     $(`img[data-name="${name}"]`)
@@ -86,7 +89,7 @@ function drawSketcherFeedback(globalGame, scoreDiff, clickedObjNames) {
   var numTargets = _.filter(globalGame.objects, x => x.targetStatus == 'target').length;
   var targetWord = numTargets > 1 ? 'targets' : 'target';
   var clickedWord = clickedObjNames.length > 1 ? 'objects' : 'object';
-
+  highlightCell('grey', x => x.targetStatus == 'target');
   if (scoreDiff > 0) {
     highlightCell('#19A319', x => _.includes(clickedObjNames, x.name));
     setTimeout(() => {
@@ -106,7 +109,7 @@ function drawViewerFeedback(globalGame, scoreDiff, clickedObjNames) {
   var targetWord = numTargets > 1 ? 'targets' : 'target';
   var conjugation = numTargets > 1 ? 'are' : 'is';
 
-  highlightCell('#000000', x => _.includes(clickedObjNames, x.name));
+  highlightCell('grey', x => _.includes(clickedObjNames, x.name));
   if (scoreDiff > 0) {
     highlightCell('#19A319', x => x.targetStatus == 'target');
     setTimeout(() => {
