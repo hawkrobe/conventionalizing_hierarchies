@@ -117,6 +117,8 @@ var client_onserverupdate_received = function(data){
 };
 
 var advanceRound = function() {
+  // Stop letting people click stuff
+  $('#advance_button').show().attr('disabled', 'disabled');
   globalGame.socket.send(["clickedObj", globalGame.selections].join('.'));
 };
 
@@ -138,11 +140,7 @@ var client_onMessage = function(data) {
       $('#context').hide();
       break;
 
-    case 'feedback' :
-      // Stop letting people click stuff
-      globalGame.messageSent = false;
-      $('#advance_button').show().attr('disabled', 'disabled');
-      
+    case 'feedback' :      
       // update local score
       var clickedObjNames = commanddata.split(',');
       var targetNames = _.map(_.filter(globalGame.objects, (x) => {
@@ -199,6 +197,7 @@ var customSetup = function(game) {
   // Set up new round on client's browsers after submit round button is pressed.
   // This means clear the chatboxes, update round number, and update score on screen
   game.socket.on('newRoundUpdate', function(data){
+    globalGame.messageSent = false;
     $('#messages').empty();
     $("#context").empty();
     if(game.roundNum + 2 > game.numRounds) {
