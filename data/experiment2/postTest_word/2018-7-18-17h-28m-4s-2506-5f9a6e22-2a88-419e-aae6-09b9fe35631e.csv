@@ -1,0 +1,10 @@
+iterationName	gameid	time	stimulusHalf	condition	blueSquare1	blueSquare2	redSquare1	redSquare2	target	finalRole	eventType
+experiment2_pilot	2506-5f9a6e22-2a88-419e-aae6-09b9fe35631e	1531960084503	square	mixed	true	false	false	false	lake	speaker	postTest_word
+experiment2_pilot	2506-5f9a6e22-2a88-419e-aae6-09b9fe35631e	1531960090849	square	mixed	false	false	false	false	moni	speaker	postTest_word
+experiment2_pilot	2506-5f9a6e22-2a88-419e-aae6-09b9fe35631e	1531960094497	square	mixed	false	false	false	false	hili	speaker	postTest_word
+experiment2_pilot	2506-5f9a6e22-2a88-419e-aae6-09b9fe35631e	1531960099048	square	mixed	false	false	true	true	wimu	speaker	postTest_word
+experiment2_pilot	2506-5f9a6e22-2a88-419e-aae6-09b9fe35631e	1531960101781	square	mixed	false	false	false	false	paho	speaker	postTest_word
+experiment2_pilot	2506-5f9a6e22-2a88-419e-aae6-09b9fe35631e	1531960105678	square	mixed	true	true	false	false	howu	speaker	postTest_word
+experiment2_pilot	2506-5f9a6e22-2a88-419e-aae6-09b9fe35631e	1531960108902	square	mixed	false	false	false	true	gule	speaker	postTest_word
+experiment2_pilot	2506-5f9a6e22-2a88-419e-aae6-09b9fe35631e	1531960112842	square	mixed	false	false	true	false	nupi	speaker	postTest_word
+experiment2_pilot	2506-5f9a6e22-2a88-419e-aae6-09b9fe35631e	1531960115940	square	mixed	false	true	false	false	line	speaker	postTest_word

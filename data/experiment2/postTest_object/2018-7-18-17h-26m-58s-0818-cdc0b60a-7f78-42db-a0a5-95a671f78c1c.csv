@@ -1,0 +1,9 @@
+iterationName	gameid	time	stimulusHalf	condition	mipo	hagu	peke	mamo	guka	nama	wuko	lolo	wega	target	finalRole	eventType
+experiment2_pilot	0818-cdc0b60a-7f78-42db-a0a5-95a671f78c1c	1531960018280	square	mixed	true	false	false	false	false	false	false	false	false	blueSquare1	listener	postTest_object
+experiment2_pilot	0818-cdc0b60a-7f78-42db-a0a5-95a671f78c1c	1531960021216	square	mixed	false	true	false	false	false	false	false	false	false	blueSquare2	listener	postTest_object
+experiment2_pilot	0818-cdc0b60a-7f78-42db-a0a5-95a671f78c1c	1531960021570	square	mixed	true	false	false	false	false	false	false	false	false	blueSquare1	speaker	postTest_object
+experiment2_pilot	0818-cdc0b60a-7f78-42db-a0a5-95a671f78c1c	1531960023900	square	mixed	false	false	true	false	false	false	false	false	false	redSquare1	listener	postTest_object
+experiment2_pilot	0818-cdc0b60a-7f78-42db-a0a5-95a671f78c1c	1531960025291	square	mixed	false	true	false	false	false	false	false	false	false	blueSquare2	speaker	postTest_object
+experiment2_pilot	0818-cdc0b60a-7f78-42db-a0a5-95a671f78c1c	1531960026537	square	mixed	false	false	false	false	true	false	false	false	false	redSquare2	listener	postTest_object
+experiment2_pilot	0818-cdc0b60a-7f78-42db-a0a5-95a671f78c1c	1531960028131	square	mixed	false	false	true	false	false	false	false	false	false	redSquare1	speaker	postTest_object
+experiment2_pilot	0818-cdc0b60a-7f78-42db-a0a5-95a671f78c1c	1531960032476	square	mixed	false	false	false	false	true	false	false	false	false	redSquare2	speaker	postTest_object

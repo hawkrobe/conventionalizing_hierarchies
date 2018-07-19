@@ -1,0 +1,9 @@
+iterationName	gameid	time	stimulusHalf	condition	heko	hiku	huwe	halo	mupa	nege	gehe	game	mape	target	finalRole	eventType
+experiment2_pilot	6077-2c1b44e1-88d5-455e-89be-4b1974391e8f	1531872228672	circle	mixed	false	false	false	false	false	true	false	false	false	spottedCircle1	listener	postTest_object
+experiment2_pilot	6077-2c1b44e1-88d5-455e-89be-4b1974391e8f	1531872231772	circle	mixed	false	true	false	false	false	false	false	false	false	spottedCircle2	listener	postTest_object
+experiment2_pilot	6077-2c1b44e1-88d5-455e-89be-4b1974391e8f	1531872234433	circle	mixed	false	false	false	false	false	false	false	false	true	stripedCircle1	listener	postTest_object
+experiment2_pilot	6077-2c1b44e1-88d5-455e-89be-4b1974391e8f	1531872235369	circle	mixed	false	false	false	false	false	false	false	false	true	spottedCircle1	speaker	postTest_object
+experiment2_pilot	6077-2c1b44e1-88d5-455e-89be-4b1974391e8f	1531872240000	circle	mixed	false	false	false	true	false	false	false	false	false	spottedCircle2	speaker	postTest_object
+experiment2_pilot	6077-2c1b44e1-88d5-455e-89be-4b1974391e8f	1531872241317	circle	mixed	false	false	false	false	false	false	false	true	false	stripedCircle2	listener	postTest_object
+experiment2_pilot	6077-2c1b44e1-88d5-455e-89be-4b1974391e8f	1531872244978	circle	mixed	false	false	false	false	false	true	false	false	false	stripedCircle1	speaker	postTest_object
+experiment2_pilot	6077-2c1b44e1-88d5-455e-89be-4b1974391e8f	1531872248353	circle	mixed	false	true	false	false	false	false	false	false	false	stripedCircle2	speaker	postTest_object

@@ -1,0 +1,9 @@
+iterationName	gameid	time	stimulusHalf	condition	nepu	nuha	lige	kaki	mipi	hiwa	wigo	gumo	memi	target	finalRole	eventType
+experiment2_pilot	6490-86f6bd87-4fbd-4918-916d-1667e77cfc2d	1531850920670	square	mixed	false	false	false	false	false	false	false	false	false	blueSquare1	listener	postTest_object
+experiment2_pilot	6490-86f6bd87-4fbd-4918-916d-1667e77cfc2d	1531850922876	square	mixed	true	false	false	false	false	false	false	false	false	blueSquare1	speaker	postTest_object
+experiment2_pilot	6490-86f6bd87-4fbd-4918-916d-1667e77cfc2d	1531850926299	square	mixed	false	false	true	false	false	false	false	false	false	blueSquare2	speaker	postTest_object
+experiment2_pilot	6490-86f6bd87-4fbd-4918-916d-1667e77cfc2d	1531850931002	square	mixed	false	false	false	true	false	false	false	false	false	redSquare1	speaker	postTest_object
+experiment2_pilot	6490-86f6bd87-4fbd-4918-916d-1667e77cfc2d	1531850933098	square	mixed	false	false	false	false	false	true	false	false	false	redSquare2	speaker	postTest_object
+experiment2_pilot	6490-86f6bd87-4fbd-4918-916d-1667e77cfc2d	1531850933414	square	mixed	false	false	true	false	false	false	false	false	false	blueSquare2	listener	postTest_object
+experiment2_pilot	6490-86f6bd87-4fbd-4918-916d-1667e77cfc2d	1531850936534	square	mixed	false	true	false	false	false	false	false	false	false	redSquare1	listener	postTest_object
+experiment2_pilot	6490-86f6bd87-4fbd-4918-916d-1667e77cfc2d	1531850942986	square	mixed	false	false	false	false	false	true	false	false	false	redSquare2	listener	postTest_object

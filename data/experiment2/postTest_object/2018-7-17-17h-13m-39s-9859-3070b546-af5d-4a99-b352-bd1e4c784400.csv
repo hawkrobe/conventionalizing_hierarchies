@@ -1,0 +1,9 @@
+iterationName	gameid	time	stimulusHalf	condition	mupo	wili	kahe	goki	gene	nama	mawu	wula	guhu	target	finalRole	eventType
+experiment2_pilot	9859-3070b546-af5d-4a99-b352-bd1e4c784400	1531872819092	circle	mixed	false	false	false	false	false	false	true	false	false	spottedCircle1	speaker	postTest_object
+experiment2_pilot	9859-3070b546-af5d-4a99-b352-bd1e4c784400	1531872830241	circle	mixed	true	false	false	false	false	false	true	false	false	spottedCircle2	speaker	postTest_object
+experiment2_pilot	9859-3070b546-af5d-4a99-b352-bd1e4c784400	1531872835136	circle	mixed	false	true	false	false	false	false	false	true	false	stripedCircle1	speaker	postTest_object
+experiment2_pilot	9859-3070b546-af5d-4a99-b352-bd1e4c784400	1531872838115	circle	mixed	false	true	false	false	false	false	false	true	false	stripedCircle2	speaker	postTest_object
+experiment2_pilot	9859-3070b546-af5d-4a99-b352-bd1e4c784400	1531872924480	circle	mixed	true	false	false	false	false	false	false	false	false	spottedCircle1	listener	postTest_object
+experiment2_pilot	9859-3070b546-af5d-4a99-b352-bd1e4c784400	1531872928059	circle	mixed	true	false	false	false	false	false	false	false	false	spottedCircle2	listener	postTest_object
+experiment2_pilot	9859-3070b546-af5d-4a99-b352-bd1e4c784400	1531872939837	circle	mixed	false	false	false	false	false	false	false	true	false	stripedCircle1	listener	postTest_object
+experiment2_pilot	9859-3070b546-af5d-4a99-b352-bd1e4c784400	1531872944384	circle	mixed	false	true	false	false	false	false	false	false	false	stripedCircle2	listener	postTest_object

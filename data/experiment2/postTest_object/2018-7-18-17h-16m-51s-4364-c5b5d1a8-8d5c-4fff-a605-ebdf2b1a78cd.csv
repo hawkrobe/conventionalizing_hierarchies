@@ -1,0 +1,9 @@
+iterationName	gameid	time	stimulusHalf	condition	mopa	kemo	leku	heko	lola	hahi	welo	gole	nipu	target	finalRole	eventType
+experiment2_pilot	4364-c5b5d1a8-8d5c-4fff-a605-ebdf2b1a78cd	1531959411145	square	mixed	false	true	false	false	false	false	false	false	false	blueSquare1	listener	postTest_object
+experiment2_pilot	4364-c5b5d1a8-8d5c-4fff-a605-ebdf2b1a78cd	1531959413949	square	mixed	false	true	false	false	false	false	false	false	false	blueSquare2	listener	postTest_object
+experiment2_pilot	4364-c5b5d1a8-8d5c-4fff-a605-ebdf2b1a78cd	1531959417718	square	mixed	false	false	true	false	false	false	false	false	false	redSquare1	listener	postTest_object
+experiment2_pilot	4364-c5b5d1a8-8d5c-4fff-a605-ebdf2b1a78cd	1531959425264	square	mixed	false	false	false	false	true	false	false	false	false	redSquare2	listener	postTest_object
+experiment2_pilot	4364-c5b5d1a8-8d5c-4fff-a605-ebdf2b1a78cd	1531959455522	square	mixed	true	false	false	false	false	false	false	false	false	blueSquare1	speaker	postTest_object
+experiment2_pilot	4364-c5b5d1a8-8d5c-4fff-a605-ebdf2b1a78cd	1531959459997	square	mixed	false	true	false	false	false	false	false	false	false	blueSquare2	speaker	postTest_object
+experiment2_pilot	4364-c5b5d1a8-8d5c-4fff-a605-ebdf2b1a78cd	1531959462618	square	mixed	false	false	true	false	false	false	false	false	false	redSquare1	speaker	postTest_object
+experiment2_pilot	4364-c5b5d1a8-8d5c-4fff-a605-ebdf2b1a78cd	1531959465077	square	mixed	false	false	false	false	true	false	false	false	false	redSquare2	speaker	postTest_object

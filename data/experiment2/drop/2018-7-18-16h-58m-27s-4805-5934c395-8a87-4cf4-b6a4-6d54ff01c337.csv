@@ -1,0 +1,15 @@
+iterationName	gameid	time	stimulusHalf	condition	intendedName	trialNum	text	timeFromRoundStart	repetition	eventType
+experiment2_pilot	4805-5934c395-8a87-4cf4-b6a4-6d54ff01c337	1531958307176	square	mixed	redSquare1	1	wowe	63940	0	drop
+experiment2_pilot	4805-5934c395-8a87-4cf4-b6a4-6d54ff01c337	1531958329905	square	mixed	redSquare2	2	wako	8807	0	drop
+experiment2_pilot	4805-5934c395-8a87-4cf4-b6a4-6d54ff01c337	1531958348740	square	mixed	blueSquare1	3	kigu	8146	0	drop
+experiment2_pilot	4805-5934c395-8a87-4cf4-b6a4-6d54ff01c337	1531958374371	square	mixed	blueSquares	4	guke	16962	0	drop
+experiment2_pilot	4805-5934c395-8a87-4cf4-b6a4-6d54ff01c337	1531958397593	square	mixed	redSquares	5	guke	13221	0	drop
+experiment2_pilot	4805-5934c395-8a87-4cf4-b6a4-6d54ff01c337	1531958411303	square	mixed	blueSquare2	6	kopo	5601	0	drop
+experiment2_pilot	4805-5934c395-8a87-4cf4-b6a4-6d54ff01c337	1531958438429	square	mixed	redSquares	7	wako	13609	1	drop
+experiment2_pilot	4805-5934c395-8a87-4cf4-b6a4-6d54ff01c337	1531958452348	square	mixed	redSquare1	8	wowe	6120	1	drop
+experiment2_pilot	4805-5934c395-8a87-4cf4-b6a4-6d54ff01c337	1531958465748	square	mixed	blueSquare1	9	wowe	4841	1	drop
+experiment2_pilot	4805-5934c395-8a87-4cf4-b6a4-6d54ff01c337	1531958485781	square	mixed	blueSquares	10	guke	11706	1	drop
+experiment2_pilot	4805-5934c395-8a87-4cf4-b6a4-6d54ff01c337	1531958505535	square	mixed	blueSquare2	11	neli	9830	1	drop
+experiment2_pilot	4805-5934c395-8a87-4cf4-b6a4-6d54ff01c337	1531958524902	square	mixed	redSquare2	12	wako	9999	1	drop
+experiment2_pilot	4805-5934c395-8a87-4cf4-b6a4-6d54ff01c337	1531958580986	square	mixed	redSquares	13	neli	42177	2	drop
+experiment2_pilot	4805-5934c395-8a87-4cf4-b6a4-6d54ff01c337	1531958604302	square	mixed	blueSquare1	14	kigu	13316	2	drop

@@ -1,0 +1,9 @@
+iterationName	gameid	time	stimulusHalf	condition	pami	liki	kinu	kopa	wiwi	lego	nuna	hoho	nipi	target	finalRole	eventType
+experiment2_pilot	6090-f747b4bd-054e-497e-82c1-6c681266db06	1531852119086	circle	mixed	false	false	false	false	false	true	false	false	false	spottedCircle1	speaker	postTest_object
+experiment2_pilot	6090-f747b4bd-054e-497e-82c1-6c681266db06	1531852123074	circle	mixed	false	false	true	false	false	false	false	false	false	spottedCircle2	speaker	postTest_object
+experiment2_pilot	6090-f747b4bd-054e-497e-82c1-6c681266db06	1531852131873	circle	mixed	false	false	false	true	false	false	false	false	false	stripedCircle1	speaker	postTest_object
+experiment2_pilot	6090-f747b4bd-054e-497e-82c1-6c681266db06	1531852136875	circle	mixed	false	false	false	false	true	false	false	false	false	stripedCircle2	speaker	postTest_object
+experiment2_pilot	6090-f747b4bd-054e-497e-82c1-6c681266db06	1531852196459	circle	mixed	false	false	false	false	false	true	false	false	false	spottedCircle1	listener	postTest_object
+experiment2_pilot	6090-f747b4bd-054e-497e-82c1-6c681266db06	1531852200335	circle	mixed	false	false	true	false	false	false	false	false	false	spottedCircle2	listener	postTest_object
+experiment2_pilot	6090-f747b4bd-054e-497e-82c1-6c681266db06	1531852215725	circle	mixed	false	false	false	true	false	false	false	false	false	stripedCircle1	listener	postTest_object
+experiment2_pilot	6090-f747b4bd-054e-497e-82c1-6c681266db06	1531852220573	circle	mixed	false	false	false	false	true	false	false	false	false	stripedCircle2	listener	postTest_object
