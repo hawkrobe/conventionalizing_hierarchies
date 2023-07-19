@@ -73,8 +73,10 @@ var game_core = function(options){
     this.expName = options.expName;
     this.player_count = options.player_count;
     this.objects = require('./objects.json');
-    this.condition = _.sample(['mixedLower', 'subOnly', 'intermediateOnly']);
+    this.condition = _.sample(['mixedLower', 'intermediateOnly']);
     this.trialList = this.makeTrialList();
+    console.log(this.condition);
+    console.log(this.contextTypeList)
     this.language = new ArtificialLanguage();
     this.data = {
       id : this.id,
